@@ -43,7 +43,7 @@ function __run_command_unit_with_docker() {
   shift
   local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
   _me="$(whoami)"
-  message "Running command-runner(docker): '${_image_name}'"
+  message "Running commandunit(docker): '${_image_name}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
@@ -60,7 +60,7 @@ function __run_command_unit_with_docker_from_entrypoint() {
   shift 2
   local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
   _me="$(whoami)"
-  message "Running command-runner(docker): '${_image_name}'"
+  message "Running commandunit(docker): '${_image_name}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
