@@ -58,7 +58,7 @@ function main() {
   fi
   if [[ ${1} == RELEASE ]]; then
     #    check_release    doc test package_release test_release release post_release
-    main release_precheck doc test build:release push:release release-postmortem
+    main release-precheck doc test build:release push:release release-postmortem
     return 0
   fi
   local -a _stages=()
