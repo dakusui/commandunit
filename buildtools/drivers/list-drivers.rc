@@ -1,3 +1,9 @@
 function execute_stage() {
-  ls "$(dirname "${BASH_SOURCE[0]}")/*.rc" | sed -E 's/\.rc$//g'
+  local _driver_files
+  mapfile -t _driver_files < <(ls "$(dirname "${BASH_SOURCE[0]}")/"*".rc")
+  for _i in "${_driver_files[@]}"; do
+    _i="${_i%.rc}"
+    _i="${_i##*/}"
+    echo "${_i}"
+  done
 }

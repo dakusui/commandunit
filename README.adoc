@@ -1,0 +1,86 @@
+= The `commandunit` testing framework.
+
+:jsonpp: json++
+:yamlpp: yaml++
+
+The `commandunit` is a testing framework intended to verrify your command line tools.
+You can define your tests in JSON or YAML formats.
+It is also powered by `jq-front` processor, with which you can write your JSON files using inheritance and references.
+
+== Usage
+
+Runs tests.
+
+[bash]
+----
+Usage: command-unit [OPTION]... [SUBCOMMAND]...
+----
+
+=== Sub-commands:
+
+* `preprocess`:
+Preprocesses test definition files ({yamlpp}, yaml, and {jsonpp}) and convert them into executable JSON test files
+* `run`:
+Runs tests under a directory specified by --test-workdir and writes a report file: testreport.json under a directory specified by `--test-reportdir`.
+* `report`:
+Reads a file testreport.json under directory specified by `--test-reportdir` and renders a report file (`testreport.adoc`) under the same directory.
+
+=== Options:
+
+* `-h`, `--help`           show this help
+* `-p`, `--parallel`       execute the tests in parallel
+* `-f`, `--filter`         filter tests with the specified regular expression(default:'.*')
+* `--test-srcdir`: write test reports under the specified directory (default: current directory)
+* `--test-workdir`: write test reports under the specified directory (default: value for `--test-srcdir`)
+* `--test-reportdir`: write test reports under the specified directory (default: value for `--test-workdir`)
+
+=== Examples:
+
+`testrunner DIR`
+
+Run tests found under DIR with the testrunner in sequential mode.
+
+`testrunner DIR -p`
+
+Run tests found under DIR with the testrunner in parallel mode.
+
+== Installation
+
+Although it is possible to install `commandunit` scripts in your directory struture, it is highly adviced to use Docker to use `commandrunner` to avoid compatibility issues.
+
+[source,bash]
+----
+function commandunit() {
+  local _commandunit_version="v1.0"
+  local _image_name="dakusui/commandunit:${_commandunit_version}"
+  local _commandunit_dockerdir_prefix="/var/lib"
+  local _commandunit_confdir _me
+  _commandunit_confdir="$(pwd)"
+  _me="$(whoami)"
+  docker run \
+    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
+    --env PROJECT_NAME="commandunit" \
+    --env CMD_UNIT_CONFDIR="${CMD_UNIT_CONFDIR}" \
+    --env CMD_UNIT_DOCKERDIR_PREFIX="${CMD_UNIT_DOCKERDIR_PREFIX}" \
+    -v "${TESTDIR}:/var/lib/cmd-unit${TESTDIR}" \
+    -v "${TESTREPORTDIR}:/var/lib/cmd-unit${TESTREPORTDIR}" \
+    -i "${_image_name}" \
+    "${@}"
+}
+export -f commandunit
+----
+
+== Authors
+
+* https://github.com/dakusui:[**Hrioshi Ukai**]: Initial work
+
+== Support
+
+* https://github.com/dakusui/commandunit/issues[Issues]
+* Twitter @ http://twitter.com/\______HU">[\______HU]
+
+== License
+
+image::http://img.shields.io/:license-mit-blue.svg?style=flat-square[link="http://badges.mit-license.org"]
+
+Copyright 2019 © https://github.com/dakusui[Hiroshi Ukai].

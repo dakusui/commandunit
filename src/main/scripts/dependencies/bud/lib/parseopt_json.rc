@@ -159,7 +159,7 @@ function print_usage() {
   local _i
   for _i in "${_options[@]}"; do
     local _s
-    _s="$(json_value_at "${_i}")" '.[0]'
+    _s="$(json_value_at "${_i}" '.[0]')"
     if [[ "${_s}" == "" ]]; then
       _s="   "
     else
