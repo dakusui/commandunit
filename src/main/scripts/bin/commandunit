@@ -55,11 +55,11 @@ function main() {
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
-  _test_srcdir="$(__cmd_unit__normalize_path "${_test_srcdir}")"
+  _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
-  _test_workdir="$(__cmd_unit__normalize_path "${_test_workdir}")"
+  _test_workdir="$(__commandunit__normalize_path "${_test_workdir}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
-  _test_reportdir="$(__cmd_unit__normalize_path "${_test_reportdir}")"
+  _test_reportdir="$(__commandunit__normalize_path "${_test_reportdir}")"
 
   info "parallel: '${_is_parallel}'"
   info "filter: '${_filter}'"
@@ -115,7 +115,7 @@ function main() {
   info_end "commandunit"
 }
 
-function __cmd_unit__normalize_path() {
+function __commandunit__normalize_path() {
   local _path="${1}"
   _path="$(realpath -m "${1}")"
   _path="${COMMANDUNIT_DOCKERDIR_PREFIX}/${_path}"

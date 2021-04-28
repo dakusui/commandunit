@@ -3,7 +3,7 @@
   - base/normal.json
 type: CUSTOM
 description:
-  - This is a test for the customization mechanism of cmd_unit.
+  - This is a test for the customization mechanism of commandunit.
 when:
   source:
     - ${BUD_LIB}/common.rc

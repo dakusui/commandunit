@@ -4,7 +4,7 @@ readonly __COMMANDUNIT__MAIN_RC=true
 set -eu -o pipefail -o errtrace
 shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
 COMMANDUNIT_DOCKERDIR_PREFIX=${COMMANDUNIT_DOCKERDIR_PREFIX:-""}
-COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR:-"${COMMANDUNIT_DOCKERDIR_PREFIX}/${PWD}/.cmd_unit"}"
+COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR:-"${COMMANDUNIT_DOCKERDIR_PREFIX}/${PWD}/.commandunit"}"
 export COMMANDUNIT_CONFDIR
 function define_plugin_functions() {
   function format_log_record() {
