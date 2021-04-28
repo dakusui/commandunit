@@ -14,7 +14,13 @@
       "minor": 3
     }
   },
-  "release": {
-    "branch": "main"
+  "repo": {
+    "url": "https://github.com/dakusui/commandunit.git",
+    "documentation": {
+      "docbranch": "docs"
+    },
+    "release": {
+      "branch": "main"
+    }
   }
 }

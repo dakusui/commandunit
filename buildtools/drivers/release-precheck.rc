@@ -3,7 +3,7 @@ function execute_stage() {
   local unmerged_commits
   local release_branch
   local current_branch
-  release_branch="$(jq -crM '.release.branch' ./build_info.json)"
+  release_branch="$(jq -crM '.repo.release.branch' ./build_info.json)"
   # shellcheck disable=SC2063
   current_branch=$(git branch | grep '^*' | cut -d ' ' -f 2)
   if [[ ${current_branch} != "${release_branch}" ]]; then
