@@ -1,12 +1,3 @@
-= The `bud` Library
+= The `commandunit` testing framwork
 
-The `bud` is a utility library designed for scripting in `bash`.
-
-
-== Features
-
-* JSON handling
-* Printing stacktrace on a failure
-* Unit testing framework for CLI
-* Array Utilities
-* String Utilities
+(t.b.d)

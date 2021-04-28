@@ -8,12 +8,12 @@ function handle_source() {
 #build-snapshot
 function handle_snapshot() {
   source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
-  _build "${TARGET_VERSION}-snapshot"
+  build_docker_image "${TARGET_VERSION}-snapshot"
 }
 
 #build-release
 function handle_release() {
   source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
-  _build "${TARGET_VERSION}"
-  _build "latest"
+  build_docker_image "${TARGET_VERSION}"
+  build_docker_image "latest"
 }

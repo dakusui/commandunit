@@ -1,10 +1,10 @@
 "${__BUILDTOOLS__DOCKER_RC:-false}" && return 0
 readonly __BUILDTOOLS__DOCKER_RC=true
 
-function _build() {
+function build_docker_image() {
   local _version="${1}"
   local _image_name="${DOCKER_REPO_NAME}:${_version}"
-  message "Building command-runner: '${_image_name}'"
+  message "Building docker image: '${_image_name}'"
   docker build --build-arg VERSION="${_version}" -t "${_image_name}" .
 }
 
