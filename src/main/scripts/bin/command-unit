@@ -2,7 +2,7 @@
 
 source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
 
-CMD_UNIT_SPECIFICATION='{
+COMMANDUNIT_SPECIFICATION='{
   "usage": "command-unit [OPTION]... [SUBCOMMAND]...",
   "description":[
     "Runs tests.",
@@ -36,12 +36,12 @@ CMD_UNIT_SPECIFICATION='{
 
 function main() {
   local _parsed_opts_json
-  _parsed_opts_json="$(parseopt "${CMD_UNIT_SPECIFICATION}" "${@}")"
+  _parsed_opts_json="$(parseopt "${COMMANDUNIT_SPECIFICATION}" "${@}")"
   debug "_parsed_opts_json: '${_parsed_opts_json}'"
   local _help
   _help="$(parseopt_boolean_value_for 'help' "${_parsed_opts_json}")"
   if [[ "${_help}" == true ]]; then
-    print_usage "${CMD_UNIT_SPECIFICATION}"
+    print_usage "${COMMANDUNIT_SPECIFICATION}"
     return 0
   fi
   info_begin "command-unit"
@@ -118,7 +118,7 @@ function main() {
 function __cmd_unit__normalize_path() {
   local _path="${1}"
   _path="$(realpath -m "${1}")"
-  _path="${CMD_UNIT_DOCKERDIR_PREFIX}/${_path}"
+  _path="${COMMANDUNIT_DOCKERDIR_PREFIX}/${_path}"
   echo "${_path}"
 }
 

@@ -1,11 +1,11 @@
-"${__CMD_UNIT__MAIN_RC:-false}" && return 0
-readonly __CMD_UNIT__MAIN_RC=true
+"${__COMMANDUNIT__MAIN_RC:-false}" && return 0
+readonly __COMMANDUNIT__MAIN_RC=true
 
 set -eu -o pipefail -o errtrace
 shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
-CMD_UNIT_DOCKERDIR_PREFIX=${CMD_UNIT_DOCKERDIR_PREFIX:-""}
-CMD_UNIT_CONFDIR="${CMD_UNIT_CONFDIR:-"${CMD_UNIT_DOCKERDIR_PREFIX}/${PWD}/.cmd_unit"}"
-export CMD_UNIT_CONFDIR
+COMMANDUNIT_DOCKERDIR_PREFIX=${COMMANDUNIT_DOCKERDIR_PREFIX:-""}
+COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR:-"${COMMANDUNIT_DOCKERDIR_PREFIX}/${PWD}/.cmd_unit"}"
+export COMMANDUNIT_CONFDIR
 function define_plugin_functions() {
   function format_log_record() {
     local _line="${1:-???}" _function="${2:-unknown}" _file="${3:-unknown file}"
@@ -18,8 +18,8 @@ function define_plugin_functions() {
     echo '(test-.+|.*-test|test)'
   }
 }
-if [[ -e "${CMD_UNIT_CONFDIR}/config.rc" ]]; then
-  source "${CMD_UNIT_CONFDIR}/config.rc"
+if [[ -e "${COMMANDUNIT_CONFDIR}/config.rc" ]]; then
+  source "${COMMANDUNIT_CONFDIR}/config.rc"
 fi
 BUD_HOME="${BUD_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies/bud}"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"

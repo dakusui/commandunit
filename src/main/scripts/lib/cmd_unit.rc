@@ -1,5 +1,5 @@
-"${__CMD_UNIT__CMDUNIT_RC:-false}" && return 0
-readonly __CMD_UNIT__CMDUNIT_RC=true
+"${__COMMANDUNIT__CMDUNIT_RC:-false}" && return 0
+readonly __COMMANDUNIT__CMDUNIT_RC=true
 
 source "${BUD_HOME:?You must set the BUD_HOME environment variable}/lib/bud.rc"
 

@@ -2,6 +2,7 @@
 
 :jsonpp: json++
 :yamlpp: yaml++
+:regexany: `.*`
 
 The `commandunit` is a testing framework intended to verrify your command line tools.
 You can define your tests in JSON or YAML formats.
@@ -19,17 +20,19 @@ Usage: command-unit [OPTION]... [SUBCOMMAND]...
 === Sub-commands:
 
 * `preprocess`:
-Preprocesses test definition files ({yamlpp}, yaml, and {jsonpp}) and convert them into executable JSON test files
+Preprocesses test definition files ({yamlpp}, yaml, and {jsonpp}) and convert them into "executable JSON test" files
 * `run`:
-Runs tests under a directory specified by --test-workdir and writes a report file: testreport.json under a directory specified by `--test-reportdir`.
+Runs tests under a directory specified by `--test-workdir` and writes a report file: `testreport.json` under a directory specified by `--test-reportdir`.
 * `report`:
-Reads a file testreport.json under directory specified by `--test-reportdir` and renders a report file (`testreport.adoc`) under the same directory.
+Reads a file `testreport.json` under directory specified by `--test-reportdir` and renders a report file (`testreport.adoc`) under the same directory.
+
+If no sub-command is given, it will be interpreted as a sequence of `preprocess`, `run`, and `report`.
 
 === Options:
 
 * `-h`, `--help`           show this help
 * `-p`, `--parallel`       execute the tests in parallel
-* `-f`, `--filter`         filter tests with the specified regular expression(default:'.*')
+* `-f`, `--filter`         filter tests with the specified regular expression(default:{regexany})
 * `--test-srcdir`: write test reports under the specified directory (default: current directory)
 * `--test-workdir`: write test reports under the specified directory (default: value for `--test-srcdir`)
 * `--test-reportdir`: write test reports under the specified directory (default: value for `--test-workdir`)
@@ -60,8 +63,8 @@ function commandunit() {
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
-    --env CMD_UNIT_CONFDIR="${CMD_UNIT_CONFDIR}" \
-    --env CMD_UNIT_DOCKERDIR_PREFIX="${CMD_UNIT_DOCKERDIR_PREFIX}" \
+    --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
+    --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
     -v "${TESTDIR}:/var/lib/cmd-unit${TESTDIR}" \
     -v "${TESTREPORTDIR}:/var/lib/cmd-unit${TESTREPORTDIR}" \
     -i "${_image_name}" \

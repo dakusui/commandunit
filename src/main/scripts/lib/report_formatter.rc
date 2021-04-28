@@ -1,5 +1,5 @@
-"${__CMD_UNIT__REPORT_FORMATTER:-false}" && return 0
-readonly __CMD_UNIT__REPORT_FORMATTER=true
+"${__COMMANDUNIT__REPORT_FORMATTER:-false}" && return 0
+readonly __COMMANDUNIT__REPORT_FORMATTER=true
 
 function print_test_report() {
   local _json_object="${1}"
