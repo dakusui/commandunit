@@ -1,0 +1,28 @@
+"${__BUD__IO_RC:-false}" && return 0
+readonly __BUD__IO_RC=true
+
+source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/core.rc"
+
+__BUD_SESSION_ID=$(date +"%Y-%m-%d_%T-%6N" | sed 's![/:]!-!g')
+
+function bud_temp_file() {
+  mktemp -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
+}
+
+# Filter files in input by a given predicate
+# Useful when you do not want to get non-zero exit code for no matching input record.
+# Usage:
+#    filter_file '[[ "${_each}" =~ (test-.+|.*-test|test) ]]'
+# Single quotes are necessary.
+function filter_file() {
+  local _predicate="${1}" _file="${2:-/dev/stdin}"
+  local _each
+  debug "_predicate: '${_predicate}'"
+  while IFS= read -r _each; do
+    eval "if ${_predicate} ; then echo '${_each}'; fi"
+  done <"${_file}"
+}
+
+
+mkdir -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
+

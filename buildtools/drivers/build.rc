@@ -1,0 +1,19 @@
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/stage_handler_dispatcher.rc"
+
+#build-release
+function handle_source() {
+  abort "'build' stage is not supported for 'source'. You must specify 'snapshot' or 'release'"
+}
+
+#build-snapshot
+function handle_snapshot() {
+  source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+  _build "${TARGET_VERSION}-snapshot"
+}
+
+#build-release
+function handle_release() {
+  source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+  _build "${TARGET_VERSION}"
+  _build "latest"
+}

@@ -1,0 +1,36 @@
+"${__BUILDTOOLS__STAGE_HANDLER_DISPATCHER_RC:-false}" && return 0
+readonly __BUILDTOOLS__STAGE_HANDLER_DISPATCHER_RC=true
+
+function handle_source() {
+  abort "This stage does not support target: 'source'"
+}
+
+function handle_snapshot() {
+  abort "This stage does not support target: 'source'"
+}
+
+function handle_release() {
+  abort "This stage does not support target: 'source'"
+}
+
+function execute_stage() {
+  local _target="${1:-source}"
+  shift
+  message "BEGIN HANDLER: target: '${_target}'; '${*}'"
+  buildtools__execute_stage "${_target}" "${@}"
+  message "END HANDLER"
+}
+
+function buildtools__execute_stage() {
+  local _target="${1}"
+  shift
+  if [[ "${_target}" == "source" ]]; then
+    handle_source "${@}"
+  elif [[ "${_target}" == "snapshot" ]]; then
+    handle_snapshot "${@}"
+  elif [[ "${_target}" == "release" ]]; then
+    handle_release "${@}"
+  else
+    abort "Unknown target: '${_target}' was specified. args: '${*}'"
+  fi
+}

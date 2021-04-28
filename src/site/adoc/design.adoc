@@ -1,0 +1,21 @@
+== Design
+
+Design of `command-unit` should come to here.
+
+[ditaa]
+----
+    +--------+   +-------+    +-------+
+    |        | --+ ditaa +--> |       |
+    |  Text  |   +-------+    |diagram|
+    |Document|   |!magic!|    |       |
+    |     {d}|   |       |    |       |
+    +---+----+   +-------+    +-------+
+        :                         ^
+        |       Lots of work      |
+        +-------------------------+
+----
+
+Hello!
+
+[.text-right]
+link:index.html[top]

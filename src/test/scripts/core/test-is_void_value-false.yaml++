@@ -1,0 +1,16 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  source:
+    - ${BUD_LIB}/core.rc
+  cmd: is_void_value
+  args:
+    - hello
+then:
+  exitCode:
+    - NOT_EQUAL
+    - 0
+  stdout:
+    absent:
+      - regex:.+

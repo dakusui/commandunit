@@ -1,0 +1,38 @@
+"${__BUD__JOBS_RC:-false}" && return 0
+readonly __BUD__JOBS_RC=true
+
+source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/logging.rc"
+
+function ensure_no_bg_jobs() {
+  local _num_remaining_jobs
+  _num_remaining_jobs="$(jobs -l | wc -l)"
+  if [[ "${_num_remaining_jobs}" -gt 0 ]]; then
+    abort "There are non-finished jobs."
+  fi
+}
+
+function wait_for_jobs() {
+  local _all_passed=true
+  info "Waiting for background jobs."
+  while true; do
+    local _num_remaining_jobs
+    _num_remaining_jobs="$(jobs -l | wc -l)"
+    if [[ "${_num_remaining_jobs}" == 0 ]]; then
+      info "No more background jobs."
+      break
+    fi
+    wait -n || {
+      local _exit_code=$?
+      if [[ "${_exit_code}" != 0 ]]; then
+        _all_passed=false
+        error "Error was detected.: '${_exit_code}'"
+        continue
+      fi
+    }
+  done
+  if [[ "${_all_passed}" == false ]]; then
+    error "Some jobs did not finish correctly."
+    return 1
+  fi
+  return 0
+}

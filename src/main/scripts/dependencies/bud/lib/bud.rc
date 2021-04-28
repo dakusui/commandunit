@@ -1,0 +1,11 @@
+"${__BUD__BUD_RC:-false}" && return 0
+readonly __BUD__BUD_RC=true
+
+# bud__package_private_function
+# __bud__private_function
+# public_function
+
+source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/opts.rc"
+source "${BUD_LIB}/common.rc"
+source "${BUD_LIB}/jobs.rc"
+source "${BUD_LIB}/cmd_json.rc"

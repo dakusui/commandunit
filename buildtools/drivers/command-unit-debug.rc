@@ -1,0 +1,18 @@
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/stage_handler_dispatcher.rc"
+
+#build-release
+function handle_source() {
+  abort "'debug' stage is not supported for 'source'. You must specify 'snapshot' or 'release'"
+}
+
+#build-snapshot
+function handle_snapshot() {
+  source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+  run_command_unit_with_snapshot_docker_image "/bin/bash" "${@}"
+}
+
+#build-release
+function handle_release() {
+  source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+  run_command_unit_with_released_docker_image "/bin/bash" "${@}"
+}

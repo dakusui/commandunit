@@ -1,0 +1,36 @@
+"${__BUILD__BUILD_RC:-false}" && return 0
+readonly __BUILD__BUILD_RC=true
+
+PROJECT_DIR="$(pwd)"
+SRCDIR="${PROJECT_DIR}/src"
+OUTDIR="${PROJECT_DIR}/out"
+EXEC_BASEDIR="${OUTDIR}/main/scripts"
+DOCDIR="${PROJECT_DIR}/out/doc"
+DOCSRCDIR="${PROJECT_DIR}/out/site/adoc"
+LIBDIR="${OUTDIR}/lib"
+TESTDIR="${OUTDIR}/test/scripts"
+TESTREPORTDIR="${OUTDIR}/testreport"
+LATEST_RELEASED_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.latestReleased.major' "${PROJECT_DIR}/build_info.json")" \
+                                           "$(jq -r -c '.version.latestReleased.minor' "${PROJECT_DIR}/build_info.json")")"
+TARGET_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.target.major' "${PROJECT_DIR}/build_info.json")" \
+                                  "$(jq -r -c '.version.target.minor' "${PROJECT_DIR}/build_info.json")")"
+PROJECT_NAME="$(jq -r -c '.appName' "${PROJECT_DIR}/build_info.json")"
+HOMEPAGE="$(jq -r -c '.homepage' "${PROJECT_DIR}/build_info.json")"
+
+DOCKER_USER_NAME="$(jq -r -c -M '.docker.user' ${PROJECT_DIR}/build_info.json)"
+DOCKER_REPO_NAME="${DOCKER_USER_NAME}/${PROJECT_NAME}"
+
+export LATEST_RELEASED_VERSION
+export TARGET_VERSION
+export PROJECT_NAME
+export HOMEPAGE
+export PROJECT_DIR
+export SRCDIR
+export OUTDIR
+export EXEC_BASEDIR
+export DOCDIR
+export DOCSRCDIR
+export LIBDIR
+export TESTDIR
+export TESTREPORTDIR
+export DOCKER_REPO_NAME

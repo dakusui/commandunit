@@ -1,0 +1,251 @@
+"${__CMD_UNIT__REPORT_FORMATTER:-false}" && return 0
+readonly __CMD_UNIT__REPORT_FORMATTER=true
+
+function print_test_report() {
+  local _json_object="${1}"
+  local _successful="not successful" _i  _filter _testdir _summary
+  _summary=$(json_value_at "${_json_object}" ".report.summary")
+  _filter=$(json_value_at "${_summary}" ".filter")
+  _testdir=$(json_value_at "${_summary}" ".testdirs[]")
+  _i="$(echo "${_json_object}" | jq '.wasSuccessful')"
+  if [[ "${_i}" == true ]]; then
+    _successful="successful"
+  fi
+
+  echo '= Test Report: `'"${APP_NAME:-unknown}"'`'
+  echo ":toc: left"
+  echo
+  echo "This test suite was ${_successful}."
+  # shellcheck disable=SC2016
+  echo 'Tests under `'"${_testdir}"'` that match a filter `'"${_filter}"'` were executed.'
+  echo
+  echo ".Summary"
+  echo "----"
+  __get_report_attr "passed" "${_json_object}"
+  __get_report_attr "skipped" "${_json_object}"
+  __get_report_attr "failed" "${_json_object}"
+  __get_report_attr "error" "${_json_object}"
+  __get_report_attr "run" "${_json_object}"
+  __get_report_attr "all" "${_json_object}"
+  echo ""
+  echo "----"
+  echo ""
+  echo ".Passed"
+  echo "----"
+  __passing_test_names "${_json_object}"
+  echo "----"
+  echo ""
+  echo ".Skipped"
+  echo "----"
+  __skipped_test_names "${_json_object}"
+  echo "----"
+  echo ""
+  echo ".Failures (Failed in Execution)"
+  echo "----"
+  __failed_test_names "${_json_object}"
+  echo "----"
+  echo ""
+  echo ".Errors"
+  echo "----"
+  __error_test_names "${_json_object}"
+  echo "----"
+  echo
+  echo "== Errors"
+  echo
+  __error_test_details "${_json_object}"
+  echo
+  echo "== Failures (Failed in Execution)"
+  echo
+  __failed_test_details "${_json_object}"
+}
+
+function __passing_test_names() {
+  local _json_object="${1}"
+  local _test_names
+  mapfile -t _test_names < <(__extract_test_names 'select(.report.result.success == true)' "${_json_object}")
+  __format_test_names "${_test_names[@]}"
+}
+
+function __filter_for_failed() {
+  echo 'select(.report.result.success == false)'
+}
+
+function __failed_test_names() {
+  local _json_object="${1}"
+  local _test_names
+  mapfile -t _test_names < <(__extract_test_names "$(__filter_for_failed)" "${_json_object}")
+  __format_test_names "${_test_names[@]}"
+}
+
+function __failed_test_details() {
+  local _json_object="${1}"
+  __test_details "$(__filter_for_failed)" "${_json_object}"
+}
+
+function __filter_for_errors() {
+  echo 'select((.report.result.success != false and .report.result.success != true) or (.report.result.precheck != false and .report.result.precheck != true))'
+}
+function __error_test_names() {
+  local _json_object="${1}"
+  local _test_names
+  mapfile -t _test_names < <(__extract_test_names "$(__filter_for_errors)" "${_json_object}")
+  __format_test_names "${_test_names[@]}"
+}
+
+function __error_test_details() {
+  local _json_object="${1}"
+  __test_details "$(__filter_for_errors)" "${_json_object}"
+}
+
+function __test_details() {
+  local _filter="${1}" _json_object="${2}"
+  local _result_objects _i
+  mapfile -t _result_objects < <(json_value_at "${_json_object}" ".report.test_results[] | ${_filter}")
+
+  if [[ "${#_result_objects[@]}" == 0 ]]; then
+    echo "No test was found in this category."
+  else
+    for _i in "${_result_objects[@]}"; do
+      local _test_name _stage
+      _test_name="$(json_value_at "${_i}" '.name')"
+      _stage="$(__find_defect_stage "${_i}")"
+      echo "=== ${_test_name}"
+      echo
+
+      echo "==== exit code"
+      echo
+      __describe_exitcodecheck_result "${_i}"
+      echo
+      echo "==== stdout"
+      echo
+      __describe_filecheck_result "stdout" "${_stage}" "${_i}"
+
+      echo "==== stderr"
+      echo
+      __describe_filecheck_result "stderr" "${_stage}" "${_i}"
+
+      local _has_framework_output=false
+      _has_framework_output="$(echo "${_i}" | jq -crM '.report|has("driverOutput")')"
+      if [[ "${_has_framework_output}" == true ]]; then
+        echo "==== Framework output"
+        echo
+        __describe_framework_output "${_i}"
+      fi
+    done
+  fi
+}
+
+function __find_defect_stage() {
+  local _result_json_object="${1}"
+  local _precheck
+  _precheck="$(json_value_at "${_result_json_object}" '.report.result.precheck')"
+  if [[ "${_precheck}" != true ]]; then
+    echo "precheck"
+    return 0
+  fi
+  echo "execution"
+}
+
+function __describe_exitcodecheck_result() {
+  local _report_json_object="${1}"
+  local _was_successful _json_object_exitcode
+  _json_object_exitcode="$(json_value_at "${_report_json_object}" ".report.result.exitCode")"
+  _was_successful="$(json_value_at "${_json_object_exitcode}" '.success')"
+  if [[ "${_was_successful}" == true ]]; then
+    # shellcheck disable=SC2016
+    echo 'Check for exit code was successful.'
+  else
+    # shellcheck disable=SC2016
+    echo 'Check for exit code was not successful because of the following mismatch(es).'
+    echo
+    __describe_mismatch "${_json_object_exitcode}"
+  fi
+  echo
+}
+
+function __describe_filecheck_result() {
+  local _file="${1}" _stage="${2}" _report_json_object="${3}"
+  local _was_successful _json_object_file
+  # shellcheck disable=SC2016
+  echo '.Actual output to `'"${_file}"'` in `'${_stage}'` stage'
+  echo '----'
+  json_value_at "${_report_json_object}" ".report.${_stage}.${_file}[]"
+  echo '----'
+
+  _json_object_file="$(json_value_at "${_report_json_object}" ".report.result.${_file}")"
+  _was_successful="$(json_value_at "${_json_object_file}" '.success')"
+  if [[ "${_was_successful}" == true ]]; then
+    # shellcheck disable=SC2016
+    echo 'Check for `'"${_file}"'` was successful.'
+  else
+    # shellcheck disable=SC2016
+    echo 'Check for `'${_file}'` was not successful because of the following mismatch(es).'
+    echo
+    __describe_mismatch "${_json_object_file}"
+  fi
+  echo
+}
+
+function __describe_framework_output() {
+  local _driver_output="${2}"
+
+  __framework_output "stdout" "${_driver_output}"
+
+  __framework_output "stderr" "${_driver_output}"
+
+}
+
+function __framework_output() {
+  local _file="${1}" _driver_output="${2}"
+
+  # !-- framework output
+  local _driver_output
+  _driver_output="$(json_value_at "${_driver_output}" ".report.driverOutput.${_file}")"
+  echo ".${_file}"
+  echo "----"
+  echo "${_driver_output}"
+  echo "----"
+  echo
+}
+
+function __describe_mismatch() {
+  local _json_object_file="${1}"
+  local _mismatch_description _i
+  mapfile -t _mismatch_description < <(json_value_at "${_json_object_file}" ".messages[]")
+  if [[ ${#_mismatch_description[@]} == 0 ]]; then
+    _mismatch_description=("(No mismatch description was given.)")
+  fi
+  for _i in "${_mismatch_description[@]}"; do
+    # shellcheck disable=SC2016
+    echo "- ${_i}" | sed -E 's/<([^>]*)>/``\1``/g'
+  done
+}
+
+function __skipped_test_names() {
+  local _json_object="${1}"
+  local _test_names
+  mapfile -t _test_names < <(__extract_test_names 'select(.report.result.precheck == false)' "${_json_object}")
+  __format_test_names "${_test_names[@]}"
+}
+
+function __extract_test_names() {
+  local _query="${1}" _json_object="${2}"
+  json_value_at "${_json_object}" '.report.test_results[] | '"${_query}"' | .name'
+}
+
+function __format_test_names() {
+  local _i
+  (
+    if [[ ${#} == 0 ]]; then
+      echo "None."
+    fi
+    for _i in "${@}"; do
+      echo "${_i}"
+    done
+  ) | sed -E 's/^/  /'
+}
+
+function __get_report_attr() {
+  local _attr="${1}" _json_object="${2}"
+  printf '%8s:%6s\n' "${_attr^^}" "$(json_value_at "${_json_object}" ".report.summary.${_attr}")"
+}

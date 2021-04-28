@@ -1,0 +1,38 @@
+"${__BUD__JSON_RC:-false}" && return 0
+readonly __BUD__JSON_RC=true
+
+source "${BUD_LIB:=$(dirname "${BASH_SOURCE[0]}")}/core.rc"
+
+function to_json_array() {
+  local _i
+  for _i in "${@}"; do echo "${_i}"; done |
+    jq -R -c --stream '.' |
+    jq -s -crM '.'
+}
+
+function json_value_at() {
+  local  _json="${1}" _path="${2}"
+  echo "${_json}" | jq -crM "${_path}" || abort "Something went wrong _path:'${_path}' _json='${_json}'"
+}
+
+function json_has_key() {
+  local _json="${1}" _key="${2}" _path="${3:-.}"
+  echo "${_json}" | jq -crM "${_path}|has("'"'"${_key}"'"'")"
+}
+
+function json_type_of() {
+  local _json="${1}"
+  echo "${_json}" | jq -crM 'type' || abort "Something went wrong: Probably json='${_json}' is not well-formed."
+}
+
+function json_object_merge() {
+  local _v="${1}" _w="${2}"
+  jq -nrcM --argjson v "${_v}" --argjson w "${_w}" '$v * $w' ||
+    abort "Failed to merge objects _v:'${_v}' _w:'${_w}'"
+}
+
+function json_array_append() {
+  local _v="${1}" _w="${2}"
+  jq -ncrM --argjson v "${_v}" --argjson w "${_w}" '$v + $w' ||
+    abort "Failed to append arrays _v:'${_v}' _w:'${_w}'"
+}

@@ -1,0 +1,43 @@
+"${__BUILD__UTILS_RC:-false}" && return 0
+readonly __BUILD__UTILS_RC=true
+
+####
+# Used when a condition is not met and a program should NOT go on.
+function abort() {
+  local _exit_code=1
+  print_stacktrace "ERROR:" "${@}"
+  exit "${_exit_code}"
+}
+
+function print_stacktrace() {
+  local _message="${1}"
+  shift
+  echo "${_message}" "${@}" >&2
+  local _i=0
+  local _e
+  while _e="$(caller $_i)"; do
+    # shellcheck disable=SC2086
+    _e="$(_format_caller ${_e})"
+    print_message "  at ${_e}"
+    _i=$((_i + 1))
+  done
+}
+
+function print_message() {
+  echo "${@}" >&2
+}
+
+function message() {
+  local _caller
+  _caller="$(caller 0)"
+  # shellcheck disable=SC2086
+  _caller="$(_format_caller ${_caller})"
+  print_message "${_caller}: " "${@}"
+}
+
+function _format_caller() {
+  local _line="${1:-???}" _function="${2:-unknown}" _file="${3:-unknown file}"
+  printf "%-40s: %-40s\n" "${_file}:${_line}" "${_function}"
+}
+
+trap abort ERR

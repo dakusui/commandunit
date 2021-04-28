@@ -1,0 +1,17 @@
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/stage_handler_dispatcher.rc"
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+
+#build-release
+function handle_source() {
+  run_command_unit_with_source "--help" "${@}"
+}
+
+#build-snapshot
+function handle_snapshot() {
+  run_command_unit_with_snapshot_docker_image "--help" "${@}"
+}
+
+#build-release
+function handle_release() {
+  run_command_unit_with_released_docker_image "--help" "${@}"
+}

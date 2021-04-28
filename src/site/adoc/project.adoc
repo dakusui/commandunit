@@ -1,0 +1,146 @@
+== Project Directory Structure
+
+
+[source, folder]
+.Directory Structure
+----
+                      build_info.rc       (direct run)
+                      ------------------- --------------
+bud/                  PROJECT_DIR
+  src/                SRCDIR              EXEC_BASEDIR
+    adoc/
+    lib/                                  LIBDIR
+    test/                                 TESTDIR
+    testreport/                           TESTREPORTDIR
+  buildtools/
+  out/                OUTDIR,EXEC_BASEDIR
+    adoc/             DOCSRCDIR
+    doc/              DOCDIR
+    lib/              LIBDIR
+    test/             TESTDIR
+    testreport/       TESTREPORTDIR
+  build.sh
+  build_info.json
+  LICENSE
+  README.adoc
+----
+
+.Environment Variables
+|===
+|Name |build_info.rc |(direct run)
+
+|`PROJECT_DIR`
+|`$(pwd)`
+|`$(pwd)`
+
+|`EXEC_BASEDIR`
+| `$\{OUTDIR\}`
+|`${PROJECT_DIR}/src`
+
+|`SRCDIR`
+|`${PROJECT_DIR}/src`
+|N/A
+
+|`OUTDIR`
+|`${PROJECT_DIR}/out`
+|N/A
+
+|`DOCSRCDIR`
+|`$\{OUTDIR}/adoc`
+|N/A
+
+
+|`DOCDIR`
+|`$\{OUTDIR}/doc`
+|N/A
+
+
+|`LIBDIR`
+|`$\{OUTDIR}/lib`
+|`${EXEC_BASEDIR}/lib`
+
+|`TESTDIR`
+|`$\{OUTDIR}/test`
+|`${EXEC_BASEDIR}/test`
+
+|`TESTREPORTDIR`
+|`$\{OUTDIR}/testreport`
+|`${EXEC_BASEDIR}/testreport`
+|===
+
+== Running the `testrunner`
+
+[source, folder]
+.Directory Structure
+----
+                      build_info.rc
+                      -------------------
+bud/
+  src/                BUD_HOME
+    adoc/
+    lib/                                   LIBDIR
+    test/                                 TESTDIR
+    testreport/                           TESTREPORTDIR
+  buildtools/
+  out/                OUTDIR,EXEC_BASEDIR
+    adoc/             DOCSRCDIR
+    doc/              DOCDIR
+    lib/              LIBDIR
+    test/             TESTDIR
+    testreport/       TESTREPORTDIR
+  build.sh
+  build_info.json
+  LICENSE
+  README.adoc
+{app}/                 BUD_APP_HOME
+  src/
+    test/
+      scripts/         BUD_TEST_SRCCDIR
+  target
+    test-classes/      BUD_TEST_BASEDIR
+  bud-testrepors/      BUD_TEST_REPORTDIR
+----
+
+.Environment Variables
+|===
+|Name |build_info.rc |(direct run)
+
+|`PROJECT_DIR`
+|`$(pwd)`
+|`$(pwd)`
+
+|`EXEC_BASEDIR`
+| `$\{OUTDIR\}`
+|`${PROJECT_DIR}/src`
+
+|`SRCDIR`
+|`${PROJECT_DIR}/src`
+|N/A
+
+|`OUTDIR`
+|`${PROJECT_DIR}/out`
+|N/A
+
+|`DOCSRCDIR`
+|`$\{OUTDIR}/adoc`
+|N/A
+
+
+|`DOCDIR`
+|`$\{OUTDIR}/doc`
+|N/A
+
+
+|`LIBDIR`
+|`$\{OUTDIR}/lib`
+|`${EXEC_BASEDIR}/lib`
+
+|`TESTDIR`
+|`$\{OUTDIR}/test`
+|`${EXEC_BASEDIR}/test`
+
+|`TESTREPORTDIR`
+|`$\{OUTDIR}/testreport`
+|`${EXEC_BASEDIR}/testreport`
+|===
+

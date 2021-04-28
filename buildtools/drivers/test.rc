@@ -1,0 +1,54 @@
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/stage_handler_dispatcher.rc"
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
+
+function execute_stage() {
+  local _target="${1:-"source"}" _filter="${2:-.*}"
+  shift 2
+  message "BEGIN HANDLER(test): target: '${_target}'; filter: '${_filter}': '${*}'"
+  buildtools__execute_stage "${_target}" "${_filter}" "${@}"
+  message "END HANDLER(test)"
+}
+
+function __run_commandunit() {
+  local _test_filter="${1}"
+  shift
+  run_commandunit \
+    --parallel \
+    --filter="${_test_filter}" \
+    --test-report="${TESTREPORTDIR}" \
+    --test-srcdir="${TESTDIR}" \
+    --test-workdir="${TESTDIR}"
+}
+
+# source
+function handle_source() {
+  _docker_prefix=""
+  export CMD_UNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
+  export CMD_UNIT_CONFDIR="${CMD_UNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.cmd_unit"
+  function run_commandunit() {
+    run_command_unit_with_source "${@}"
+  }
+  __run_commandunit "${@}"
+}
+
+# snapshot
+function handle_snapshot() {
+  _docker_prefix="/var/lib/cmd-unit"
+  export CMD_UNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
+  export CMD_UNIT_CONFDIR="${CMD_UNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.cmd_unit"
+  function run_commandunit() {
+    run_command_unit_with_snapshot_docker_image "${@}"
+  }
+  __run_commandunit "${@}"
+}
+
+# release
+function handle_release() {
+  _docker_prefix="/var/lib/cmd-unit"
+  export CMD_UNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
+  export CMD_UNIT_CONFDIR="${CMD_UNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.cmd_unit"
+  function run_commandunit() {
+    run_command_unit_with_released_docker_image "${@}"
+  }
+  __run_commandunit "${@}"
+}

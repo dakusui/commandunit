@@ -1,0 +1,3 @@
+function execute_stage() {
+  ls "$(dirname "${BASH_SOURCE[0]}")/*.rc" | sed -E 's/\.rc$//g'
+}

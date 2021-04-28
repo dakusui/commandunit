@@ -1,0 +1,42 @@
+"${__BUD__OPT_RC:-false}" && return 0
+readonly __BUD__OPT_RC=true
+
+set -eu -o pipefail -o errtrace
+shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
+
+source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/envvars.rc"
+
+#####
+# A function to set trap on a signal.
+# In bud based tools, a pseudo signal ERR is handled by a function "abort" because
+# this function is called by the "opts.rc"
+# There is no known good way to guarantee to propagate "trap"s to subshells.
+# When you want to make your subshell report an error in the bud's standard way
+# call this function with in the subshell.
+# That is, do
+#
+#   cat -n < <(bud_trap && cat notFound)
+#
+# or
+#
+#   echo "$(bud_trap && cat fileNotFound)"
+#
+# Note that examples above will not make the enclosing script stop immediately.
+# Also note that an error in a command substitution WITH assignment, i.e.
+#
+#  var="$(cat fileNotFound)"
+#
+# WILL be handled by the signal trap set outside of it.
+# This is because of the bash's implementation for optimization.
+function bud_trap() {
+  trap "abort ERR was reported by bash" ERR
+}
+
+####
+# This function is usually overridden by another implementation defined in "common.rc"
+function abort() {
+  echo "${*}" >&2
+  exit 1
+}
+
+bud_trap

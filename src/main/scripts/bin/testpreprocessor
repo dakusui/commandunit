@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+
+TESTCOMPILER_SPECIFICATION='{
+  "usage": "testpreprocessor [OPTION]... [DIRECTORY]",
+  "description":[
+    "Compiles tests under the DIRECTORY.",
+    "If --output-dir option is specified, tests are copied under a working directory (--output-dir) and then compiled there."
+  ],
+  "options":[
+    ["h","help",false,false,"show this help"],
+    ["p","parallel",false,false,"execute the tests in parallel"],
+    ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+    ["","output-dir",true,[],""]
+  ],
+  "examples":{
+    "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
+    "testrunner DIR -p": "Run tests found under DIR with the testrunner in parallel mode."
+  },
+  "references":{
+    "github project": "https://github.com/dakusui/bud"
+  }
+}'
+APP_LIB="${APP_HOME}/lib"
+
+function main() {
+  local _parsed_opts_json
+  _parsed_opts_json="$(parseopt "${TESTCOMPILER_SPECIFICATION}" "${@}")"
+  debug "_parsed_opts_json: '${_parsed_opts_json}'"
+  local _help
+  _help="$(parseopt_boolean_value_for 'help' "${_parsed_opts_json}")"
+  if [[ "${_help}" == true ]]; then
+    print_usage "${TESTRUNNER_SPECIFICATION}"
+    return 0
+  fi
+  local _is_parallel _filter _test_rootdir
+  mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
+  mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
+    _i="$(realpath -m "${_i}")"
+    echo "${_i}"
+  done)
+  if [[ "${#_test_rootdir[@]}" == 0 ]]; then
+    abort "Test root directory was missing."
+  fi
+  if [[ "${#_test_rootdir[@]}" -gt 1 ]]; then
+    abort "More than one test directories are specified: '${_test_rootdir[*]}'"
+  fi
+
+  _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
+  _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  _output_dir="$(parseopt_string_value_for 'output-dir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
+  _output_dir="$(realpath -m "${_output_dir}")"
+
+  prepare_tests "${_test_rootdir[0]}" \
+    "${_output_dir}" \
+    "${_is_parallel}" \
+    "${_filter}"
+}
+
+function prepare_tests() {
+  local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}"
+  info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'"
+  # Copy contents in srcdir to outdir
+  if [[ "${_srcdir}" != "${_outdir}" ]]; then
+    # Create a directory for output.
+    mkdir -p "${_outdir}"
+    cp -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
+  fi
+  # Compile tests
+  __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}"
+}
+
+function __process_yamlpp_files() {
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  function __process_files_converter() {
+    echo "yaml2json"
+  }
+
+  function __process_files_src() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file}"
+  }
+  function __process_files_dest() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file%.yaml++}".json++
+  }
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "yaml++"
+  unset -f __process_files_dest
+  unset -f __process_files_src
+  unset -f __process_files_converter
+}
+
+function __process_yaml_files() {
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  function __process_files_converter() {
+    echo "yaml2json"
+  }
+
+  function __process_files_src() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file}"
+  }
+  function __process_files_dest() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file%.yaml}".json
+  }
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "yaml"
+  unset -f __process_files_dest
+  unset -f __process_files_src
+  unset -f __process_files_converter
+}
+
+function __process_jsonpp_files() {
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  function __process_files_converter() {
+    echo "jq-front"
+  }
+
+  function __process_files_src() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file}"
+  }
+  function __process_files_dest() {
+    local _source_file="${1}" _output_dir="${2}"
+    echo "${_output_dir}/${_source_file%++}"
+  }
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "json++"
+  unset -f __process_files_dest
+  unset -f __process_files_src
+  unset -f __process_files_converter
+}
+
+function __process_files_convert() {
+  local _src="${1}" _dest="${2}"
+  printf '%s "%s" >"%s"' \
+    "$(__process_files_converter)" \
+    "${_src}" \
+    "${_dest}"
+}
+
+function __process_files() {
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _extension="${4}"
+  local _source_files _i
+  info_begin "Processing '${_extension}' files"
+  ensure_no_bg_jobs
+  mapfile -t _source_files < <(__list_test_sources "${_output_dir}" "${_extension}" "${_filter}")
+  for _i in "${_source_files[@]}"; do
+    local _cmd _src _dest
+    _src="$(__process_files_src "${_i}" "${_output_dir}")"
+    _dest="$(__process_files_dest "${_i}" "${_output_dir}")"
+    if [[ ! -e "${_dest}" || "${_dest}" -ot "${_src}" ]]; then
+      info "- '${_i}'"
+      _cmd="$(__process_files_convert "${_src}" "${_dest}")"
+      debug "_cmd: '${_cmd}'"
+      if [[ "${_is_parallel}" == true ]]; then
+        eval "${_cmd}" &
+      else
+        eval "${_cmd}"
+      fi
+    else
+      info "-  '${_i}' (skipped)"
+    fi
+  done
+  wait_for_jobs
+  info_end "Done."
+}
+
+function __compile_tests() {
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+
+  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+
+  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+
+  local _pwd
+  _pwd="$(pwd)"
+  export JF_PATH="${_pwd}:${_output_dir}:${APP_LIB}/jsonpp"
+  info "JF_PATH: '${JF_PATH}'"
+  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+}
+
+function __list_test_sources() {
+  local _output_dir="${1%/}" _extension="${2}" _filter="${3}"
+  _filter=".*${_filter}.*"
+  # shellcheck disable=SC2016
+  find "${_output_dir}" -name '*.'"${_extension}" |
+    filter_file '[[ "${_each}" =~ '"$(included_tests)"' ]]' |
+    filter_file '[[ "${_each}" == *.'"${_extension}"' ]]' |
+    filter_file '[[ "${_each}" =~ '"${_filter}"' ]]' |
+    sed -r 's!'"${_output_dir}/"'!!' |
+    sort
+}
+
+main "${@}"

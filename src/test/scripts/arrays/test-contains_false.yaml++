@@ -1,0 +1,23 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'array_contains' with the first argument contained by the rest.
+  source:
+    - ${BUD_LIB}/arrays.rc
+  cmd: array_contains
+  args:
+    - HELLO
+    - hello
+    - world
+then:
+  exitCode:
+    - NOT_EQUAL
+    - 0
+  stdout:
+    absent:
+      - regex:.+
+  stderr:
+    absent:
+      - regex:.+

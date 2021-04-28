@@ -1,0 +1,17 @@
+function precheck_test() {
+  local _testname="${1}" _testdir="${2}"
+  local _json_object
+
+  _json_object="$(cat "${_testdir}/${_testname}" | jq -crM .)"
+
+  precheck_test_json "${_json_object}"
+}
+
+function execute_test() {
+  local _testname="${1}" _testdir="${2}"
+  local _json_object
+
+  _json_object="$(cat "${_testdir}/${_testname}" | jq -crM .)"
+
+  execute_test_json "${_json_object}"
+}

@@ -1,0 +1,19 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  source:
+    - ${BUD_LIB}/strings.rc
+  cmd: urlencode
+  args:
+    - こんにちは、世界
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - %E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF%E3%80%81%E4%B8%96%E7%95%8C
+  stderr:
+    absent:
+      - regex:.+

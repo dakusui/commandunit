@@ -1,0 +1,19 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Call 'void_value' function, which should return a value that represents nothing.
+  source:
+    - ${BUD_LIB}/core.rc
+  cmd: void_value
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - regex:^BUD_VOID\:.+
+  stderr:
+    absent:
+      - regex:.+

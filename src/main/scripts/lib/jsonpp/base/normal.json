@@ -1,0 +1,66 @@
+{
+  "type": "NORMAL",
+  "description": [
+  ],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+    },
+    "cmd": ":",
+    "args": [
+    ]
+  },
+  "when": {
+    "description": [
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+    },
+    "cmd": "eval:string:$(error 'missing attribute!')",
+    "args": [
+    ]
+  },
+  "then": {
+    "description": [
+    ],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    },
+    "stderr": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    }
+  }
+}

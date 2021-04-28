@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+
+CMD_UNIT_SPECIFICATION='{
+  "usage": "command-unit [OPTION]... [SUBCOMMAND]...",
+  "description":[
+    "Runs tests.",
+    "",
+    "Sub-commands:",
+    "  preprocess:",
+    "    Preprocesses test definition files (yaml++, yaml, and json++) and convert them into executable JSON test files",
+    "  run:",
+    "    Runs tests under a directory specified by --test-workdir and writes a report file: testreport.json under a ",
+    "    directory specified by --test-reportdir.",
+    "  report:",
+    "    Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)",
+    "    under the same directory."
+  ],
+  "options":[
+    ["h","help",false,false,"show this help"],
+    ["p","parallel",false,false,"execute the tests in parallel"],
+    ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+    ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
+    ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
+    ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"]
+  ],
+  "examples":{
+    "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
+    "testrunner DIR -p": "Run tests found under DIR with the testrunner in parallel mode."
+  },
+  "references":{
+    "github project": "https://github.com/dakusui/bud"
+  }
+}'
+
+function main() {
+  local _parsed_opts_json
+  _parsed_opts_json="$(parseopt "${CMD_UNIT_SPECIFICATION}" "${@}")"
+  debug "_parsed_opts_json: '${_parsed_opts_json}'"
+  local _help
+  _help="$(parseopt_boolean_value_for 'help' "${_parsed_opts_json}")"
+  if [[ "${_help}" == true ]]; then
+    print_usage "${CMD_UNIT_SPECIFICATION}"
+    return 0
+  fi
+  info_begin "command-unit"
+  local _default_target_directory _is_parallel _filter _test_reportdir _subcommands _bindir
+  _bindir="$(dirname "${BASH_SOURCE[0]}")"
+  mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
+  if [[ "${#_subcommands[@]}" == 0 ]]; then
+    _subcommands=(preprocess run report)
+  fi
+  _default_target_directory="${PWD}"
+  _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
+  _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
+  _test_srcdir="$(__cmd_unit__normalize_path "${_test_srcdir}")"
+  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
+  _test_workdir="$(__cmd_unit__normalize_path "${_test_workdir}")"
+  _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
+  _test_reportdir="$(__cmd_unit__normalize_path "${_test_reportdir}")"
+
+  info "parallel: '${_is_parallel}'"
+  info "filter: '${_filter}'"
+  info "test-srcdir: '${_test_srcdir}'"
+  info "test-workdir: '${_test_workdir}'"
+  info "test-reportdir: '${_test_reportdir}'"
+  local _each _parallel_option=""
+  if [[ "${_is_parallel}" == true ]]; then
+    _parallel_option="--parallel"
+  fi
+  local _unknown_subcommands=()
+  for _each in "${_subcommands[@]}"; do
+    if ! array_contains "${_each}" "preprocess" "run" "report"; then
+      _unknown_subcommands+=("${_each}")
+    fi
+  done
+  if [[ "${#_unknown_subcommands[@]}" -gt 0 ]]; then
+    abort "Unknown subcommand(s) are given: [$(join_by "," "${_unknown_subcommands[@]}")]."
+  fi
+  for _each in "${_subcommands[@]}"; do
+    if [[ "${_each}" == "preprocess" ]]; then
+      # _parallel_option is passed to the command without being quoted.
+      "${_bindir}/testpreprocessor" \
+        ${_parallel_option} \
+        --output-dir="${_test_workdir}" \
+        --filter="${_filter}" \
+        "${_test_srcdir}"
+    elif [[ "${_each}" == "run" ]]; then
+      mkdir -p "${_test_reportdir}"
+      # _parallel_option is passed to the command without being quoted.
+      "${_bindir}/testrunner" \
+        ${_parallel_option} \
+        --test-reportdir="${_test_reportdir}" \
+        --filter="${_filter}" \
+        "${_test_workdir}" |
+        tee "${_test_reportdir}/testreport.json" |
+        jq '.|{"wasSuccessful":.wasSuccessful,"summary":.report.summary}' >&2
+    elif [[ "${_each}" == "report" ]]; then
+      "${_bindir}/reportrenderer" "${_test_reportdir}/testreport.json" |
+        tee "${_test_reportdir}/testreport.adoc" >&2
+    else
+      abort "Runtime error for subcommand: '${_each}'"
+    fi
+  done
+  if array_contains "run" "${_subcommands[@]}"; then
+    local _successful
+    _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
+    if [[ "${_successful}" != true ]]; then
+      message "TESTS FAILED"
+      return 1
+    fi
+  fi
+  info_end "command-unit"
+}
+
+function __cmd_unit__normalize_path() {
+  local _path="${1}"
+  _path="$(realpath -m "${1}")"
+  _path="${CMD_UNIT_DOCKERDIR_PREFIX}/${_path}"
+  echo "${_path}"
+}
+
+main "${@}"

@@ -1,0 +1,73 @@
+"${__BUILDTOOLS__DOCKER_RC:-false}" && return 0
+readonly __BUILDTOOLS__DOCKER_RC=true
+
+function _build() {
+  local _version="${1}"
+  local _image_name="${DOCKER_REPO_NAME}:${_version}"
+  message "Building command-runner: '${_image_name}'"
+  docker build --build-arg VERSION="${_version}" -t "${_image_name}" .
+}
+
+function run_command_unit_with_source() {
+  __run_command_unit_with_source "${@}"
+}
+
+function run_command_unit_with_snapshot_docker_image() {
+  __run_command_unit_with_docker "-snapshot" "${@}"
+}
+
+function run_command_unit_with_released_docker_image() {
+  __run_command_unit_with_docker "" "${@}"
+}
+
+function run_command_unit_with_snapshot_docker_image_from_entrypoint() {
+  local _entrypoint="${1}"
+  shift
+  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "-snapshot" "${@}"
+}
+
+function run_command_unit_with_released_docker_image_from_entrypoint() {
+  local _entrypoint="${1}"
+  shift
+  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "" "${@}"
+}
+
+function __run_command_unit_with_source() {
+  local _executable="${EXEC_BASEDIR}/bin/command-unit"
+  message "Running command-runner(source): '${_executable}'"
+  "${_executable}" "${@}"
+}
+
+function __run_command_unit_with_docker() {
+  local _suffix="${1}"
+  shift
+  local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
+  _me="$(whoami)"
+  message "Running command-runner(docker): '${_image_name}'"
+  docker run \
+    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
+    --env PROJECT_NAME="command-unit" \
+    --env CMD_UNIT_CONFDIR="${CMD_UNIT_CONFDIR}" \
+    --env CMD_UNIT_DOCKERDIR_PREFIX="${CMD_UNIT_DOCKERDIR_PREFIX}" \
+    -v "${TESTDIR}:/var/lib/cmd-unit${TESTDIR}" \
+    -v "${TESTREPORTDIR}:/var/lib/cmd-unit${TESTREPORTDIR}" \
+    -i "${_image_name}" \
+    "${@}"
+}
+
+function __run_command_unit_with_docker_from_entrypoint() {
+  local _entrypoint="${1}" _suffix="${2}"
+  shift 2
+  local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
+  _me="$(whoami)"
+  message "Running command-runner(docker): '${_image_name}'"
+  docker run \
+    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
+    --env PROJECT_NAME="command-unit" \
+    --env CMD_UNIT_CONFDIR="${CMD_UNIT_CONFDIR}" \
+    --env CMD_UNIT_DOCKERDIR_PREFIX="${CMD_UNIT_DOCKERDIR_PREFIX}" \
+    -v "$(pwd):/var/lib/cmd-unit$(pwd)" \
+    --entrypoint="${_entrypoint}" \
+    -i "${_image_name}" \
+    "${@}"
+}

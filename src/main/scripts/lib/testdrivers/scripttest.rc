@@ -1,0 +1,41 @@
+# If pre-check succeeds this function should exit with 0 printing a JSON object
+# whose ".precheck" attribute is set to "true" or "false".
+# If the test should be executed in the current run, the attribute should be
+# "true" otherwise "false".
+# In case unexpected error is detected, this function should exit with non-0
+# exit code and non-JSON data may be printed.
+function precheck_test() {
+  local _testname="${1}" _testdir="${2}"
+  local _precheck=true
+  if [[ "${_testname}" == ignore-* ]]; then
+    _precheck=false
+  fi
+  jq -ncrM --argjson v "${_precheck}" '{"report":{"result":{"precheck":$v}}}'
+}
+
+function _execute_test() {
+  local _testname="${1}" _testdir="${2}"
+  local _exit_code
+  cp "${_testdir}/${_testname}" "$(bud__file_for_script)"
+  bash -eu -E "${_testdir}/${_testname}" >"$(bud__file_for_stdout)" 2>"$(bud__file_for_stderr)"
+  _exit_code="$?"
+  echo "${_exit_code}" >"$(bud__file_for_exit_code)"
+  return 0
+}
+
+function execute_test() {
+  local _testname="${1}" _testdir="${2}"
+  _execute_test "${_testname}" "${_testdir}" || {
+    error "The test: '${_testname}' failed with an error. (${_testdir})"
+  }
+
+  local _expectation_json _ret _report
+  _expectation_json="$(__bud__compose_precheck_expectation_json)"
+  _ret="$(__bud__verify_cmd_execution_result "${_expectation_json}")"
+  _ret="$(echo "${_ret}" | jq -crM '{"report":{"result":.}}')"
+  debug "_ret: ${_ret}"
+  _report="$(__bud__compose_execution_report)"
+  _report="$(echo "${_report}" | jq -crM '{"report":{"execution":.}}')"
+  _ret="$(json_object_merge "${_ret}" "${_report}")"
+  echo "${_ret}"
+}

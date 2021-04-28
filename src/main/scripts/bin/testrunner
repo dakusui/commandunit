@@ -1,0 +1,316 @@
+#!/usr/bin/env bash
+
+source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+source "${APP_HOME}/lib/cmd_unit.rc"
+
+TESTRUNNER_SPECIFICATION='{
+  "usage": "testrunner [OPTION]... [DIRECTORY]",
+  "description":[
+    "Runs tests under the DIRECTORY.",
+    "The reports are created under the same DIRECTORY unless the --test-reportdir option is given."
+  ],
+  "options":[
+    ["h","help",false,false,"show this help"],
+    ["p","parallel",false,false,"execute the tests in parallel"],
+    ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+    ["","test-reportdir",true,[],"write test reports under the specified directory"]
+  ],
+  "examples":{
+    "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
+    "testrunner DIR -p": "Run tests found under DIR with the testrunner in parallel mode."
+  },
+  "references":{
+    "github project": "https://github.com/dakusui/bud"
+  }
+}'
+
+function list_executable_tests() {
+  local _workdir="${1%/}" _filter="${2}"
+  # shellcheck disable=SC2016
+  find "${_workdir}" -name '*.json' -or -name '*.sh' |
+    filter_file '[[ "${_each}" =~ '"$(included_tests)"'(\.sh|\.json) ]]' |
+    filter_file '[[ "${_each}" =~ '"${_filter}"' ]]' |
+    sed -r 's!'"${_workdir}/"'!!' |
+    sort
+}
+
+function precheck_each_test() {
+  local _testname="${1}" _testdir="${2}" _out="${3}"
+  __execute_test_stage "${_testname}" "${_testdir}" "precheck" "precheck" "precheck" "${_out}"
+}
+
+function execute_each_test() {
+  local _testname="${1}" _testdir="${2}" _errout="${3}"
+  __execute_test_stage "${_testname}" "${_testdir}" "execute" "success" "execution" "${_errout}"
+}
+
+function __execute_test_stage() {
+  local _testname="${1}"
+  local _testdir="${2}"
+  local _stage_name="${3}" # execute / precheck
+  local _attr_name="${4}"  # .successful / .precheck
+  local _label="${5}"      # execution / precheck
+  local _errout="${6}"
+  local _result_json _ret
+  info_begin "__execute_test_stage: ${_stage_name}: (${_testname})"
+  _result_json="$("${_stage_name}_test" "${_testname}" "${_testdir}" 2>"${_errout}")" || {
+    error "DRIVER ERROR DETECTED: '${_stage_name}_test' in $(test_driver_name)"
+  }
+  debug "_result_json: '${_result_json}'"
+  if (__is_valid "${_result_json}" "${_attr_name}"); then
+    debug "valid"
+    echo "${_result_json}"
+  else
+    debug "not valid"
+    local _err
+    _err="$(cat "${_errout}")"
+    jq -ncrM --arg v "${_result_json}" --arg w "${_err}" '{"report":{"result":{"'"${_label}"'":null},"driverOutput":{"stdout":$v,"stderr":$w}}}'
+  fi
+  info_end "__execute_test_stage: ${_stage_name}: (${_testname})"
+  return 0
+}
+
+function __is_valid() {
+  local _content="${1}" _attr_name="${2}"
+  local _exit_code=0
+  (echo "${_content}" | jq ".report.result.${_attr_name}") >&/dev/null || {
+    _exit_code=1
+  }
+  json_object_merge "${_content}" '{}' >&/dev/null || {
+    _exit_code=1
+  }
+  return "${_exit_code}"
+}
+
+#   _run
+#   _passed
+#   _skipped
+#   _failed
+#   _error
+#   tests[@]
+__run_each_test_dir="out"
+__run_each_test_test_driver_name="unknown"
+# shellcheck disable=SC2016
+__run_each_test_test_result_json_template='{
+  "report": {
+    "result": {
+      "precheck": null,
+      "success": null,
+      "exitCode": {
+        "success": null,
+        "messages": []
+      },
+      "stdout": {
+        "success": null,
+        "messages": []
+      },
+      "stderr": {
+        "success": null,
+        "messages": []
+      }
+    },
+    "precheck": {
+      "exitCode": [],
+      "script": [],
+      "stdout": [],
+      "stderr": []
+    },
+    "execution": {
+      "exitCode": [],
+      "script": [],
+      "stdout": [],
+      "stderr": []
+    }
+  },
+  "name": "%s"
+}'
+function run_each_test() {
+  local _testname="${1}" _testdir="${2}" _testreportdir="${3}"
+  local _precheck_result_file _execution_result_file
+  local _test_result_json
+  # shellcheck disable=SC2059
+  _test_result_json="$(printf "${__run_each_test_test_result_json_template}" "${_testname}")"
+  info_begin "'${1}'"
+  if [[ "${_testname}" == *.sh ]]; then
+    info "Test type: 'scripttest'"
+    if [[ -e "${CMD_UNIT_CONFDIR}/testdrivers/scripttest.rc" ]]; then
+      __run_each_test_test_driver_name="${CMD_UNIT_CONFDIR}/testdrivers/scripttest.rc"
+    else
+      __run_each_test_test_driver_name="${APP_HOME}/lib/testdrivers/scripttest.rc"
+    fi
+  elif [[ "${_testname}" == *.json ]]; then
+    local _content _test_type
+    _content=$(cat "${_testdir}/${_testname}")
+    _test_type="$(echo "${_content}" | jq -crM '.type')"
+    info "Test type: 'JSON:${_test_type}'"
+    local _custom_driver="${CMD_UNIT_CONFDIR}/testdrivers/json_${_test_type}.rc"
+    if [[ -e "${_custom_driver}" ]]; then
+      __run_each_test_test_driver_name="${_custom_driver}"
+    else
+      __run_each_test_test_driver_name="${APP_HOME}/lib/testdrivers/json_${_test_type}.rc"
+    fi
+  else
+    abort "Unsupported test type: '${_testname}'"
+  fi
+
+  ####
+  info_begin "Loading: '${__run_each_test_test_driver_name}'"
+  # shellcheck disable=SC1090
+  source "${__run_each_test_test_driver_name}" || {
+    # .report.result.exitCode isn't the ideal place to describe the driver loading failure
+    # but there's no any better place as of now.
+    local _err
+    _err="$(jq -ncrM '{"report":{"result":{"exitCode":{"messages":["'"Failed to load driver for <${_testname}>(driver: <${__run_each_test_test_driver_name}>, config directory: <${CMD_UNIT_CONFDIR}>)"'"]}}}}')"
+    json_object_merge "${_test_result_json}" "$_err"
+    info_end "Driver loading failed: '${_testname}': '${__run_each_test_test_driver_name}'"
+    return 0
+  }
+  info_end "Loaded."
+  __run_each_test_dir="${_testreportdir}/${_testname%.sh}-output"
+  function bud__directory_for_output() {
+    echo "${__run_each_test_dir}"
+  }
+
+  function test_driver_name() {
+    echo "${__run_each_test_test_driver_name}"
+  }
+  local _dir
+  _dir="$(bud__directory_for_output)"
+  mkdir -p "${_dir}"
+  touch "$(bud__file_for_exit_code)"
+  touch "$(bud__file_for_stdout)"
+  touch "$(bud__file_for_stderr)"
+  touch "$(bud__file_for_script)"
+  _precheck_result_file="${_dir}/precheck.txt"
+  _execution_result_file="${_dir}/execution.txt"
+  touch "${_precheck_result_file}"
+  touch "${_execution_result_file}"
+  ####
+
+  local _precheck_result _precheck_result_json_boolean='{}'
+  _precheck_result="$(precheck_each_test "${_testname}" "${_testdir}" "${_precheck_result_file}")"
+  debug "_precheck_result: '${_precheck_result}'"
+  _precheck_result_json_boolean="$(echo "${_precheck_result}" | jq -crM '.report.result.precheck')"
+  debug "_precheck_result_json_boolean: '${_precheck_result_json_boolean}'"
+  if [[ "${_precheck_result_json_boolean}" == 'true' ]]; then
+    local _execution_result
+    debug "trying to execute: '${_testname}'"
+    _execution_result="$(execute_each_test "${_testname}" "${_testdir}" "${_execution_result_file}")"
+    debug "_execution_result: '${_execution_result}'"
+    _test_result_json="$(json_object_merge "${_test_result_json}" "${_execution_result}")"
+  fi
+  _test_result_json="$(json_object_merge "${_test_result_json}" "${_precheck_result}")"
+  debug "_test_result_json: '${_test_result_json}'"
+  echo "${_test_result_json}" | jq -crM .
+  info_end "${1}"
+}
+
+function run_tests() {
+  local _test_rootdir="${1:?Test root directory is missing.}"
+  local _test_filter="${2:?Filter is missing}"
+  local _test_reportdir="${3:?Teset report directory is missing}"
+  local _parallel="${4:-true}"
+  _test_rootdir="${_test_rootdir%/}"
+  local -a _tests
+  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
+  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
+  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
+  local _passed=0 _skipped=0 _failed=0 _error=0 _run=0 _numtests=0 _test_results=()
+  local _i
+  local -a _test_result_files=()
+  ensure_no_bg_jobs
+  for _i in "${_tests[@]}"; do
+    _each_test_result_file="$(bud_temp_file)"
+    if ${_parallel}; then
+      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}" &
+    else
+      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}"
+    fi
+    _test_result_files+=("${_each_test_result_file}")
+  done
+  wait_for_jobs || error "Some tests are failed. Inspect the test report."
+
+  _numtests="${#_tests[@]}"
+  for _i in "${_test_result_files[@]}"; do
+    _each_test_result_content="$(cat "${_i}")"
+    _test_results+=("${_each_test_result_content}")
+    local _precheck _execution
+    _precheck="$(echo "${_each_test_result_content}" | jq '.report.result.precheck')"
+    if [[ "${_precheck}" == true ]]; then
+      _run=$((_run + 1))
+      _execution="$(echo "${_each_test_result_content}" | jq '.report.result.success')"
+      if [[ "${_execution}" == true ]]; then
+        _passed=$((_passed + 1))
+      elif [[ "${_execution}" == false ]]; then
+        _failed=$((_failed + 1))
+      else
+        _error=$((_error + 1))
+      fi
+    elif [[ "${_precheck}" == false ]]; then
+      _skipped=$((_skipped + 1))
+    else
+      _error=$((_error + 1))
+    fi
+  done
+  local _was_successful=false
+  [[ "${_failed}" == 0 && "${_error}" == 0 && "${#_tests[@]}" -gt 0 ]] && _was_successful=true
+  local _test_results_json
+  _test_results_json="$(
+    for _i in "${_test_results[@]}"; do
+      echo "${_i}"
+    done | jq -s .
+  )"
+
+  local _ret
+  _ret="$(jq -ncrM \
+    --argjson was_successful "${_was_successful}" \
+    --argjson numtests "${_numtests}" \
+    --argjson run "${_run}" \
+    --argjson passed "${_passed}" \
+    --argjson failed "${_failed}" \
+    --argjson error "${_error}" \
+    --argjson skipped "${_skipped}" \
+    --arg test_filter "${_test_filter}" \
+    --arg testdir "${_test_rootdir}" \
+    --argjson test_results "${_test_results_json}" \
+    '{"wasSuccessful":$was_successful,"report":{"summary":{"filter":$test_filter,"testdirs":[$testdir],"all":$numtests,"run":$run,"skipped":$skipped,"passed":$passed,"failed":$failed,"error":$error},"test_results":$test_results}}')"
+  echo "${_ret}"
+  info_end
+}
+
+function main() {
+  local _parsed_opts_json
+  _parsed_opts_json="$(parseopt "${TESTRUNNER_SPECIFICATION}" "${@}")"
+  debug "_parsed_opts_json: '${_parsed_opts_json}'"
+  local _help
+  _help="$(parseopt_boolean_value_for 'help' "${_parsed_opts_json}")"
+  if [[ "${_help}" == true ]]; then
+    print_usage "${TESTRUNNER_SPECIFICATION}"
+    return 0
+  fi
+  local _is_parallel _filter _test_rootdir _test_reportdir
+  mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
+  mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
+    _i="$(realpath -m "${_i}")"
+    [[ $? == 0 ]] || abort "Failed to figure out real path of:'${_i}'"
+    echo "${_i}"
+  done)
+  if [[ "${#_test_rootdir[@]}" == 0 ]]; then
+    abort "Test root directory was missing."
+  fi
+  if [[ "${#_test_rootdir[@]}" -gt 1 ]]; then
+    abort "More than one test directories are specified: '${_test_rootdir[*]}'"
+  fi
+
+  _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
+  _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
+
+  run_tests \
+    "${_test_rootdir[0]}" \
+    "${_filter}" \
+    "${_test_reportdir}" \
+    "${_is_parallel}"
+}
+
+main "${@}"

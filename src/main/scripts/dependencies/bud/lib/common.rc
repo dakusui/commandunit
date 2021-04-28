@@ -1,0 +1,10 @@
+"${__BUD__COMMON_RC:-false}" && return 0
+readonly __BUD__COMMON_RC=true
+
+source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/envvars.rc"
+source "${BUD_LIB}/arrays.rc"
+source "${BUD_LIB}/json.rc"
+source "${BUD_LIB}/logging.rc"
+source "${BUD_LIB}/strings.rc"
+source "${BUD_LIB}/io.rc"
+source "${BUD_LIB}/parseopt_json.rc"

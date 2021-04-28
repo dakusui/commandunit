@@ -1,0 +1,7 @@
+function execute_stage() {
+  local _i _args=""
+  for _i in "${@}"; do
+    _args="${_args}:${_i}"
+  done
+  bashcov --bash-path="${SHELL}" -- "${PROJECT_DIR}/build.sh" doc test"${_args}"
+}

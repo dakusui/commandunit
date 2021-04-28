@@ -1,0 +1,290 @@
+"${__CMD_UNIT__CMDUNIT_RC:-false}" && return 0
+readonly __CMD_UNIT__CMDUNIT_RC=true
+
+source "${BUD_HOME:?You must set the BUD_HOME environment variable}/lib/bud.rc"
+
+function run_test_json() {
+  local _json_object="${1}"
+  local _precheck_result _precheck
+  bud_trap
+  _precheck_result="$(precheck_test_json "${_json_object}")"
+  _precheck="$(json_value_at "${_precheck_result}" '.report.result.precheck')"
+  local _execution_result="{}"
+  if [[ "${_precheck}" == true ]]; then
+    _execution_result="$(execute_test_json "${_json_object}")"
+  fi
+  local _ret="${_json_object}"
+  _ret="$(json_object_merge "${_ret}" "${_precheck_result}")"
+  _ret="$(json_object_merge "${_ret}" "${_execution_result}")"
+  echo "${_ret}"
+}
+
+function precheck_test_json() {
+  local _json_object="${1}"
+  local _cmd_json
+  debug "begin precheck"
+  _cmd_json="$(json_value_at "${_json_object}" '.given')"
+  debug "check-1"
+  run_json_object "${_cmd_json}"
+  debug "check-2"
+  local _expectation
+  _expectation="$(__bud__compose_precheck_expectation_json)"
+  debug "check-3: _expectation: '${_expectation}'"
+  local _result _precheck_preport _ret
+  _result="$(__bud__verify_cmd_execution_result "${_expectation}")"
+  debug "check-4: _result: '${_result}'"
+  _result="$(echo "${_result}" | jq '.success|{"precheck": .}' | jq -crM '{"report":{"result": .}}')"
+  debug "check-5: _result: '${_result}'"
+  _precheck_preport="$(__bud__compose_execution_report)"
+  _precheck_preport="$(echo "${_precheck_preport}" | jq -crM '{"report":{"precheck": .}}')"
+  _ret="{}"
+  _ret="$(json_object_merge "${_ret}" "${_result}")"
+  _ret="$(json_object_merge "${_ret}" "${_precheck_preport}")"
+  echo "${_ret}"
+  debug "end precheck: _ret: '${_ret}'"
+}
+
+function __bud__compose_precheck_expectation_json() {
+  local _ret
+  bud_trap
+  _ret="$(jq -ncrM '{"exitCode":["EQUAL",0],"stdout":{"present":[],"absent":[]},"stderr":{"present":[],"absent":[]}}')"
+  echo "${_ret}"
+}
+
+function execute_test_json() {
+  local _json_object="${1}"
+  local _cmd_json
+  _cmd_json="$(json_value_at "${_json_object}" '.when')"
+  run_json_object "${_cmd_json}"
+  local _expectation
+  _expectation="$(json_value_at "${_json_object}" '.then')"
+
+  local _result _execution_report _ret
+  _result="$(__bud__verify_cmd_execution_result "${_expectation}")"
+  _result="$(echo "${_result}" | jq -crM '{"report":{"result": .}}')"
+  _execution_report="$(__bud__compose_execution_report)"
+  _execution_report="$(echo "${_execution_report}" | jq -crM '{"report":{"execution": .}}')"
+  _ret="{}"
+  _ret="$(json_object_merge "${_ret}" "${_result}")"
+  _ret="$(json_object_merge "${_ret}" "${_execution_report}")"
+  echo "${_ret}"
+}
+
+function __bud__verify_cmd_execution_result() {
+  local _json_object="${1}"
+
+  local _exit_code_messages _exit_code_messages_json _exit_code_successful=false
+  _exit_code_messages="$(__bud__verify_exit_code "${_json_object}")"
+  [[ $? == 0 ]] || abort "${_exit_code_messages}"
+  IFS=$'\n' read -r -a _exit_code_messages <<< "${_exit_code_messages}"
+  _exit_code_messages_json="$(to_json_array "${_exit_code_messages[@]}")"
+  [[ "${#_exit_code_messages[@]}" == 0 ]] && _exit_code_successful=true
+
+  local _stdout_messages _stdout_messages_json _stdout_successful=false
+  mapfile -t _stdout_messages < <(__bud__verify_stdout "${_json_object}")
+  _stdout_messages_json="$(to_json_array "${_stdout_messages[@]}")"
+  debug "_stdout_messages[@]: <${_stdout_messages[*]}>"
+  debug "#_stdout_messages[@]: <${#_stdout_messages[@]}>"
+  [[ "${#_stdout_messages[@]}" == 0 ]] && _stdout_successful=true
+
+  local _stderr_messages _stderr_messages_json _stderr_successful=false
+  mapfile -t _stderr_messages < <(__bud__verify_stderr "${_json_object}")
+  _stderr_messages_json="$(to_json_array "${_stderr_messages[@]}")"
+  [[ "${#_stderr_messages[@]}" == 0 ]] && _stderr_successful=true
+
+  local _successful=false
+  [[ "${_exit_code_successful}" == true && "${_stdout_successful}" == true && "${_stderr_successful}" == true ]] && _successful=true
+  __bud__compose_cmd_execution_result \
+    "${_successful}"  \
+    "${_exit_code_messages_json}" "${_exit_code_successful}" \
+    "${_stdout_messages_json}" "${_stdout_successful}" \
+    "${_stderr_messages_json}" "${_stderr_successful}"
+}
+
+function __bud__compose_cmd_execution_result() {
+  local _successful="${1}"
+  local _exit_code_messages_json="${2}"
+  local _exit_code_successful="${3}"
+  local _stdout_messages_json="${4}"
+  local _stdout_successful="${5}"
+  local _stderr_messages_json="${6}"
+  local _stderr_successful="${7}"
+  jq -ncrM \
+    --argjson successful "${_successful}" \
+    --argjson exitCodeSuccessful "${_exit_code_successful}" \
+    --argjson exitCode "${_exit_code_messages_json}" \
+    --argjson stdout "${_stdout_messages_json}" \
+    --argjson stdoutSuccessful "${_stdout_successful}" \
+    --argjson stderr "${_stderr_messages_json}" \
+    --argjson stderrSuccessful "${_stderr_successful}" \
+    '{"success": $successful,"exitCode":{"success": $exitCodeSuccessful, "messages": $exitCode}, "stdout":{"success": $stdoutSuccessful, "messages": $stdout}, "stderr":{"success": $stderrSuccessful, "messages": $stderr}}'
+}
+
+function __bud__compose_execution_report() {
+  local _script _exit_code _stdout _stderr
+  local _script_json _exit_code_json _stdout _stderr_json
+  mapfile -t _script < <(cat "$(bud__file_for_script)")
+  _script_json="$(to_json_array "${_script[@]}")"
+  mapfile -t _exit_code < <(cat "$(bud__file_for_exit_code)")
+  _exit_code_json="$(to_json_array "${_exit_code[@]}")"
+  mapfile -t _stdout < <(cat "$(bud__file_for_stdout)")
+  _stdout_json="$(to_json_array "${_stdout[@]}")"
+  mapfile -t _stderr < <(cat "$(bud__file_for_stderr)")
+  _stderr_json="$(to_json_array "${_stderr[@]}")"
+
+  jq -ncrM \
+    --argjson exitCode "${_exit_code_json}" \
+    --argjson script "${_script_json}" \
+    --argjson stdout "${_stdout_json}" \
+    --argjson stderr "${_stderr_json}" \
+    '{"exitCode":$exitCode,"script":$script,"stdout":$stdout,"stderr":$stderr}'
+}
+
+function __bud__verify_exit_code() {
+  local _json_object="${1}"
+  local _cond
+  info_begin "exit code verification: '${_json_object}}'"
+  mapfile -t _cond < <(json_value_at "${_json_object}" ".exitCode[]")
+  mapfile -t _actual_exit_code <"$(bud__file_for_exit_code)"
+  if [[ "${_cond[0]}" == "EQUAL" ]]; then
+    if [[ "${_cond[1]}" != "${_actual_exit_code[0]}" ]]; then
+      echo "Exit code was expected to be <${_cond[1]}> but was <${_actual_exit_code[0]}>."
+    fi
+  elif [[ "${_cond[0]}" == "NOT_EQUAL" ]]; then
+    if [[ "${_cond[1]}" == "${_actual_exit_code[0]}" ]]; then
+      echo "Exit code was expected NOT to be <${_cond[1]}> but was."
+    fi
+  else
+    local _message="Unknown condition name: '${_cond[0]}' was specified for exit code checking."
+    # We need to print out the message to the stdout to make the framework recognize this is an error.
+    # Since this method may be called via 'process substitution' and it swallows exit code, doing "abort" alone
+    # cannot stop the execution sequence of the caller side in BASH 4.2 or earlier.
+    echo "${_message}"
+    abort "${_message}"
+  fi
+  info_end "exit code verification"
+}
+
+function __bud__verify_stdout() {
+  local _json_object="${1}"
+  local _target_content
+  mapfile -t _target_content <"$(bud__file_for_stdout)"
+  _json_object="$(json_value_at "${_json_object}" ".stdout")"
+  __bud__verify_target_content "${_json_object}" "${_target_content[@]}"
+}
+
+function __bud__verify_stderr() {
+  local _json_object="${1}"
+  local _target_content
+  mapfile -t _target_content <"$(bud__file_for_stderr)"
+  _json_object="$(json_value_at "${_json_object}" ".stderr")"
+  __bud__verify_target_content "${_json_object}" "${_target_content[@]}"
+}
+
+# $1: JSON object that describes the expectation to be verified
+# {
+#   "present": [
+#      "regex:Hello.*world"
+#   ],
+#   "absent": [
+#      "regex:.*"
+#   ]
+# }
+# $2-: An array that conttains the content of the file
+function __bud__verify_target_content() {
+  local _json_object="${1}"
+  shift
+  local _presence_expectation
+  mapfile -t _presence_expectation < <(json_value_at "${_json_object}" ".present[]")
+  __bud__assert_presence "${_presence_expectation[@]}" "--" "${@}"
+
+  local _absence_expectation
+  mapfile -t _absence_expectation < <(json_value_at "${_json_object}" ".absent[]")
+  __bud__assert_absence "${_absence_expectation[@]}" "--" "${@}"
+}
+
+function __bud__assert_presence() {
+  local _patterns=() _target_content=()
+  __bud__split_patterns_and_target_content "${@}"
+  debug "Checking presence of patterns."
+  if [[ "${#_patterns[@]}" == 0 ]]; then
+    return 0
+  fi
+
+  local _pattern _target_content_line
+  debug "#_patterns[@]: '${#_patterns[@]}'"
+  debug "#_target_content[@]: '${#_target_content[@]}'"
+  for _pattern in "${_patterns[@]}"; do
+    local _found=no
+    debug "_pattern: '${_pattern}'"
+    for _target_content_line in "${_target_content[@]}"; do
+      if __bud__pattern_matches_target_content_line "${_pattern}" "${_target_content_line}"; then
+        debug "Undesired line was found: '${_target_content_line}'"
+        _found=yes
+        break
+      fi
+    done
+    if [[ "${_found}" != yes ]]; then
+      echo "pattern: <${_pattern}> did not match any line."
+    fi
+  done
+}
+
+function __bud__assert_absence() {
+  local _patterns=() _target_content=()
+  __bud__split_patterns_and_target_content "${@}"
+
+  if [[ "${#_patterns[@]}" == 0 ]]; then
+    return 0
+  fi
+
+  local _pattern _target_content_line
+  for _pattern in "${_patterns[@]}"; do
+    for _target_content_line in "${_target_content[@]}"; do
+      if __bud__pattern_matches_target_content_line "${_pattern}" "${_target_content_line}"; then
+        echo "pattern: <${_pattern}> matched with a line: <${_target_content_line}>"
+      fi
+    done
+  done
+}
+
+function __bud__split_patterns_and_target_content() {
+  local _i _state=READ_PATTERNS
+  for _i in "${@}"; do
+    if [[ "${_state}" == READ_PATTERNS ]]; then
+      if [[ "${_i}" == "--" ]]; then
+        _state=READ_TARGET_CONTENT
+        continue
+      fi
+      _patterns+=("${_i}")
+    elif [[ "${_state}" == READ_TARGET_CONTENT ]]; then
+      if [[ "${_i}" == "--" ]]; then
+        break
+      fi
+      _target_content+=("${_i}")
+    fi
+  done
+}
+
+function __bud__pattern_matches_target_content_line() {
+  local _pattern="${1}" _target_content_line="${2}"
+
+  if [[ "${_pattern}" == "regex:"* ]]; then
+    local _p="${_pattern#*:}"
+    if [[ "${_target_content_line}" =~ ${_p} ]]; then
+      return 0
+    fi
+    return 1
+  else
+    local _p
+    if [[ "${_pattern}" == "raw:"* ]]; then
+      _p="${_pattern#*:}"
+    else
+      _p="${_pattern}"
+    fi
+    if [[ "${_target_content_line}" == "${_p}" ]]; then
+      return 0
+    fi
+    return 1
+  fi
+}

@@ -1,0 +1,19 @@
+"${__BUD__STRINGS_RC:-false}" && return 0
+readonly __BUD__STRINGS_RC=true
+
+function urlencode() {
+  local _data="${1}"
+  jq -rn --arg x "${_data}" '$x|@uri'
+}
+
+function urldecode() {
+  : "${*//+/ }"
+  echo -e "${_//%/\\x}"
+}
+
+###
+# Quote a given string with a single quote (')
+function quote() {
+  local _v="${1}"
+  echo -n "'""${_v//\'/\'\"\'\"\'}""'"
+}
