@@ -1,6 +1,6 @@
 {
-  "appName": "command-unit",
-  "homepage": "https://github.com/dakusui/bud",
+  "appName": "commandunit",
+  "homepage": "https://github.com/dakusui/commandunit",
   "docker": {
     "user": "dakusui"
   },

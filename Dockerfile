@@ -7,4 +7,4 @@ RUN find /app && \
     apt-get update && \
     apt-get install gettext-base && \
     mkdir -p /var/lib/cmd-unit
-ENTRYPOINT ["/app/bin/command-unit"]
+ENTRYPOINT ["/app/bin/commandunit"]

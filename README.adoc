@@ -14,7 +14,7 @@ Runs tests.
 
 [bash]
 ----
-Usage: command-unit [OPTION]... [SUBCOMMAND]...
+Usage: commandunit [OPTION]... [SUBCOMMAND]...
 ----
 
 === Sub-commands:
@@ -30,9 +30,9 @@ If no sub-command is given, it will be interpreted as a sequence of `preprocess`
 
 === Options:
 
-* `-h`, `--help`           show this help
-* `-p`, `--parallel`       execute the tests in parallel
-* `-f`, `--filter`         filter tests with the specified regular expression(default:{regexany})
+* `-h`, `--help`: show this help
+* `-p`, `--parallel`: execute the tests in parallel
+* `-f`, `--filter`: filter tests with the specified regular expression(default:{regexany})
 * `--test-srcdir`: write test reports under the specified directory (default: current directory)
 * `--test-workdir`: write test reports under the specified directory (default: value for `--test-srcdir`)
 * `--test-reportdir`: write test reports under the specified directory (default: value for `--test-workdir`)

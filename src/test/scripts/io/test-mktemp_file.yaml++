@@ -11,7 +11,7 @@ then:
     - 0
   stdout:
     present:
-      - regex:.+\/bud\/command-unit
+      - regex:.+\/bud\/commandunit
   stderr:
     absent:
       - regex:.+

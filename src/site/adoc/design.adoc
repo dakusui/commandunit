@@ -1,6 +1,6 @@
 == Design
 
-Design of `command-unit` should come to here.
+Design of `commandunit` should come to here.
 
 [ditaa]
 ----

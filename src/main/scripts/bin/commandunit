@@ -3,7 +3,7 @@
 source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
 
 COMMANDUNIT_SPECIFICATION='{
-  "usage": "command-unit [OPTION]... [SUBCOMMAND]...",
+  "usage": "commandunit [OPTION]... [SUBCOMMAND]...",
   "description":[
     "Runs tests.",
     "",
@@ -44,7 +44,7 @@ function main() {
     print_usage "${COMMANDUNIT_SPECIFICATION}"
     return 0
   fi
-  info_begin "command-unit"
+  info_begin "commandunit"
   local _default_target_directory _is_parallel _filter _test_reportdir _subcommands _bindir
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
@@ -112,7 +112,7 @@ function main() {
       return 1
     fi
   fi
-  info_end "command-unit"
+  info_end "commandunit"
 }
 
 function __cmd_unit__normalize_path() {
