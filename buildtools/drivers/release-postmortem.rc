@@ -1,6 +1,7 @@
 function execute_stage() {
-  local _release_branch="main"
+  local _release_branch
   local tmp
+  _release_branch="$(jq -crM '.release.branch' ./build_info.json)"
   git tag "${TARGET_VERSION}"
   git push origin "${TARGET_VERSION}"
   tmp=$(mktemp)
