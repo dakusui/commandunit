@@ -65,8 +65,8 @@ function commandunit() {
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
-    -v "${TESTDIR}:/var/lib/cmd-unit${TESTDIR}" \
-    -v "${TESTREPORTDIR}:/var/lib/cmd-unit${TESTREPORTDIR}" \
+    -v "${TESTDIR}:/var/lib/commandunit${TESTDIR}" \
+    -v "${TESTREPORTDIR}:/var/lib/commandunit${TESTREPORTDIR}" \
     -i "${_image_name}" \
     "${@}"
 }

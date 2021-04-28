@@ -6,5 +6,5 @@ ENV PATH="/app:${PATH}"
 RUN find /app && \
     apt-get update && \
     apt-get install gettext-base && \
-    mkdir -p /var/lib/cmd-unit
+    mkdir -p /var/lib/commandunit
 ENTRYPOINT ["/app/bin/commandunit"]

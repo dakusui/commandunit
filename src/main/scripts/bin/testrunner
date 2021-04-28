@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
-source "${APP_HOME}/lib/cmd_unit.rc"
+source "${APP_HOME}/lib/commandunit-core.rc"
 
 TESTRUNNER_SPECIFICATION='{
   "usage": "testrunner [OPTION]... [DIRECTORY]",

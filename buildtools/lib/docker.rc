@@ -34,7 +34,7 @@ function run_command_unit_with_released_docker_image_from_entrypoint() {
 
 function __run_command_unit_with_source() {
   local _executable="${EXEC_BASEDIR}/bin/commandunit"
-  message "Running command-runner(source): '${_executable}'"
+  message "Running commandunit(source): '${_executable}'"
   "${_executable}" "${@}"
 }
 
@@ -44,13 +44,17 @@ function __run_command_unit_with_docker() {
   local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
   _me="$(whoami)"
   message "Running commandunit(docker): '${_image_name}'"
+  message "- COMMANDUNIT_CONFDIR:          '${COMMANDUNIT_CONFDIR}'"
+  message "- COMMANDUNIT_DOCKERDIR_PREFIX: '${COMMANDUNIT_DOCKERDIR_PREFIX}'"
+  message "- TESTDIR:                      '${TESTDIR}'"
+  message "- TESTREPORTDIR:                '${TESTREPORTDIR}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
-    -v "${TESTDIR}:/var/lib/cmd-unit${TESTDIR}" \
-    -v "${TESTREPORTDIR}:/var/lib/cmd-unit${TESTREPORTDIR}" \
+    -v "${TESTDIR}:/var/lib/commandunit${TESTDIR}" \
+    -v "${TESTREPORTDIR}:/var/lib/commandunit${TESTREPORTDIR}" \
     -i "${_image_name}" \
     "${@}"
 }
@@ -66,7 +70,7 @@ function __run_command_unit_with_docker_from_entrypoint() {
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
-    -v "$(pwd):/var/lib/cmd-unit$(pwd)" \
+    -v "$(pwd):/var/lib/commandunit$(pwd)" \
     --entrypoint="${_entrypoint}" \
     -i "${_image_name}" \
     "${@}"

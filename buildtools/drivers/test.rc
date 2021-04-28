@@ -33,7 +33,7 @@ function handle_source() {
 
 # snapshot
 function handle_snapshot() {
-  _docker_prefix="/var/lib/cmd-unit"
+  _docker_prefix="/var/lib/commandunit"
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
   export COMMANDUNIT_CONFDIR="${COMMANDUNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.cmd_unit"
   function run_commandunit() {
@@ -44,7 +44,7 @@ function handle_snapshot() {
 
 # release
 function handle_release() {
-  _docker_prefix="/var/lib/cmd-unit"
+  _docker_prefix="/var/lib/commandunit"
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
   export COMMANDUNIT_CONFDIR="${COMMANDUNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.cmd_unit"
   function run_commandunit() {
