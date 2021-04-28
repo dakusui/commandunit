@@ -1,0 +1,20 @@
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docutils.rc"
+
+# This stage requires to have a branch for documentation in your repository.
+function execute_stage() {
+  local _repo="https://github.com/dakusui/commandunit.git"
+  local _docbranch="docs"
+  if [[ -e "${DOCDIR}" ]]; then
+    abort "To publish your doc, do 'clean' and 'prepare' first."
+  fi
+  git clone "${_repo}" --branch="${_docbranch}" --depth=1 || abort "Failed to clone from '${_repo}'. Maybe you don't have '${_docbranch}' branch"
+  # In ordre not to do 'rm -fr .' , 'rm -fr /', or 'rm -fr "${PROJECT_DIR}' on unintended behavior (bugs)
+  # Intentionally not using "$DOCDIR" here.
+  rm -fr "${PROJECT_DIR}/out/doc/"*
+
+  ./build.sh doc
+
+  git -C "${DOCDIR}" commit -a -c "Documentation updated"
+  git -C "${DOCDIR}" push origin "${_docbranch}":"${_docbranch}"
+}
+

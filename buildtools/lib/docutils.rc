@@ -1,0 +1,30 @@
+function render_doc_files() {
+  local i
+  while IFS= read -r -d '' i; do
+    local _src_file="/docsrc/${i##*/}"
+    local _dest_file="${i%.adoc}"
+    _dest_file="/doc/${_dest_file##*/}.html"
+    message "Processing '${_src_file}'"
+    __ascii_doctor --trace -r asciidoctor-diagram -a toc=left "${_src_file}" -o "${_dest_file}"
+    #ls /docsrc/adoc
+    # asciidoctor -r asciidoctor-diagram -a toc=left "${_src_file}" -o "${_dest_file}"
+    [[ $? == 0 ]] || abort "Failed to process: '${_src_file}'(From:${i})"
+    message "...done"
+  done < <(find "${DOCSRCDIR}" -type f -name '*.adoc' -print0)
+
+
+  message "Generating '${DOCDIR}/index.html'"
+  buildtools/index.sh "${DOCSRCDIR}" >"${DOCDIR}/index.html"
+  [[ $? == 0 ]] || abort "Failed to generate 'index.html'"
+  message "...done"
+}
+
+function __ascii_doctor() {
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -v "${DOCSRCDIR}":/docsrc/ \
+    -v "${DOCDIR}":/doc/ \
+    asciidoctor/docker-asciidoctor \
+    asciidoctor \
+    "${@}"
+}
