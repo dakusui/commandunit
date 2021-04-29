@@ -7,11 +7,11 @@
   "version": {
     "latestReleased": {
       "major": 1,
-      "minor": 2
+      "minor": 3
     },
     "target": {
       "major": 1,
-      "minor": 3
+      "minor": 4
     }
   },
   "repo": {
