@@ -1,5 +1,8 @@
+export COMMANDUNIT_VERSION="${COMMANDUNIT_VERSION:="${LATEST_RELEASED_VERSION}"}"
+# shellcheck disable=SC2154
+envsubst '${COMMANDUNIT_VERSION}' <<'END'
 function commandunit() {
-  local _image_version="v1.3-snapshot"
+  local _image_version="${COMMANDUNIT_VERSION}"
   local _image_name="dakusui/commandunit:${_image_version}"
   local _commandunit_dockerdir_prefix="/var/lib/commandunit"
   local _project_dir _me _info_log
@@ -17,3 +20,4 @@ function commandunit() {
     "${@}"
 }
 export -f commandunit
+END

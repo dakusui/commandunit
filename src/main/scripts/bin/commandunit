@@ -27,12 +27,13 @@ COMMANDUNIT_SPECIFICATION='{
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"]
   ],
   "examples":{
-    "commandunit": "Run tests found under current directory with the testrunner in sequential mode.",
-    "commandunit --srcdir=DIR": "Run tests found under DIR with the testrunner in sequential mode.",
-    "commandunit --srcdir=DIR -p": "Run tests found under DIR with the testrunner in parallel mode."
+    "commandunit": "Run tests found under current directory in sequential mode.",
+    "commandunit --srcdir=DIR": "Run tests found under DIR in sequential mode.",
+    "commandunit --srcdir=DIR -p": "Run tests found under DIR in parallel mode."
   },
   "references":{
-    "github project": "https://github.com/dakusui/bud"
+    "github project": "https://github.com/dakusui/bud",
+    "documentation": "https://dakusui.github.io/commandunit/"
   }
 }'
 

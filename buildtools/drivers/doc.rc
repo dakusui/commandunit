@@ -1,12 +1,15 @@
 source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docutils.rc"
 
 function execute_stage() {
-  message "Preparing a directory for documents: '${DOCDIR}'"
+  message "Rendering documentation: '${DOCSRCDIR}' -> '${DOCDIR}'"
   mkdir -p "${DOCDIR}/resources"
 
+  message "Copying: '${DOCSRCDIR}' -> '${DOCDIR}'"
   cp -r "${DOCSRCDIR}/resources/"* "${DOCDIR}/resources/"
   [[ $? == 0 ]] || abort "Failed to copy 'resources' directory."
   message "...done"
 
   render_doc_files
+
+  message "Documentation rendering has finished."
 }

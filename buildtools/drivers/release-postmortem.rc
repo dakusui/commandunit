@@ -11,9 +11,9 @@ function execute_stage() {
   source build_info.sh
   message "Reloaded build_info.sh"
   message "Synchronize documentation"
-  execute_prepare
-  execute_doc
-  message "Documenatation was synchronized"
+  ./build.sh prepare
+  ./build.sh doc
+  message "Documentation was synchronized"
   git commit -a -m "$(printf "Bump up target version to v%s.%s" \
     "$(jq '.version.target.major' "${tmp}")" \
     "$(jq '.version.target.minor' "${tmp}")")" || abort "Failed to commit bumped up version."

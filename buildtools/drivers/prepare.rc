@@ -1,4 +1,8 @@
 function execute_stage() {
   mkdir -p "${OUTDIR}"
   cp --preserve -r "${SRCDIR}/"* "${OUTDIR}/"
+  message "Preprocess '.x' files: '${SRCDIR}'"
+  # shellcheck disable=SC2156
+  find "${SRCDIR}" -name '*.x' -exec sh -eu -c 'bash -eu -E "${1}" >"${1%.x}"' - {} \;
+  message "...done"
 }
