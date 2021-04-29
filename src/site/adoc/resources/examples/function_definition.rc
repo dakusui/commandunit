@@ -1,22 +1,19 @@
 function commandunit() {
-  local _image_version="v1.0"
+  local _image_version="v1.3-snapshot"
   local _image_name="dakusui/commandunit:${_image_version}"
-  local _commandunit_dockerdir_prefix="/var/lib"
-  local _commandunit_confdir _me
-  _commandunit_confdir="$(pwd)/."
+  local _commandunit_dockerdir_prefix="/var/lib/commandunit"
+  local _project_dir _me
   _me="$(whoami)"
+  _project_dir="$(pwd)"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
-    --env COMMANDUNIT_CONFDIR="${_commandunit_confdir}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${_commandunit_dockerdir_prefix}" \
-    -v "${TESTDIR}:/var/lib/commandunit${TESTDIR}" \
-    -v "${TESTREPORTDIR}:/var/lib/commandunit${TESTREPORTDIR}" \
+    -v "${_project_dir}:${_commandunit_dockerdir_prefix}${_project_dir}" \
     -i "${_image_name}" \
     "${@}"
 }
 export -f commandunit
-
 
 # - COMMANDUNIT_CONFDIR:          '/var/lib/commandunit//Users/hiroshi.ukai/Desktop/commandunit/out/test/scripts/.commandunit'
 # - COMMANDUNIT_DOCKERDIR_PREFIX: '/var/lib/commandunit'

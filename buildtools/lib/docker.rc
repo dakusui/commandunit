@@ -44,14 +44,9 @@ function __run_command_unit_with_docker() {
   local _me _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
   _me="$(whoami)"
   message "Running commandunit(docker): '${_image_name}'"
-  message "- COMMANDUNIT_CONFDIR:          '${COMMANDUNIT_CONFDIR}'"
-  message "- COMMANDUNIT_DOCKERDIR_PREFIX: '${COMMANDUNIT_DOCKERDIR_PREFIX}'"
-  message "- TESTDIR:                      '${TESTDIR}'"
-  message "- TESTREPORTDIR:                '${TESTREPORTDIR}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
-    --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
     -v "${TESTDIR}:${TESTDIR}" \
     -v "$(pwd):/var/lib/commandunit$(pwd)" \
@@ -68,7 +63,6 @@ function __run_command_unit_with_docker_from_entrypoint() {
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
-    --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
     -v "$(pwd):/var/lib/commandunit$(pwd)" \
     --entrypoint="${_entrypoint}" \

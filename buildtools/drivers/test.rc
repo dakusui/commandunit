@@ -36,8 +36,6 @@ function handle_snapshot() {
   _docker_prefix="/var/lib/commandunit"
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
   message "COMMANDUNIT_DOCKERDIR_PREFIX: '${COMMANDUNIT_DOCKERDIR_PREFIX}'"
-  message "COMMANDUNIT_CONFDIR: '${COMMANDUNIT_CONFDIR}'"
-  message "TESTDIR: '${TESTDIR}'"
   function run_commandunit() {
     run_command_unit_with_snapshot_docker_image "${@}"
   }

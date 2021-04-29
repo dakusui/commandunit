@@ -15,9 +15,7 @@ function define_plugin_functions() {
     echo '(test-.+|.*-test|test)'
   }
 }
-if [[ -e "${COMMANDUNIT_CONFDIR}/config.rc" ]]; then
-  source "${COMMANDUNIT_CONFDIR}/config.rc"
-fi
+
 BUD_HOME="${BUD_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies/bud}"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 APP_NAME="${APP_NAME:-${PROJECT_NAME:?Project name is not specified.}}"

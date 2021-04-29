@@ -1,0 +1,3 @@
+function execute_stage() {
+  message "This stage does nothing."
+}

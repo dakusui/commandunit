@@ -55,13 +55,14 @@ function main() {
   _default_target_directory="${PWD}"
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
-  _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_default_target_directory}/.commandunit")"
-  _configdir="$(__commandunit__normalize_path "${_configdir}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
-  _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
+  _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
-  _test_workdir="$(__commandunit__normalize_path "${_test_workdir}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
+
+  _configdir="$(__commandunit__normalize_path "${_configdir}")"
+  _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
+  _test_workdir="$(__commandunit__normalize_path "${_test_workdir}")"
   _test_reportdir="$(__commandunit__normalize_path "${_test_reportdir}")"
 
   info "parallel: '${_is_parallel}'"
