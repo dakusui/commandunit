@@ -16,7 +16,7 @@ function execute_stage() {
 
   ./build.sh doc
 
-  git -C "${DOCDIR}" add --all .
+  git -C "${DOCDIR}" add --all
   git -C "${DOCDIR}" commit -a -m "Documentation updated."
   git -C "${DOCDIR}" push origin "${_docbranch}":"${_docbranch}"
 }

@@ -63,7 +63,7 @@ function main() {
   fi
   if [[ ${1} == PUBLISH_DOC ]]; then
     #    check_release    doc test package_release test_release release post_release
-    main DOC publish-doc
+    main clean prepare publish-doc
     return 0
   fi
   local -a _stages=()
