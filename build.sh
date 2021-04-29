@@ -53,7 +53,7 @@ function main() {
   fi
   if [[ ${1} == PACKAGE ]]; then
     #    check_release    doc test package_release test_release release post_release
-    main test build:snapshot test:snapshot push:snapshot
+    main clean prepare test build:snapshot test:snapshot
     return 0
   fi
   if [[ ${1} == RELEASE ]]; then
