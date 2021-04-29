@@ -53,8 +53,8 @@ function __run_command_unit_with_docker() {
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_CONFDIR="${COMMANDUNIT_CONFDIR}" \
     --env COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX}" \
-    -v "${TESTDIR}:/var/lib/commandunit${TESTDIR}" \
-    -v "${TESTREPORTDIR}:/var/lib/commandunit${TESTREPORTDIR}" \
+    -v "${TESTDIR}:${TESTDIR}" \
+    -v "$(pwd):/var/lib/commandunit$(pwd)" \
     -i "${_image_name}" \
     "${@}"
 }

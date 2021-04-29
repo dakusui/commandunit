@@ -144,6 +144,7 @@ function run_each_test() {
     _test_type="$(echo "${_content}" | jq -crM '.type')"
     info "Test type: 'JSON:${_test_type}'"
     local _custom_driver="${COMMANDUNIT_CONFDIR}/testdrivers/json_${_test_type}.rc"
+    message "_custom_driver: '${_custom_driver}'"
     if [[ -e "${_custom_driver}" ]]; then
       __run_each_test_test_driver_name="${_custom_driver}"
     else

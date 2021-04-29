@@ -15,6 +15,7 @@ function __run_commandunit() {
   run_commandunit \
     --parallel \
     --filter="${_test_filter}" \
+    --configdir="${TESTDIR}/.commandunit" \
     --test-report="${TESTREPORTDIR}" \
     --test-srcdir="${TESTDIR}" \
     --test-workdir="${TESTDIR}"
@@ -24,7 +25,6 @@ function __run_commandunit() {
 function handle_source() {
   _docker_prefix=""
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
-  export COMMANDUNIT_CONFDIR="${COMMANDUNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.commandunit"
   function run_commandunit() {
     run_command_unit_with_source "${@}"
   }
@@ -35,7 +35,9 @@ function handle_source() {
 function handle_snapshot() {
   _docker_prefix="/var/lib/commandunit"
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
-  export COMMANDUNIT_CONFDIR="${COMMANDUNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.commandunit"
+  message "COMMANDUNIT_DOCKERDIR_PREFIX: '${COMMANDUNIT_DOCKERDIR_PREFIX}'"
+  message "COMMANDUNIT_CONFDIR: '${COMMANDUNIT_CONFDIR}'"
+  message "TESTDIR: '${TESTDIR}'"
   function run_commandunit() {
     run_command_unit_with_snapshot_docker_image "${@}"
   }
@@ -46,7 +48,6 @@ function handle_snapshot() {
 function handle_release() {
   _docker_prefix="/var/lib/commandunit"
   export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
-  export COMMANDUNIT_CONFDIR="${COMMANDUNIT_DOCKERDIR_PREFIX}/${TESTDIR}/.commandunit"
   function run_commandunit() {
     run_command_unit_with_released_docker_image "${@}"
   }

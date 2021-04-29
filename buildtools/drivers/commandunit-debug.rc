@@ -8,11 +8,11 @@ function handle_source() {
 #build-snapshot
 function handle_snapshot() {
   source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
-  run_command_unit_with_snapshot_docker_image "/bin/bash" "${@}"
+  run_command_unit_with_snapshot_docker_image_from_entrypoint "/bin/bash" "${@}"
 }
 
 #build-release
 function handle_release() {
   source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
-  run_command_unit_with_released_docker_image "/bin/bash" "${@}"
+  run_command_unit_with_released_docker_image_from_entrypoint "/bin/bash" "${@}"
 }

@@ -21,6 +21,7 @@ COMMANDUNIT_SPECIFICATION='{
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+    ["","configdir",true,[],"directory to store config files (default: current {directory/.commandunit})"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"]
@@ -45,7 +46,7 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _is_parallel _filter _test_reportdir _subcommands _bindir
+  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
@@ -54,6 +55,8 @@ function main() {
   _default_target_directory="${PWD}"
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_default_target_directory}/.commandunit")"
+  _configdir="$(__commandunit__normalize_path "${_configdir}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
   _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
@@ -66,6 +69,7 @@ function main() {
   info "test-srcdir: '${_test_srcdir}'"
   info "test-workdir: '${_test_workdir}'"
   info "test-reportdir: '${_test_reportdir}'"
+  info "configdir: '${_configdir}'"
   local _each _parallel_option=""
   if [[ "${_is_parallel}" == true ]]; then
     _parallel_option="--parallel"
@@ -88,6 +92,7 @@ function main() {
         --filter="${_filter}" \
         "${_test_srcdir}"
     elif [[ "${_each}" == "run" ]]; then
+      export COMMANDUNIT_CONFDIR="${_configdir}"
       mkdir -p "${_test_reportdir}"
       # _parallel_option is passed to the command without being quoted.
       "${_bindir}/testrunner" \
@@ -118,7 +123,7 @@ function main() {
 function __commandunit__normalize_path() {
   local _path="${1}"
   _path="$(realpath -m "${1}")"
-  _path="${COMMANDUNIT_DOCKERDIR_PREFIX}/${_path}"
+  _path="${COMMANDUNIT_DOCKERDIR_PREFIX}/${_path#/}"
   echo "${_path}"
 }
 
