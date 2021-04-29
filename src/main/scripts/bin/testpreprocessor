@@ -60,6 +60,7 @@ function main() {
 
 function prepare_tests() {
   local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}"
+  info_begin "Preprocessing"
   info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'"
   # Copy contents in srcdir to outdir
   if [[ "${_srcdir}" != "${_outdir}" ]]; then
@@ -69,6 +70,7 @@ function prepare_tests() {
   fi
   # Compile tests
   __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}"
+  info_end "Preprocessing"
 }
 
 function __process_yamlpp_files() {
