@@ -441,13 +441,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>The <code>commandunit</code> testing framwork</h1>
 </div>
 <div id="content">
-<div class="paragraph">
-<p>(t.b.d)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">function commandunit() {
+  local _image_version="v1.4"
+  local _image_name="dakusui/commandunit:${_image_version}"
+  local _commandunit_dockerdir_prefix="/var/lib/commandunit"
+  local _project_dir _me _info_log
+  _me="$(whoami)"
+  _project_dir="$(pwd)"
+  _info_log="${BUD_INFO:-disabled}"
+  docker run \
+    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
+    --env COMMANDUNIT_PWD="${PWD}" \
+    --env PROJECT_NAME="commandunit" \
+    --env COMMANDUNIT_DOCKERDIR_PREFIX="${_commandunit_dockerdir_prefix}" \
+    --env BUD_INFO="${_info_log}" \
+    -v "${_project_dir}:${_commandunit_dockerdir_prefix}${_project_dir}" \
+    -i "${_image_name}" \
+    "${@}"
+}
+export -f commandunit</code></pre>
+</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-28 19:39:51 UTC
+Last updated 2021-04-29 12:52:39 UTC
 </div>
 </div>
 </body>
