@@ -1,0 +1,13 @@
+function execute_stage() {
+  message "Preprocess '.x' files: '${SRCDIR}'"
+  local _basedir="buildtools/resources/generate-src"
+  find "${_basedir}" -type f -name '*.x' \
+    -exec bash -eu -E -c '
+    echo -n "Preprocessing: <${1}>: " &&
+    dest="${1%.x}" &&
+    dest="${dest#${2}/}"  &&
+    mkdir -p "$(dirname "${dest}")" &&
+    bash -eu -E "${1}" "${2}" > ${dest} &&
+    echo "...done"' - {} "${_basedir}" \;
+  message "Done.'${SRCDIR}'"
+}

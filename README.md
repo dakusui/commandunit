@@ -1,26 +1,21 @@
-= The `commandunit` testing framework.
-
-:jsonpp: json++
-:yamlpp: yaml++
-:regexany: `.*`
+# The `commandunit` testing framework.
 
 The `commandunit` is a testing framework intended to verrify your command line tools.
 You can define your tests in JSON or YAML formats.
 It is also powered by `jq-front` processor, with which you can write your JSON files using inheritance and references.
 
-== Usage
+## Usage
 
 Runs tests.
 
-[bash]
-----
+```bash
 Usage: commandunit [OPTION]... [SUBCOMMAND]...
-----
+```
 
-=== Sub-commands:
+### Sub-commands:
 
 * `preprocess`:
-Preprocesses test definition files ({yamlpp}, yaml, and {jsonpp}) and convert them into "executable JSON test" files
+Preprocesses test definition files (yaml++, yaml, and json++) and convert them into "executable JSON test" files
 * `run`:
 Runs tests under a directory specified by `--test-workdir` and writes a report file: `testreport.json` under a directory specified by `--test-reportdir`.
 * `report`:
@@ -28,7 +23,7 @@ Reads a file `testreport.json` under directory specified by `--test-reportdir` a
 
 If no sub-command is given, it will be interpreted as a sequence of `preprocess`, `run`, and `report`.
 
-=== Options:
+### Options:
 
 * `-h`, `--help`: show this help
 * `-p`, `--parallel`: execute the tests in parallel
@@ -37,7 +32,7 @@ If no sub-command is given, it will be interpreted as a sequence of `preprocess`
 * `--test-workdir`: write test reports under the specified directory (default: value for `--test-srcdir`)
 * `--test-reportdir`: write test reports under the specified directory (default: value for `--test-workdir`)
 
-=== Examples:
+### Examples:
 
 `testrunner DIR`
 
@@ -47,12 +42,13 @@ Run tests found under DIR with the testrunner in sequential mode.
 
 Run tests found under DIR with the testrunner in parallel mode.
 
-== Installation
+## Installation
 
 Although it is possible to install `commandunit` scripts in your directory struture, it is highly adviced to use Docker to use `commandrunner` to avoid compatibility issues.
+Have the following bash function definition in your `~/.bashrc` or `~/.bash_profile`.
 
-[source,bash]
-----
+```bash
+
 function commandunit() {
   local _image_version="v1.5"
   local _image_name="dakusui/commandunit:${_image_version}"
@@ -72,19 +68,20 @@ function commandunit() {
     "${@}"
 }
 export -f commandunit
-----
+```
 
-== Authors
+## Authors
 
-* https://github.com/dakusui:[**Hrioshi Ukai**]: Initial work
+* **Hrioshi Ukai** - *Initial work* - <a href="https://github.com/dakusui">dakusui</a>
 
-== Support
+## Support
 
-* https://github.com/dakusui/commandunit/issues[Issues]
-* Twitter @ http://twitter.com/\______HU">[\______HU]
+* <a href="https://github.com/dakusui/commandunit/issues">Issues</a>
+* Twitter at <a href="http://twitter.com/\______HU">@\______HU</a>
 
-== License
+## License
 
-image::http://img.shields.io/:license-mit-blue.svg?style=flat-square[link="http://badges.mit-license.org"]
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
-Copyright 2019 © https://github.com/dakusui[Hiroshi Ukai].
+- **[MIT license](http://opensource.org/licenses/mit-license.php)**
+- Copyright 2019 © <a href="https://github.com/dakusui" target="_blank">Hiroshi Ukai</a>.
