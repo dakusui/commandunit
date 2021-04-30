@@ -12,7 +12,7 @@ function print_test_report() {
     _successful="successful"
   fi
 
-  echo '= Test Report: `'"${APP_NAME:-unknown}"'`'
+  echo '= Test Report: `'"${PROJECT_NAME:-unknown}"'`'
   echo ":toc: left"
   echo
   echo "This test suite was ${_successful}."

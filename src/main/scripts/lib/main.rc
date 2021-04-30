@@ -16,14 +16,13 @@ function define_plugin_functions() {
   }
 }
 
+PROJECT_NAME="${PROJECT_NAME:-unknown}"
 BUD_HOME="${BUD_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies/bud}"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
-APP_NAME="${APP_NAME:-${PROJECT_NAME:?Project name is not specified.}}"
-BUD_APP_NAME="${APP_NAME}"
+BUD_APP_NAME="${PROJECT_NAME}"
 
 export BUD_HOME
 export APP_HOME
-export APP_NAME
 export BUD_APP_NAME
 source "${BUD_HOME}/lib/bud.rc"
 

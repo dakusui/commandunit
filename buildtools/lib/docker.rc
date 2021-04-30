@@ -47,7 +47,6 @@ function __run_command_unit_with_docker() {
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
-    -v "${TESTDIR}:${TESTDIR}" \
     -v "$(pwd):/var/lib/commandunit$(pwd)" \
     -i "${_image_name}" \
     "${@}"

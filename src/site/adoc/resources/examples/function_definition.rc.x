@@ -4,7 +4,7 @@ envsubst '${COMMANDUNIT_VERSION}' <<'END'
 function commandunit() {
   local _image_version="${COMMANDUNIT_VERSION}"
   local _image_name="dakusui/commandunit:${_image_version}"
-  local _project_name _project_dir _pwd _me _info_log _debug_log
+  local _project_name _project_dir _pwd _me _info_log
   _pwd="${PWD}"
   _me="${USER}"
   _project_name="unknown"

@@ -1,5 +1,5 @@
 {
-  "appName": "commandunit",
+  "projectName": "commandunit",
   "homepage": "https://github.com/dakusui/commandunit",
   "docker": {
     "user": "dakusui"

@@ -6,6 +6,7 @@ function execute_stage() {
   shift 2
   message "BEGIN HANDLER(test): target: '${_target}'; filter: '${_filter}': '${*}'"
   buildtools__execute_stage "${_target}" "${_filter}" "${@}"
+  __check_testreport_json_file "${TESTREPORTDIR}/testreport.json"
   message "END HANDLER(test)"
 }
 
@@ -50,4 +51,16 @@ function handle_release() {
     run_command_unit_with_released_docker_image "${@}"
   }
   __run_commandunit "${@}"
+}
+
+function __check_testreport_json_file() {
+  local _testreport_json_file="${1}"
+  local _was_successful
+  _was_successful="$(jq '.wasSuccessful' "${_testreport_json_file}")"
+  if [[ "${_was_successful}" == true ]]; then
+    return 0
+  elif [[ "${_was_successful}" ]]; then
+    abort "One or more tests have failed. Check test report files found under $(dirnam "${_testreport_json_file}")."
+  fi
+  abort "Some error was detected test execution or report generation."
 }
