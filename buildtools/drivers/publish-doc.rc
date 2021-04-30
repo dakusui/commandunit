@@ -19,11 +19,6 @@ function execute_stage() {
   git -C "${DOCDIR}" add --all
   git -C "${DOCDIR}" commit -a -m "Documentation updated."
   git -C "${DOCDIR}" push origin "${_docbranch}":"${_docbranch}"
-}
 
-#git init
-#$ git remote add origin https://github/project.git
-#$ touch document.doc
-#$ git add .
-#$ git commit -m '1st orphan-doc commit'
-#$ git push origin master:orphan-doc  # ←これでリモートにはブランチ名が orphan-doc でプッシュできるのでエラーがおきない
+  docker pushrm "dakusui/commandunit" || abort "Failed to update README on Docker Hub. Maybe you don't have pushrm plugin. Visit 'https://github.com/christian-korneck/docker-pushrm'"
+}
