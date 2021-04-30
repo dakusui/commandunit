@@ -24,7 +24,8 @@ COMMANDUNIT_SPECIFICATION='{
     ["","configdir",true,[],"directory to store config files (default: current {directory/.commandunit})"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
-    ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"]
+    ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
+    ["","format",true,["json"],"write test reports in specified format. You can also specify \"tap\""]
   ],
   "examples":{
     "commandunit": "Run tests found under current directory in sequential mode.",
@@ -48,7 +49,7 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir
+  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _format
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
@@ -61,6 +62,7 @@ function main() {
   _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
+  _format="$(parseopt_string_value_for 'format' "${_parsed_opts_json}")"
 
   _configdir="$(__commandunit__normalize_path "${_configdir}")"
   _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
@@ -102,9 +104,9 @@ function main() {
         ${_parallel_option} \
         --test-reportdir="${_test_reportdir}" \
         --filter="${_filter}" \
+        --format="${_format}" \
         "${_test_workdir}" |
-        tee "${_test_reportdir}/testreport.json" |
-        jq '.|{"wasSuccessful":.wasSuccessful,"summary":.report.summary}' >&2
+        tee "${_test_reportdir}/testreport.${_format}" >&2
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_test_reportdir}/testreport.json" |
         tee "${_test_reportdir}/testreport.adoc" >&2

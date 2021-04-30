@@ -20,6 +20,7 @@ PROJECT_NAME="${PROJECT_NAME:-unknown}"
 BUD_HOME="${BUD_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies/bud}"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APP_NAME="${PROJECT_NAME}"
+COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX:-""}"
 
 export BUD_HOME
 export APP_HOME

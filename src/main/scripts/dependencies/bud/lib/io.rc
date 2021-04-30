@@ -23,6 +23,15 @@ function filter_file() {
   done <"${_file}"
 }
 
+function map_file() {
+  local _function="${1}" _file="${2:-/dev/stdin}"
+  local _each
+  debug "_function: '${_function}'"
+  while IFS= read -r _each; do
+    eval "${_function}"
+  done <"${_file}"
+}
+
 
 mkdir -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
 

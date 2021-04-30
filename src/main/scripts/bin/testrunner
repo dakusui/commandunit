@@ -13,7 +13,8 @@ TESTRUNNER_SPECIFICATION='{
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","test-reportdir",true,[],"write test reports under the specified directory"]
+    ["","test-reportdir",true,[],"write test reports under the specified directory"],
+    ["","format",true,["json"],"write test reports in specified format. You can also specify \"tap\""]
   ],
   "examples":{
     "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
@@ -298,6 +299,38 @@ function run_tests_and_compile_testreport_json() {
   info_end
 }
 
+___taps_to_json_converter="$(
+  cat <<'END'
+cat "${_each}" | jq -crM '.|
+if .report.result.precheck == true then
+  if .report.result.success == true then
+    "ok " + (.id|tostring) + " " + .name
+  elif .report.result.success == false then
+    "not ok " + (.id|tostring) + " " + .name
+  else
+    "not ok " + (.id|tostring) + " FATAL ERROR IN EXECUTION: " + .name
+  end
+elif .report.result.precheck == false then
+  "not ok " + (.id|tostring) + " " + .name + " # TODO"
+else
+  "not ok " + (.id|tostring) + " FATAL ERROR IN PRECHECK: " + .name
+end'
+END
+)"
+function run_tests_and_compile_testreport_tap() {
+  local _test_rootdir="${1:?Test root directory is missing.}"
+  local _test_filter="${2:?Filter is missing}"
+  local _test_reportdir="${3:?Teset report directory is missing}"
+  local _parallel="${4:-true}"
+  _test_rootdir="${_test_rootdir%/}"
+  local -a _tests
+  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
+  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
+  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
+
+  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" | map_file "${___taps_to_json_converter}"
+}
+
 function main() {
   local _parsed_opts_json
   _parsed_opts_json="$(parseopt "${TESTRUNNER_SPECIFICATION}" "${@}")"
@@ -308,7 +341,7 @@ function main() {
     print_usage "${TESTRUNNER_SPECIFICATION}"
     return 0
   fi
-  local _is_parallel _filter _test_rootdir _test_reportdir
+  local _format _is_parallel _filter _test_rootdir _test_reportdir
   mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
   mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
     _i="$(realpath -m "${_i}")"
@@ -325,12 +358,23 @@ function main() {
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
-
-  run_tests_and_compile_testreport_json \
-    "${_test_rootdir[0]}" \
-    "${_filter}" \
-    "${_test_reportdir}" \
-    "${_is_parallel}"
+  _format="$(parseopt_string_value_for 'format' "${_parsed_opts_json}")"
+  if [[ "${_format}" == "json" ]]; then
+    run_tests_and_compile_testreport_json \
+      "${_test_rootdir[0]}" \
+      "${_filter}" \
+      "${_test_reportdir}" \
+      "${_is_parallel}"
+  elif [[ "${_format}" == "tap" ]]; then
+    run_tests_and_compile_testreport_tap \
+      "${_test_rootdir[0]}" \
+      "${_filter}" \
+      "${_test_reportdir}" \
+      "${_is_parallel}"
+  else
+    print_usage "${TESTRUNNER_SPECIFICATION}"
+    abort "Unknown format '${_format}' was specified."
+  fi
 }
 
 main "${@}"
