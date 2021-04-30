@@ -211,25 +211,38 @@ function run_tests() {
   local _test_reportdir="${3:?Teset report directory is missing}"
   local _parallel="${4:-true}"
   _test_rootdir="${_test_rootdir%/}"
-  local -a _tests
-  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
-  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
-  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
-  local _passed=0 _skipped=0 _failed=0 _error=0 _run=0 _numtests=0 _test_results=()
-  local _i
-  local -a _test_result_files=()
+
   ensure_no_bg_jobs
+  local _i
   for _i in "${_tests[@]}"; do
+    local _each_test_result_file
     _each_test_result_file="$(bud_temp_file)"
     if ${_parallel}; then
       run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}" &
     else
       run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}"
     fi
-    _test_result_files+=("${_each_test_result_file}")
+    echo "${_each_test_result_file}"
   done
   wait_for_jobs || error "Some tests are failed. Inspect the test report."
+}
 
+function run_tests_and_compile_testreport_json() {
+  local _test_rootdir="${1:?Test root directory is missing.}"
+  local _test_filter="${2:?Filter is missing}"
+  local _test_reportdir="${3:?Teset report directory is missing}"
+  local _parallel="${4:-true}"
+  _test_rootdir="${_test_rootdir%/}"
+  local -a _tests
+  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
+  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
+  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
+
+  local -a _test_result_files=()
+  mapfile -t _test_result_files < <(run_tests "${_test_rootdir}" "${_test_filter}" "${_test_reportdir}" "${_parallel}")
+
+  local _i
+  local _passed=0 _skipped=0 _failed=0 _error=0 _run=0 _numtests=0 _test_results=()
   _numtests="${#_tests[@]}"
   for _i in "${_test_result_files[@]}"; do
     _each_test_result_content="$(cat "${_i}")"
@@ -306,7 +319,7 @@ function main() {
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
 
-  run_tests \
+  run_tests_and_compile_testreport_json \
     "${_test_rootdir[0]}" \
     "${_filter}" \
     "${_test_reportdir}" \
