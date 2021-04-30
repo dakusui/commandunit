@@ -207,9 +207,8 @@ function run_each_test() {
 
 function run_tests() {
   local _test_rootdir="${1:?Test root directory is missing.}"
-  local _test_filter="${2:?Filter is missing}"
-  local _test_reportdir="${3:?Teset report directory is missing}"
-  local _parallel="${4:-true}"
+  local _test_reportdir="${2:?Teset report directory is missing}"
+  local _parallel="${3:-true}"
   _test_rootdir="${_test_rootdir%/}"
 
   ensure_no_bg_jobs
@@ -227,22 +226,13 @@ function run_tests() {
   wait_for_jobs || error "Some tests are failed. Inspect the test report."
 }
 
-function run_tests_and_compile_testreport_json() {
+function compile_testreport_json() {
   local _test_rootdir="${1:?Test root directory is missing.}"
   local _test_filter="${2:?Filter is missing}"
-  local _test_reportdir="${3:?Teset report directory is missing}"
-  local _parallel="${4:-true}"
-  _test_rootdir="${_test_rootdir%/}"
-  local -a _tests
-  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
-  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
-  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
-
-  local -a _test_result_files=()
-  mapfile -t _test_result_files < <(run_tests "${_test_rootdir}" "${_test_filter}" "${_test_reportdir}" "${_parallel}")
-
+  shift 2
   local _i
   local _passed=0 _skipped=0 _failed=0 _error=0 _run=0 _numtests=0 _test_results=()
+  _test_result_files=("${@}")
   _numtests="${#_tests[@]}"
   for _i in "${_test_result_files[@]}"; do
     _each_test_result_content="$(cat "${_i}")"
@@ -288,6 +278,23 @@ function run_tests_and_compile_testreport_json() {
     --argjson test_results "${_test_results_json}" \
     '{"wasSuccessful":$was_successful,"report":{"summary":{"filter":$test_filter,"testdirs":[$testdir],"all":$numtests,"run":$run,"skipped":$skipped,"passed":$passed,"failed":$failed,"error":$error},"test_results":$test_results}}')"
   echo "${_ret}"
+}
+
+function run_tests_and_compile_testreport_json() {
+  local _test_rootdir="${1:?Test root directory is missing.}"
+  local _test_filter="${2:?Filter is missing}"
+  local _test_reportdir="${3:?Teset report directory is missing}"
+  local _parallel="${4:-true}"
+  _test_rootdir="${_test_rootdir%/}"
+  local -a _tests
+  info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
+  mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
+  [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
+
+  local -a _test_result_files=()
+  mapfile -t _test_result_files < <(run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}")
+
+  compile_testreport_json "${_test_rootdir}" "${_test_filter}" "${_test_result_files[@]}"
   info_end
 }
 
