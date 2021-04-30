@@ -123,14 +123,15 @@ __run_each_test_test_result_json_template='{
       "stderr": []
     }
   },
-  "name": "%s"
+  "name": "%s",
+  "id": "%s"
 }'
 function run_each_test() {
-  local _testname="${1}" _testdir="${2}" _testreportdir="${3}"
+  local _testname="${1}" _testdir="${2}" _testreportdir="${3}" _id="${4}"
   local _precheck_result_file _execution_result_file
   local _test_result_json
   # shellcheck disable=SC2059
-  _test_result_json="$(printf "${__run_each_test_test_result_json_template}" "${_testname}")"
+  _test_result_json="$(printf "${__run_each_test_test_result_json_template}" "${_testname}" "${_id}")"
   info_begin "'${1}'"
   if [[ "${_testname}" == *.sh ]]; then
     info "Test type: 'scripttest'"
@@ -213,16 +214,17 @@ function run_tests() {
   _test_rootdir="${_test_rootdir%/}"
 
   ensure_no_bg_jobs
-  local _i
+  local _i _id=1
   for _i in "${_tests[@]}"; do
     local _each_test_result_file
     _each_test_result_file="$(bud_temp_file)"
     if ${_parallel}; then
-      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}" &
+      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" "${_id}" >"${_each_test_result_file}" &
     else
-      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" >"${_each_test_result_file}"
+      run_each_test "${_i}" "${_test_rootdir}" "${_test_reportdir}" "${_id}" >"${_each_test_result_file}"
     fi
     echo "${_each_test_result_file}"
+    _id=$((_id + 1))
   done
   wait_for_jobs || error "Some tests are failed. Inspect the test report."
 }

@@ -115,11 +115,15 @@ function main() {
     fi
   done
   if array_contains "run" "${_subcommands[@]}"; then
-    local _successful
-    _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
-    if [[ "${_successful}" != true ]]; then
-      message "TESTS FAILED"
-      return 1
+    if [[ "${_format}" == "json" ]]; then
+      local _successful
+      _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
+      if [[ "${_successful}" != true ]]; then
+        message "TESTS FAILED"
+        return 1
+      fi
+    elif [[ "${_format}" == "tap" ]]; then
+      message "NYI"
     fi
   fi
   info_end "commandunit"
@@ -137,8 +141,5 @@ function __commandunit__stop_commandunit() {
 }
 
 trap __commandunit__stop_commandunit SIGINT
-
-
-
 
 main "${@}"
