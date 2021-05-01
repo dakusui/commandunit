@@ -186,8 +186,8 @@ then
 fi
 
 # This line was modified by Hiroshi Ukai.
-# Because '\n' sequence is not interpreted by some 'echo'es.
-printf "${report}."
+# Because '\n' sequence inside ${report} is not interpreted by some 'echo'es.
+printf "${report}.\n"
 
 exit "${status}"
 

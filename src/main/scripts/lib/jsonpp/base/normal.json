@@ -18,6 +18,7 @@
     "source": [
     ],
     "environmentVariables": {
+      "BUD_LIB": "eval:string:${BUD_LIB}"
     },
     "cmd": ":",
     "args": [
@@ -38,6 +39,7 @@
     "source": [
     ],
     "environmentVariables": {
+      "DEPENDENCIES_ROOT": "eval:string:${DEPENDENCIES_ROOT}"
     },
     "cmd": "eval:string:$(error 'missing attribute!')",
     "args": [

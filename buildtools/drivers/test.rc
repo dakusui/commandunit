@@ -15,6 +15,7 @@ function __run_commandunit() {
   shift
   run_commandunit \
     --parallel \
+    --tap \
     --filter="${_test_filter}" \
     --configdir="${TESTDIR}/.commandunit" \
     --test-report="${TESTREPORTDIR}" \

@@ -73,29 +73,14 @@ function __bud__compose_script_from_json_object() {
     echo "# ${_i}"
   done
 
-  # Print an empty line for readability
-  local -a _supported_envvars _shell_format=""
-  mapfile -t _supported_envvars < <(envsubst_variables)
-  echo
-  for _i in "${_supported_envvars[@]}"; do
-    local _v='$'"${_i}"
-    echo "# ${_i} $(eval "echo ${_v}")"
-    if [[ "${_shell_format}" == "" ]]; then
-      _shell_format='$'"${_i}"
-    else
-      _shell_format="${_shell_format},"'$'"${_i}"
-    fi
-  done
-  echo
-
-  # Print source directives to "include" files
-  local _source_files
-  mapfile -t _source_files < <(__bud__get_source_from_json_object "${_json_object}")
-  for _i in "${_source_files[@]}"; do
-    echo "source " "$(quote "${_i}" | envsubst "${_shell_format}")"
-  done
-  # Print an empty line for readability
-  echo
+  #  # Print source directives to "include" files
+  #  local _source_files
+  #  mapfile -t _source_files < <(__bud__get_source_from_json_object "${_json_object}")
+  #  for _i in "${_source_files[@]}"; do
+  #    echo "source " "$(quote "${_i}" | envsubst "${_shell_format}")"
+  #  done
+  #  # Print an empty line for readability
+  #  echo
 
   local _environment_variables
   _environment_variables="$(json_value_at "${_json_object}" '.environmentVariables')"
@@ -104,15 +89,17 @@ function __bud__compose_script_from_json_object() {
   # Print an empty line for readability
   echo
 
+  # Print source directives to "include" files
+  local _source_files
+  mapfile -t _source_files < <(__bud__get_source_from_json_object "${_json_object}")
+  for _i in "${_source_files[@]}"; do
+    echo -e "source \"${_i}\""
+  done
+  # Print an empty line for readability
+  echo
+
   # Print the command line
   __bud__compose_commandline_from_json_object "${_json_object}"
-}
-
-function envsubst_variables() {
-  echo "BUD_LIB"
-  echo "BUD_TEST_SRCDIR"
-  echo "BUD_TEST_BASEDIR"
-  echo "BUD_TEST_REPORTDIR"
 }
 
 function bud__file_for_exit_code() {
