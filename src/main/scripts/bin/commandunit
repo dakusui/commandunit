@@ -102,7 +102,7 @@ function main() {
         "${_test_srcdir}"
     elif [[ "${_each}" == "run" ]]; then
       local _viewer_command="cat"
-      if [[ "${_is_tap_enabled}" ]]; then
+      if [[ "${_is_tap_enabled}" == true ]]; then
         # shellcheck disable=SC2089
         _viewer_command="/usr/bin/env bash -eu -E ""${DEPENDENCIES_ROOT}/tapview/tapview"
       fi

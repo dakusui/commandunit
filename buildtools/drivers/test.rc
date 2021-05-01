@@ -60,7 +60,7 @@ function __check_testreport_json_file() {
   if [[ "${_was_successful}" == true ]]; then
     return 0
   elif [[ "${_was_successful}" ]]; then
-    abort "One or more tests have failed. Check test report files found under $(dirnam "${_testreport_json_file}")."
+    abort "One or more tests have failed. Check test report files found under $(dirname "${_testreport_json_file}")."
   fi
   abort "Some error was detected test execution or report generation."
 }

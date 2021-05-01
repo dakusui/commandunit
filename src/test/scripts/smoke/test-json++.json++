@@ -10,7 +10,7 @@
       "Just print a message 'hello world'"
     ],
     "source": [
-      "lib/common.rc"
+      "${BUD_LIB}/common.rc"
     ],
     "cmd": "echo",
     "args": [
