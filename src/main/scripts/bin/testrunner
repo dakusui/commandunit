@@ -329,7 +329,7 @@ function run_tests_and_compile_testreport_tap() {
   info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
   mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
   [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
-
+  echo "1..${#_tests[@]}"
   run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" | map_file "${___taps_to_json_converter}"
 }
 
