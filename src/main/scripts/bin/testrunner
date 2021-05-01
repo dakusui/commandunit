@@ -324,13 +324,22 @@ function run_tests_and_compile_testreport_tap() {
   local _test_filter="${2:?Filter is missing}"
   local _test_reportdir="${3:?Teset report directory is missing}"
   local _parallel="${4:-true}"
+  local _outfile="${5:-"${_test_reportdir}/testreport.json"}}"
   _test_rootdir="${_test_rootdir%/}"
   local -a _tests
   info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
   mapfile -t _tests < <(list_executable_tests "${_test_rootdir}" "${_test_filter}" || abort "Failed to list tests in directory:'${_test_rootdir}' with filter: '${_test_filter}'")
   [[ "${#_tests[@]}" -gt 0 ]] || abort "No available tests.: (directory: '${_test_rootdir}', filter: '${_test_filter}')"
   echo "1..${#_tests[@]}"
-  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" | map_file "${___taps_to_json_converter}"
+  local _tmp_test_results_files_list_file _test_result_files
+  _tmp_test_results_files_list_file="$(bud_temp_file)"
+  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" |
+    tee "${_tmp_test_results_files_list_file}" |
+    map_file "${___taps_to_json_converter}"
+
+  mapfile -t _test_result_files <"${_tmp_test_results_files_list_file}"
+  compile_testreport_json "${_test_rootdir}" "${_test_filter}" "${_test_result_files[@]}" >"${_outfile}"
+  info_end
 }
 
 function main() {
@@ -361,6 +370,7 @@ function main() {
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
   _format="$(parseopt_string_value_for 'format' "${_parsed_opts_json}")"
+  _outfile="${_test_reportdir}/testreport.json"
   if [[ "${_format}" == "json" ]]; then
     run_tests_and_compile_testreport_json \
       "${_test_rootdir[0]}" \
@@ -372,7 +382,8 @@ function main() {
       "${_test_rootdir[0]}" \
       "${_filter}" \
       "${_test_reportdir}" \
-      "${_is_parallel}"
+      "${_is_parallel}" \
+      "${_outfile}"
   else
     print_usage "${TESTRUNNER_SPECIFICATION}"
     abort "Unknown format '${_format}' was specified."
