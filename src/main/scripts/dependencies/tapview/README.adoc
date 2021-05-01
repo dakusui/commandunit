@@ -1,0 +1,20 @@
+= tapview =
+
+tapview is a minimalist pure consumer for TAP (Test Anything Protocol).
+
+It's intended for projects that aleady have one or more TAP producers
+built into their code and want a viewer that is small, lightweight,
+portable, has no pesky dependencies, and can easily be embedded in
+a project distribution.
+
+tapview has a line-by-line parser, so it adds as little latency
+to your test-viewing pipeline as possible.
+
+tapview requires only a POSIX-compliant shell and an echo comand
+that honors the -n switch (which POSIX allows but does not require).
+
+Permission is specifically granted for this code to be redistributed
+under the prevailing license of your project, provided that license
+is OSD-compliant. Otherwise 2-clause BSD applies.
+
+// end

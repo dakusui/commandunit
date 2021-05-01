@@ -1,0 +1,5 @@
+.F..s.u.x.s
+not ok - failure on 2
+ok 7 - success on 7 should be displayed # TODO
+ok 11 - success with a skip # SKIP
+11 tests, 1 failures, 2 TODOs, 2 SKIPs.

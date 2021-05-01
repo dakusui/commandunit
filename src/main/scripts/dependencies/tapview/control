@@ -1,0 +1,18 @@
+# This is not a real Debian control file
+# It's project metadata for the shipper tool
+
+Package: tapview
+
+Description: A tiny, lightweight, embeddable viewer/consumer for TAP.
+ Less than 150 lines of pure POSIX shell with no dependencies, meant to be included into the
+ test suite of any project that rolls its own TAP producers.
+
+#XBS-Destinations: freshcode
+
+Homepage: http://www.catb.org/~esr/tapview
+
+XBS-HTML-Target: index.html
+
+XBS-Repository-URL: https://gitlab.com/esr/tapview
+
+XBS-VC-Tag-Template: %(version)s

@@ -1,0 +1,5 @@
+F
+not ok 1 - database handle
+Bail out! Couldn't connect to database.
+Expected 523 tests but only 1 ran.
+1 tests, 1 failures.

@@ -1,0 +1,103 @@
+= tapview(1) =
+:doctype: manpage
+
+== NAME ==
+tapview - a minimalist viewing filter for TAP (Test Anything Protocol).
+
+== SYNOPSIS ==
+
+*tapview*
+
+[[description]]
+== DESCRIPTION ==
+
+tapview accepts a stream of reports in the format of TAP (Test
+Anything Protocol) on standard input and filters them for viewing in a
+terminal emulator. Its goal is to present to a human viewer only what
+the viewer needs to see, and no more.
+
+tapview is small, fast, lightweight, and designed to be easily
+embedded in any source distribution.
+
+The Test Anything Protocol is described here: https://testanything.org/
+
+tapview's output behavior is deliberately simple:
+
+. The plan line may have a SKIP directive; if so, tapview exits
+indicating an error without showing any further output.
+
+. The initial section (the "dot display") is displayed in real time
+as each TAP line arrives on standard input. It ships one of the
+following status characters for each test:
++
+|============================================
+| . | "ok" line with no directive
+| F | "not ok" line with no directive
+| s | "ok" or "not ok" line with SKIP directive
+| u | "ok" line with TODO directive
+| x | "not ok" line with TODO directive
+|============================================
+
+. The dot display may be terminated early by a "Bail out!" line. In
+this case the rest of the stream is discarded abd there is no further
+output.
+
+. After the dot display completes, tapview passes through "not ok" lines,
+with or without a SKIP directive. Not-ok lines with SKIPs or TODOs are
+not counted as failures for purposes of setting tapview's return
+value.
+
+. Lines beginning with "ok" are ignored, unless the line has a TODO
+directive in which case it is considered unexpected and passed
+through.
+
+. "Bail out!" lines are passed through, after which an error is returned.
+
+. tapview passes through TAP version 13 YAML blocks following either an "ok" or
+"not-ok" line.
+
+. tapview silently discards all other input.
+
+. A statistics line is issued after the dot display and any message
+lines passed through.
+
+tapview conforms to TAP version 13
+and respects https://testanything.org/philosophy.html[the Tao of TAP].
+
+[[requirements]]
+== REQUIREMENTS ==
+
+tapview is written in pure POSIX shell. It requires a POSIX-compliant
+expr(1). Either your shell's echo builtin or /bin/echo must support -n
+to suppress emitting trailing newline. If neither does, tapview will
+exit with an error message.
+
+[[bugs]]
+== BUGS ==
+
+There are ambiguities in the TAP specification that mean the behavior
+of parsers is underconstrained. Thus, tapview and other consumers may
+treat the same TAP stream differently.
+
+The most notable internal inconsistency is in whether a plan line is
+optional or required; tapview considers it required, in accordance
+with the draft of the TAP version 14 specification.
+
+[[returns]]
+== ERROR RETURNS ==
+
+Returns
+3 if it cannot run on your system due to missing features;
+2 if it saw a "Bail out!" line;
+1 if it saw a "not ok" line without a SKIP or TODO, or the expected
+number of tests failed to match a single valid plan line, or the
+entire test sequence was skipped;
+0 otherwise.
+
+[[author]]
+== AUTHOR ==
+
+Eric S. Raymond <esr@thyrsus.com>.
+The public repository is at https://gitlab.com/esr/tapview[on GitLab].
+
+// end

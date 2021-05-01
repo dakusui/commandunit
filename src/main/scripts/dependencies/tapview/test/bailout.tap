@@ -1,0 +1,4 @@
+# Swiped from the TAP website
+1..523
+not ok 1 - database handle
+Bail out! Couldn't connect to database.

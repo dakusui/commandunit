@@ -1,0 +1,17 @@
+.........
+  ---
+  message: "Board layout"
+  severity: comment
+  dump:
+     board:
+       - '      16G         05C        '
+       - '      G N C       C C G      '
+       - '        G           C  +     '
+       - '10C   01G         03C        '
+       - 'R N G G A G       C C C      '
+       - '  R     G           C  +     '
+       - '      01G   17C   00C        '
+       - '      G A G G N R R N R      '
+       - '        G     R     G        '
+  ...
+9 tests, 0 failures.

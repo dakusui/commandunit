@@ -1,0 +1,12 @@
+= reposurgeon project news =
+
+1.1: 2021-05-01::
+     Minor clarification to lidense language.
+
+1.0: 2021-03-09::
+     First production release.
+
+0.95: 2021-03-02::
+     Project published as an alpha release on GitLab.
+
+// end

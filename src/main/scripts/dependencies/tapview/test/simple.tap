@@ -1,0 +1,14 @@
+1..11
+# Simplest case, no detail lines or directives.
+ok 1 - success on 1
+not ok - failure on 2
+ok 3 - success on 3
+ok 4 - success on 4
+not ok 5 failure on 5 should be ignored # SKIP
+ok 6 - success on 6
+ok 7 - success on 7 should be displayed # TODO
+ok 8 - success on 8
+not ok 9 - failure on 7 should not be displayed # TODO
+ok 10 - success on 10
+ok 11 - success with a skip # SKIP
+
