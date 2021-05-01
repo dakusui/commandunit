@@ -17,14 +17,14 @@ function define_plugin_functions() {
 }
 
 PROJECT_NAME="${PROJECT_NAME:-unknown}"
-BUD_HOME="${BUD_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies/bud}"
+DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APP_NAME="${PROJECT_NAME}"
 COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX:-""}"
 
-export BUD_HOME
+export DEPENDENCIES_ROOT
 export APP_HOME
 export BUD_APP_NAME
-source "${BUD_HOME}/lib/bud.rc"
+source "${DEPENDENCIES_ROOT}/bud/lib/bud.rc"
 
 define_plugin_functions

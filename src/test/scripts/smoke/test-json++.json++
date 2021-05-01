@@ -9,7 +9,7 @@
     "description": [
       "Just print a message 'hello world'"
     ],
-    "${BUD_HOME}/source": [
+    "source": [
       "lib/common.rc"
     ],
     "cmd": "echo",

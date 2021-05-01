@@ -2,7 +2,9 @@
 
 source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
 
-COMMANDUNIT_SPECIFICATION='{
+COMMANDUNIT_SPECIFICATION="$(
+  cat <<'END'
+{
   "usage": "commandunit [OPTION]... [SUBCOMMAND]...",
   "description":[
     "Runs tests.",
@@ -25,7 +27,7 @@ COMMANDUNIT_SPECIFICATION='{
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
-    ["","format",true,["json"],"write test reports in specified format. You can also specify \"tap\""]
+    ["","tap",false,false,"show result in 'tap' mode"]
   ],
   "examples":{
     "commandunit": "Run tests found under current directory in sequential mode.",
@@ -36,7 +38,9 @@ COMMANDUNIT_SPECIFICATION='{
     "github project": "https://github.com/dakusui/bud",
     "documentation": "https://dakusui.github.io/commandunit/"
   }
-}'
+}
+END
+)"
 
 function main() {
   local _parsed_opts_json
@@ -49,7 +53,7 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _format
+  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tap_enabled
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
@@ -62,7 +66,7 @@ function main() {
   _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
-  _format="$(parseopt_string_value_for 'format' "${_parsed_opts_json}")"
+  _is_tap_enabled="$(parseopt_boolean_value_for "tap" "${_parsed_opts_json}")"
 
   _configdir="$(__commandunit__normalize_path "${_configdir}")"
   _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
@@ -97,34 +101,33 @@ function main() {
         --filter="${_filter}" \
         "${_test_srcdir}"
     elif [[ "${_each}" == "run" ]]; then
+      local _viewer_command="cat"
+      if [[ "${_is_tap_enabled}" ]]; then
+        # shellcheck disable=SC2089
+        _viewer_command="/usr/bin/env bash -eu -E ""${DEPENDENCIES_ROOT}/tapview/tapview"
+      fi
       export COMMANDUNIT_CONFDIR="${_configdir}"
       mkdir -p "${_test_reportdir}"
+      # shellcheck disable=SC2090
       # _parallel_option is passed to the command without being quoted.
       "${_bindir}/testrunner" \
         ${_parallel_option} \
         --test-reportdir="${_test_reportdir}" \
         --filter="${_filter}" \
-        --format="${_format}" \
         "${_test_workdir}" |
-        cat
-      #        tee "${_test_reportdir}/testreport.${_format}" >&2
+        ${_viewer_command}
     elif [[ "${_each}" == "report" ]]; then
-      "${_bindir}/reportrenderer" "${_test_reportdir}/testreport.json" |
-        tee "${_test_reportdir}/testreport.adoc" >&2
+      "${_bindir}/reportrenderer" "${_test_reportdir}/testreport.json" >"${_test_reportdir}/testreport.adoc"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi
   done
   if array_contains "run" "${_subcommands[@]}"; then
-    if [[ "${_format}" == "json" ]]; then
-      local _successful
-      _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
-      if [[ "${_successful}" != true ]]; then
-        message "TESTS FAILED"
-        return 1
-      fi
-    elif [[ "${_format}" == "tap" ]]; then
-      :
+    local _successful
+    _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
+    if [[ "${_successful}" != true ]]; then
+      message "TESTS FAILED"
+      return 1
     fi
   fi
   info_end "commandunit"

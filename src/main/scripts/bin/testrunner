@@ -13,8 +13,7 @@ TESTRUNNER_SPECIFICATION='{
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","test-reportdir",true,[],"write test reports under the specified directory"],
-    ["","format",true,["json"],"write test reports in specified format. You can also specify \"tap\""]
+    ["","test-reportdir",true,[],"write test reports under the specified directory"]
   ],
   "examples":{
     "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
@@ -334,8 +333,8 @@ function run_tests_and_compile_testreport_tap() {
   echo "1..${#_tests[@]}"
   local _tmp_test_results_files_list_file _test_result_files
   _tmp_test_results_files_list_file="$(bud_temp_file)"
-  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" > "${_tmp_test_results_files_list_file}"
-  cat "${_tmp_test_results_files_list_file}" |  map_file "${___taps_to_json_converter}"
+  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" >"${_tmp_test_results_files_list_file}"
+  cat "${_tmp_test_results_files_list_file}" | map_file "${___taps_to_json_converter}"
   info_begin "JSON COMPILATION: '${_outfile}': '${_tmp_test_results_files_list_file}'"
   mapfile -t _test_result_files <"${_tmp_test_results_files_list_file}"
   compile_testreport_json "${_test_rootdir}" "${_test_filter}" "${_test_result_files[@]}" >"${_outfile}"
@@ -353,7 +352,7 @@ function main() {
     print_usage "${TESTRUNNER_SPECIFICATION}"
     return 0
   fi
-  local _format _is_parallel _filter _test_rootdir _test_reportdir
+  local _is_parallel _filter _test_rootdir _test_reportdir
   mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
   mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
     _i="$(realpath -m "${_i}")"
@@ -370,25 +369,13 @@ function main() {
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
-  _format="$(parseopt_string_value_for 'format' "${_parsed_opts_json}")"
   _outfile="${_test_reportdir}/testreport.json"
-  if [[ "${_format}" == "json" ]]; then
-    run_tests_and_compile_testreport_json \
-      "${_test_rootdir[0]}" \
-      "${_filter}" \
-      "${_test_reportdir}" \
-      "${_is_parallel}"
-  elif [[ "${_format}" == "tap" ]]; then
-    run_tests_and_compile_testreport_tap \
-      "${_test_rootdir[0]}" \
-      "${_filter}" \
-      "${_test_reportdir}" \
-      "${_is_parallel}" \
-      "${_outfile}"
-  else
-    print_usage "${TESTRUNNER_SPECIFICATION}"
-    abort "Unknown format '${_format}' was specified."
-  fi
+  run_tests_and_compile_testreport_tap \
+    "${_test_rootdir[0]}" \
+    "${_filter}" \
+    "${_test_reportdir}" \
+    "${_is_parallel}" \
+    "${_outfile}"
 }
 
 main "${@}"
