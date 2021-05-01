@@ -303,7 +303,8 @@ function run_tests_and_compile_testreport_json() {
 
 ___taps_to_json_converter="$(
   cat <<'END'
-cat "${_each}" | jq -crM '.|
+cat "${_each}" |
+jq -crM '.|
 if .report.result.precheck == true then
   if .report.result.success == true then
     "ok " + (.id|tostring) + " " + .name
@@ -324,7 +325,7 @@ function run_tests_and_compile_testreport_tap() {
   local _test_filter="${2:?Filter is missing}"
   local _test_reportdir="${3:?Teset report directory is missing}"
   local _parallel="${4:-true}"
-  local _outfile="${5:-"${_test_reportdir}/testreport.json"}}"
+  local _outfile="${5:-"${_test_reportdir}/testreport.json"}"
   _test_rootdir="${_test_rootdir%/}"
   local -a _tests
   info_begin "_test_rootdir: '${_test_rootdir}'; _test_filter: '${_test_filter}'; _test_reportdir: '${_test_reportdir}'"
@@ -333,12 +334,12 @@ function run_tests_and_compile_testreport_tap() {
   echo "1..${#_tests[@]}"
   local _tmp_test_results_files_list_file _test_result_files
   _tmp_test_results_files_list_file="$(bud_temp_file)"
-  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" |
-    tee "${_tmp_test_results_files_list_file}" |
-    map_file "${___taps_to_json_converter}"
-
+  run_tests "${_test_rootdir}" "${_test_reportdir}" "${_parallel}" > "${_tmp_test_results_files_list_file}"
+  cat "${_tmp_test_results_files_list_file}" |  map_file "${___taps_to_json_converter}"
+  info_begin "JSON COMPILATION: '${_outfile}': '${_tmp_test_results_files_list_file}'"
   mapfile -t _test_result_files <"${_tmp_test_results_files_list_file}"
   compile_testreport_json "${_test_rootdir}" "${_test_filter}" "${_test_result_files[@]}" >"${_outfile}"
+  info_end "JSON COMPILATION"
   info_end
 }
 

@@ -9,6 +9,13 @@ function bud_temp_file() {
   mktemp -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
 }
 
+function bud_temp_fifo() {
+  local _ret
+  _ret="$(mktemp -d -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}")/0"
+  mkfifo "${_ret}"
+  echo "${_ret}"
+}
+
 # Filter files in input by a given predicate
 # Useful when you do not want to get non-zero exit code for no matching input record.
 # Usage:
