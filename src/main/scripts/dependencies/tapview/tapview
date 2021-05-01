@@ -185,7 +185,9 @@ then
     report="${report}, ${skipcount} SKIPs"
 fi
 
-echo "${report}."
+# This line was modified by Hiroshi Ukai.
+# Because '\n' sequence is not interpreted by some 'echo'es.
+printf "${report}."
 
 exit "${status}"
 
