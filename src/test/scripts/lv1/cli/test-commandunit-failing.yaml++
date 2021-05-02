@@ -4,9 +4,9 @@
 when:
   description:
     - Run a failing test and make sure it is reported correctly.
-  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${PROJECT_DIR}/out/main/scripts/bin/commandunit"
+  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${PROJECT_BASEDIR}/out/main/scripts/bin/commandunit"
   args:
-    - QUOTE2:--test-srcdir=${PROJECT_DIR}/out/test/scripts/lv2/failing
+    - QUOTE2:--test-srcdir=${PROJECT_BASEDIR}/out/test/scripts/lv2/failing
 then:
   description":
     - The message is printed to stdout.

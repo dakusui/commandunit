@@ -10,9 +10,9 @@ function execute_stage() {
   _repo_url="$(jq -crM '.repo.url' "build_info.json")"
   _docbranch="$(jq -crM '.repo.documentation.docbranch' ./build_info.json)"
   git clone "${_repo_url}" --branch="${_docbranch}" --depth=1 "${DOCDIR}"|| abort "Failed to clone from '${_repo_url}'. Maybe you don't have '${_docbranch}' branch"
-  # In ordre not to do 'rm -fr .' , 'rm -fr /', or 'rm -fr "${PROJECT_DIR}' on unintended behavior (bugs)
+  # In ordre not to do 'rm -fr .' , 'rm -fr /', or 'rm -fr "${PROJECT_BASEDIR}' on unintended behavior (bugs)
   # Intentionally not using "$DOCDIR" here.
-  rm -fr "${PROJECT_DIR}/out/doc/"*
+  rm -fr "${PROJECT_BASEDIR}/out/doc/"*
 
   ./build.sh doc
 

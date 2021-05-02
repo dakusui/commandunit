@@ -2,12 +2,12 @@
 readonly __BUILD__BUILD_RC=true
 
 _build_info_file="${PWD}/build_info.json"
-PROJECT_DIR="${PWD}"
-SRCDIR="${PROJECT_DIR}/src"
-OUTDIR="${PROJECT_DIR}/out"
+PROJECT_BASEDIR="${PWD}"
+SRCDIR="${PROJECT_BASEDIR}/src"
+OUTDIR="${PROJECT_BASEDIR}/out"
 EXEC_BASEDIR="${OUTDIR}/main/scripts"
-DOCDIR="${PROJECT_DIR}/out/doc"
-DOCSRCDIR="${PROJECT_DIR}/out/site/adoc"
+DOCDIR="${PROJECT_BASEDIR}/out/doc"
+DOCSRCDIR="${PROJECT_BASEDIR}/out/site/adoc"
 LIBDIR="${OUTDIR}/lib"
 TESTDIR="${OUTDIR}/test/scripts/lv1"
 TESTREPORTDIR="${OUTDIR}/testreport"
@@ -25,7 +25,7 @@ export LATEST_RELEASED_VERSION
 export TARGET_VERSION
 export PROJECT_NAME
 export HOMEPAGE
-export PROJECT_DIR
+export PROJECT_BASEDIR
 export SRCDIR
 export OUTDIR
 export EXEC_BASEDIR

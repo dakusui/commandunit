@@ -3,5 +3,5 @@ function execute_stage() {
   for _i in "${@}"; do
     _args="${_args}:${_i}"
   done
-  bashcov --bash-path="${SHELL}" -- "${PROJECT_DIR}/build.sh" doc test"${_args}"
+  bashcov --bash-path="${SHELL}" -- "${PROJECT_BASEDIR}/build.sh" doc test"${_args}"
 }

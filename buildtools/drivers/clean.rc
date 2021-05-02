@@ -1,4 +1,4 @@
 function execute_stage() {
-  rm -fr "${PROJECT_DIR}/"'?'
+  rm -fr "${PROJECT_BASEDIR}/"'?'
   rm -fr "out"
 }

@@ -7,7 +7,7 @@
 ----
                       build_info.rc       (direct run)
                       ------------------- --------------
-bud/                  PROJECT_DIR
+bud/                  PROJECT_BASEDIR
   src/                SRCDIR              EXEC_BASEDIR
     adoc/
     lib/                                  LIBDIR
@@ -30,20 +30,20 @@ bud/                  PROJECT_DIR
 |===
 |Name |build_info.rc |(direct run)
 
-|`PROJECT_DIR`
+|`PROJECT_BASEDIR`
 |`$(pwd)`
 |`$(pwd)`
 
 |`EXEC_BASEDIR`
 | `$\{OUTDIR\}`
-|`${PROJECT_DIR}/src`
+|`${PROJECT_BASEDIR}/src`
 
 |`SRCDIR`
-|`${PROJECT_DIR}/src`
+|`${PROJECT_BASEDIR}/src`
 |N/A
 
 |`OUTDIR`
-|`${PROJECT_DIR}/out`
+|`${PROJECT_BASEDIR}/out`
 |N/A
 
 |`DOCSRCDIR`
@@ -106,20 +106,20 @@ bud/
 |===
 |Name |build_info.rc |(direct run)
 
-|`PROJECT_DIR`
+|`PROJECT_BASEDIR`
 |`$(pwd)`
 |`$(pwd)`
 
 |`EXEC_BASEDIR`
 | `$\{OUTDIR\}`
-|`${PROJECT_DIR}/src`
+|`${PROJECT_BASEDIR}/src`
 
 |`SRCDIR`
-|`${PROJECT_DIR}/src`
+|`${PROJECT_BASEDIR}/src`
 |N/A
 
 |`OUTDIR`
-|`${PROJECT_DIR}/out`
+|`${PROJECT_BASEDIR}/out`
 |N/A
 
 |`DOCSRCDIR`
