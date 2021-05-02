@@ -1,0 +1,20 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  source:
+    - ${BUD_LIB}/json.rc
+  cmd: json_array_append
+  args:
+    - "[]"
+    - "[2]"
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - "RAW:[2]"
+  stderr:
+    absent:
+      - REGEX:.+

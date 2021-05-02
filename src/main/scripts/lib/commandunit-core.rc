@@ -184,10 +184,10 @@ function __bud__verify_stderr() {
 # $1: JSON object that describes the expectation to be verified
 # {
 #   "present": [
-#      "regex:Hello.*world"
+#      "REGEX:Hello.*world"
 #   ],
 #   "absent": [
-#      "regex:.*"
+#      "REGEX:.*"
 #   ]
 # }
 # $2-: An array that conttains the content of the file
@@ -269,7 +269,7 @@ function __bud__split_patterns_and_target_content() {
 function __bud__pattern_matches_target_content_line() {
   local _pattern="${1}" _target_content_line="${2}"
 
-  if [[ "${_pattern}" == "regex:"* ]]; then
+  if [[ "${_pattern}" == "REGEX:"* ]]; then
     local _p="${_pattern#*:}"
     if [[ "${_target_content_line}" =~ ${_p} ]]; then
       return 0
@@ -277,7 +277,7 @@ function __bud__pattern_matches_target_content_line() {
     return 1
   else
     local _p
-    if [[ "${_pattern}" == "raw:"* ]]; then
+    if [[ "${_pattern}" == "RAW:"* ]]; then
       _p="${_pattern#*:}"
     else
       _p="${_pattern}"

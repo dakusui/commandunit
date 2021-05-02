@@ -1,0 +1,18 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Just print a help message of commandunit
+  cmd: "${OUTDIR}/main/scripts/bin/commandunit"
+  args:
+    - --help
+then:
+  description":
+    - The message is printed to stdout.
+  stdout:
+    present:
+      - REGEX:Usage.+commandunit.+
+  stderr:
+    absent:
+      - REGEX:.+

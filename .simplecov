@@ -1,0 +1,8 @@
+SimpleCov.coverage_dir 'out/testreport-coverage'
+SimpleCov.add_filter '.git'
+SimpleCov.add_filter 'src'
+SimpleCov.add_group 'Executables', 'out/main/scripts/(bin/.*|(lib|bin)/.*\.sh)'
+SimpleCov.add_group 'Libraries', 'out/main/scripts/lib/.*\.rc'
+SimpleCov.add_group 'Externals', 'out/main/scripts/dependencies/(.*\.(rc|sh)|[a-z]+)'
+SimpleCov.add_group 'Tests', 'out/test/.*\.(rc|sh)'
+SimpleCov.add_group 'Build tools', 'buildtools/.*\.(rc|sh)|build.sh'

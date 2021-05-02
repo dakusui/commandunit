@@ -17,3 +17,10 @@ function quote() {
   local _v="${1}"
   echo -n "'""${_v//\'/\'\"\'\"\'}""'"
 }
+
+###
+# Quote a given string with a double quote (")
+function quote2() {
+  local _v="${1}"
+  echo -n '"'"${_v//\"/\"\'\"\'\"}"'"'
+}

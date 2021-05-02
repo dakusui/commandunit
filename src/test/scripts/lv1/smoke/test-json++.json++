@@ -1,0 +1,36 @@
+{
+  "$extends": [
+    "base/normal.json"
+  ],
+  "description": [
+    "This is a passing example NORMAL test for JSON++"
+  ],
+  "when": {
+    "description": [
+      "Just print a message 'hello world'"
+    ],
+    "source": [
+      "${BUD_LIB}/common.rc"
+    ],
+    "cmd": "echo",
+    "args": [
+      "-e",
+      "hello, world"
+    ]
+  },
+  "then": {
+    "description": [
+      "The message is printed to stdout."
+    ],
+    "stdout": {
+      "present": [
+        "REGEX:hello.+world"
+      ]
+    },
+    "stderr": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}

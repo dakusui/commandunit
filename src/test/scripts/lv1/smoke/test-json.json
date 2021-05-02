@@ -1,0 +1,68 @@
+{
+  "type": "NORMAL",
+  "description": [
+    "This is a passing example NORMAL test for JSON"
+  ],
+  "given": {
+    "description": [
+      "This should always be executed."
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu"
+      ]
+    },
+    "source": [
+    ],
+    "cmd": ":",
+    "args": [
+    ]
+  },
+  "when": {
+    "description": [
+      "Just print a message 'Hello world'"
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu"
+      ]
+    },
+    "source": [
+      "$BUD_LIB/common.rc"
+    ],
+    "cmd": "echo",
+    "args": [
+      "-e",
+      "hello, world"
+    ]
+  },
+  "then": {
+    "description": [
+      "The message is printed to stdout."
+    ],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [
+        "REGEX:hello.+world"
+      ],
+      "absent": [
+      ]
+    },
+    "stderr": {
+      "present": [
+      ],
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}

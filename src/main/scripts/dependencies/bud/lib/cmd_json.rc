@@ -57,7 +57,13 @@ function __bud__compose_commandline_from_json_object() {
   _ret="$(__bud__get_command_name_from_json_object "${_json_object}")"
   mapfile -t _args < <(__bud__get_args_from_json_object "${_json_object}")
   for _i in "${_args[@]}"; do
-    _ret="${_ret} $(quote "${_i}")"
+    if [[ "${_i}" == "QUOTE:"* ]]; then
+      _ret="${_ret} $(quote "${_i#*:}")"
+    elif [[ "${_i}" == "QUOTE:"* ]]; then
+      _ret="${_ret} $(quote2 "${_i#*:}")"
+    else
+      _ret="${_ret} $(quote2 "${_i}")"
+    fi
   done
 
   echo "${_ret}"

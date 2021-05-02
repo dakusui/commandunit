@@ -1,0 +1,22 @@
+---
+"$extends":
+  - base/normal.json
+type: CUSTOM
+description:
+  - This is a test for the customization mechanism of commandunit.
+when:
+  source:
+    - ${BUD_LIB}/common.rc
+  cmd: echo
+  args:
+    - "-e"
+    - hello, world
+then:
+  description":
+    - The message is printed to stdout.
+  stdout:
+    present:
+      - REGEX:hello.+world
+  stderr:
+    absent:
+      - REGEX:.+

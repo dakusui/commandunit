@@ -1,0 +1,21 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'join_by' with a delimiter '-' and an array (A, B, C).
+  source:
+    - ${BUD_LIB}/arrays.rc
+  cmd: join_by
+  args:
+    - -
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - RAW:
+  stderr:
+    absent:
+      - REGEX:.+

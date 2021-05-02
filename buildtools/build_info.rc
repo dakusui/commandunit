@@ -8,7 +8,7 @@ EXEC_BASEDIR="${OUTDIR}/main/scripts"
 DOCDIR="${PROJECT_DIR}/out/doc"
 DOCSRCDIR="${PROJECT_DIR}/out/site/adoc"
 LIBDIR="${OUTDIR}/lib"
-TESTDIR="${OUTDIR}/test/scripts"
+TESTDIR="${OUTDIR}/test/scripts/lv1"
 TESTREPORTDIR="${OUTDIR}/testreport"
 LATEST_RELEASED_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.latestReleased.major' "${PROJECT_DIR}/build_info.json")" \
                                            "$(jq -r -c '.version.latestReleased.minor' "${PROJECT_DIR}/build_info.json")")"

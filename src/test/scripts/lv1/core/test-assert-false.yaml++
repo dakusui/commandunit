@@ -1,0 +1,25 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  source:
+    - ${BUD_LIB}/core.rc
+  cmd: assert_that
+  args:
+    - HELLO
+    - "[["
+    - hello
+    - ==
+    - Hello
+    - "]]"
+then:
+  exitCode:
+    - NOT_EQUAL
+    - 0
+  stdout:
+    absent:
+      - REGEX:.+
+  stderr:
+    present:
+      - REGEX:Condition.*HELLO
+      - REGEX:Detail.*hello.*Hello

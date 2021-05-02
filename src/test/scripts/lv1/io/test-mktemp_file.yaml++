@@ -1,0 +1,17 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  source:
+    - ${BUD_LIB}/io.rc
+  cmd: bud_temp_file
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - REGEX:.+\/bud\/commandunit
+  stderr:
+    absent:
+      - REGEX:.+
