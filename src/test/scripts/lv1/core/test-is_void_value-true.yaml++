@@ -3,7 +3,7 @@
   - base/normal.json
 when:
   source:
-    - ${BUD_LIB}/core.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/core.rc
   cmd: is_void_value
   args:
     - BUD_VOID:4a19bc62ecb732c9bd99fcc834116227

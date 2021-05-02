@@ -17,9 +17,10 @@ function define_plugin_functions() {
 }
 
 PROJECT_NAME="${PROJECT_NAME:-unknown}"
-COMMANDUNIT_DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APP_NAME="${PROJECT_NAME}"
+
+COMMANDUNIT_DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 COMMANDUNIT_DOCKERDIR_PREFIX="/var/lib/commandunit"
 COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}"
 if [[ "${COMMANDUNIT_LOGLEVEL}" == DEBUG ]]; then

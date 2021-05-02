@@ -3,7 +3,7 @@
   - base/normal.json
 when:
   source:
-    - ${BUD_LIB}/logging.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/logging.rc
   cmd: trace
   args:
     - Hello!

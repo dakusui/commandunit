@@ -3,7 +3,7 @@
   - base/normal.json
 when:
   source:
-    - ${BUD_LIB}/io.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/io.rc
   cmd: bud_temp_file
 then:
   exitCode:

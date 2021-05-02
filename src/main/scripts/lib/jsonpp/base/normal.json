@@ -18,7 +18,7 @@
     "source": [
     ],
     "environmentVariables": {
-      "BUD_LIB": "eval:string:${BUD_LIB}"
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
     },
     "cmd": ":",
     "args": [

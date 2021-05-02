@@ -5,7 +5,7 @@ when:
   description:
     - Run 'join_by' with a delimiter '-' and an array (A, B, C).
   source:
-    - ${BUD_LIB}/arrays.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc
   cmd: join_by
   args:
     - -

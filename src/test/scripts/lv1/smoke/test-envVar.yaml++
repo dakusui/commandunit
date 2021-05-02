@@ -7,7 +7,7 @@ when:
   description:
     - Just print a message 'hello, world'
   source:
-    - ${BUD_LIB}/common.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/common.rc
   environmentVariables:
     HELLOENV: HELLO, WORLD
   cmd: eval

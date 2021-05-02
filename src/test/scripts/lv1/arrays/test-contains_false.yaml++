@@ -5,7 +5,7 @@ when:
   description:
     - Run 'array_contains' with the first argument contained by the rest.
   source:
-    - ${BUD_LIB}/arrays.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc
   cmd: array_contains
   args:
     - HELLO

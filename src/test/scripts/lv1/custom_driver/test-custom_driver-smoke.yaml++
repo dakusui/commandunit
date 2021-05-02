@@ -6,7 +6,7 @@ description:
   - This is a test for the customization mechanism of commandunit.
 when:
   source:
-    - ${BUD_LIB}/common.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/common.rc
   cmd: echo
   args:
     - "-e"

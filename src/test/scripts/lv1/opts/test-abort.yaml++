@@ -5,7 +5,7 @@ when:
   description:
     - Call 'abort' function.
   source:
-    - ${BUD_LIB}/opts.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/opts.rc
   cmd: abort
   args:
     - HELLO ABORT

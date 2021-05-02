@@ -3,7 +3,7 @@
   - base/normal.json
 when:
   source:
-    - ${BUD_LIB}/json.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/json.rc
   cmd: json_array_append
   args:
     - "[1]"

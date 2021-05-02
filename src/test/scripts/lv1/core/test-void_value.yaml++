@@ -5,7 +5,7 @@ when:
   description:
     - Call 'void_value' function, which should return a value that represents nothing.
   source:
-    - ${BUD_LIB}/core.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/core.rc
   cmd: void_value
 then:
   exitCode:

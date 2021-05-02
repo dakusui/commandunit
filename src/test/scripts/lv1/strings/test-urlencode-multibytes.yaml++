@@ -3,7 +3,7 @@
   - base/normal.json
 when:
   source:
-    - ${BUD_LIB}/strings.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/strings.rc
   cmd: urlencode
   args:
     - こんにちは、世界
