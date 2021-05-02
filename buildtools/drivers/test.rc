@@ -1,21 +1,56 @@
 source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/stage_handler_dispatcher.rc"
 source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/docker.rc"
 
+set -eu -E
+
 function execute_stage() {
-  local _target="${1:-"source"}" _filter="${2:-.*}"
-  shift 2
-  message "BEGIN HANDLER(test): target: '${_target}'; filter: '${_filter}': '${*}'"
-  buildtools__execute_stage "${_target}" "${_filter}" "${@}"
+  local _args
+  mapfile -t _args < <(resolve_stage_args 3 "${@}")
+  local _target="${_args[0]}" _filter="${_args[1]}" _ignore_mtime="${_args[2]}"
+  message "BEGIN HANDLER(test): target: '${_target}'; filter: '${_filter}'; ignore_mtime: '${_ignore_mtime}'; '${_args[*]:3}'"
+  buildtools__execute_stage "${_target}" "${_filter}" "${_ignore_mtime}" "${_args[@]:3}"
   __check_testreport_json_file "${TESTREPORTDIR}/testreport.json"
   message "END HANDLER(test)"
 }
 
-function __run_commandunit() {
-  local _test_filter="${1}"
+function resolve_stage_args() {
+  local _num_params="${1}"
   shift
+  local -a _default_args
+  mapfile -t _default_args < <(default_stage_args)
+  for _i in $(seq 0 $((_num_params - 1))); do
+    local _v=""
+    if [[ "${_i}" -lt "${#@}" ]]; then
+      _v="$(eval "echo \${$((_i + 1))}")"
+    fi
+    if [[ "${_v}" == "" ]]; then
+      _v="${_default_args[$_i]}"
+    fi
+    echo "${_v}"
+  done
+  for _i in $(seq "${_num_params}" $((${#@} - 1))); do
+    eval "echo \${$_i}"
+  done
+}
+
+function default_stage_args() {
+  echo 'source'
+  echo '.*'
+  echo 'false'
+}
+
+function __run_commandunit() {
+  local _test_filter="${1}" _ignore_mtime="${2}"
+  shift
+  if [[ "${_ignore_mtime}" == "true" ]]; then
+    _ignore_mtime="--ignore-mtime"
+  else
+    _ignore_mtime=""
+  fi
   run_commandunit \
     --parallel \
     --tap \
+    ${_ignore_mtime} \
     --filter="${_test_filter}" \
     --configdir="${TESTDIR}/.commandunit" \
     --test-report="${TESTREPORTDIR}" \

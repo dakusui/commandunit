@@ -51,9 +51,9 @@ function execute() {
   elif [[ ${_first} == COVERAGE ]]; then
     execute clean prepare doc coverage "${@}"
   elif [[ ${_first} == PACKAGE ]]; then
-    execute clean prepare test build:snapshot test:snapshot "${@}"
+    execute clean prepare test:::true build:snapshot test:snapshot::true "${@}"
   elif [[ ${_first} == RELEASE ]]; then
-    execute clean release-precheck prepare test build:release test:release push:release release-postmortem "${@}"
+    execute clean release-precheck prepare test:::true build:release test:release::true push:release release-postmortem "${@}"
   elif [[ ${_first} == PUBLISH_DOC ]]; then
     execute clean prepare publish-doc "${@}"
   else

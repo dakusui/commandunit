@@ -12,6 +12,7 @@ TESTCOMPILER_SPECIFICATION='{
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
+    ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
     ["","output-dir",true,[],""]
   ],
   "examples":{
@@ -34,7 +35,7 @@ function main() {
     print_usage "${TESTRUNNER_SPECIFICATION}"
     return 0
   fi
-  local _is_parallel _filter _test_rootdir
+  local _is_parallel _filter _ignore_mtime _test_rootdir
   mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
   mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
     _i="$(realpath -m "${_i}")"
@@ -49,19 +50,21 @@ function main() {
 
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _output_dir="$(parseopt_string_value_for 'output-dir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
   _output_dir="$(realpath -m "${_output_dir}")"
 
   prepare_tests "${_test_rootdir[0]}" \
     "${_output_dir}" \
     "${_is_parallel}" \
-    "${_filter}"
+    "${_filter}" \
+    "${_ignore_mtime}"
 }
 
 function prepare_tests() {
-  local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}"
+  local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}" _ignore_mtime="${5}"
   info_begin "Preprocessing"
-  info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'"
+  info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'; _ignore_mtime: '${_ignore_mtime}'"
   # Copy contents in srcdir to outdir
   if [[ "${_srcdir}" != "${_outdir}" ]]; then
     # Create a directory for output.
@@ -69,12 +72,12 @@ function prepare_tests() {
     cp -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
   fi
   # Compile tests
-  __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}"
+  __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
   info_end "Preprocessing"
 }
 
 function __process_yamlpp_files() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
   function __process_files_converter() {
     echo "yaml2json"
   }
@@ -87,14 +90,14 @@ function __process_yamlpp_files() {
     local _source_file="${1}" _output_dir="${2}"
     echo "${_output_dir}/${_source_file%.yaml++}".json++
   }
-  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "yaml++"
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" "yaml++"
   unset -f __process_files_dest
   unset -f __process_files_src
   unset -f __process_files_converter
 }
 
 function __process_yaml_files() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
   function __process_files_converter() {
     echo "yaml2json"
   }
@@ -107,14 +110,14 @@ function __process_yaml_files() {
     local _source_file="${1}" _output_dir="${2}"
     echo "${_output_dir}/${_source_file%.yaml}".json
   }
-  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "yaml"
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" "yaml"
   unset -f __process_files_dest
   unset -f __process_files_src
   unset -f __process_files_converter
 }
 
 function __process_jsonpp_files() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
   function __process_files_converter() {
     echo "jq-front"
   }
@@ -127,7 +130,7 @@ function __process_jsonpp_files() {
     local _source_file="${1}" _output_dir="${2}"
     echo "${_output_dir}/${_source_file%++}"
   }
-  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "json++"
+  __process_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" "json++"
   unset -f __process_files_dest
   unset -f __process_files_src
   unset -f __process_files_converter
@@ -142,16 +145,16 @@ function __process_files_convert() {
 }
 
 function __process_files() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _extension="${4}"
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}" _extension="${5}"
   local _source_files _i
-  info_begin "Processing '${_extension}' files"
+  info_begin "Processing '${_extension}' files: (force: ${_ignore_mtime}})"
   ensure_no_bg_jobs
   mapfile -t _source_files < <(__list_test_sources "${_output_dir}" "${_extension}" "${_filter}")
   for _i in "${_source_files[@]}"; do
     local _cmd _src _dest
     _src="$(__process_files_src "${_i}" "${_output_dir}")"
     _dest="$(__process_files_dest "${_i}" "${_output_dir}")"
-    if [[ ! -e "${_dest}" || "${_dest}" -ot "${_src}" ]]; then
+    if [[ ! -e "${_dest}" || "${_dest}" -ot "${_src}" || "${_ignore_mtime}" == true ]]; then
       info "- '${_i}'"
       _cmd="$(__process_files_convert "${_src}" "${_dest}")"
       debug "_cmd: '${_cmd}'"
@@ -169,17 +172,17 @@ function __process_files() {
 }
 
 function __compile_tests() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}"
+  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
 
-  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
 
-  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
 
   local _pwd
   _pwd="$(pwd)"
   export JF_PATH="${_pwd}:${_output_dir}:${APP_LIB}/jsonpp"
   info "JF_PATH: '${JF_PATH}'"
-  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}"
+  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
 }
 
 function __list_test_sources() {
