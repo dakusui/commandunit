@@ -5,7 +5,8 @@ readonly __BUD__BUD_RC=true
 # __bud__private_function
 # public_function
 
-source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/opts.rc"
+source "$(dirname "${BASH_SOURCE[0]}")/envvars.rc"
+source "${BUD_HOME}/lib/opts.rc"
 source "${BUD_HOME}/lib/common.rc"
 source "${BUD_HOME}/lib/jobs.rc"
 source "${BUD_HOME}/lib/cmd_json.rc"

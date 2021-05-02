@@ -1,7 +1,8 @@
 "${__BUD__JOBS_RC:-false}" && return 0
 readonly __BUD__JOBS_RC=true
 
-source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/logging.rc"
+source "$(dirname "${BASH_SOURCE[0]}")/envvars.rc"
+source "${BUD_HOME}/lib/logging.rc"
 
 function ensure_no_bg_jobs() {
   local _num_remaining_jobs

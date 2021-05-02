@@ -4,7 +4,7 @@ readonly __BUD__OPT_RC=true
 set -eu -o pipefail -o errtrace
 shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
 
-source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/envvars.rc"
+source "$(dirname "${BASH_SOURCE[0]}")/envvars.rc"
 
 #####
 # A function to set trap on a signal.

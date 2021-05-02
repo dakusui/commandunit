@@ -8,7 +8,8 @@ readonly __BUD__CMD_JSON_RC=true
 #
 ##########################################################################################
 
-source "$(dirname "${BASH_SOURCE[0]}")/common.rc"
+source "$(dirname "${BASH_SOURCE[0]}")/envvars.rc"
+source "${BUD_HOME}/lib/common.rc"
 
 function __bud__get_description_from_json_object() {
   local _json_object="${1}"

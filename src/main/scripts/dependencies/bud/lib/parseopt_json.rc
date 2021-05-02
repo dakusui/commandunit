@@ -1,7 +1,7 @@
 "${__BUD__PARSEOPT_JSON_RC:-false}" && return 0
 readonly __BUD__PARSEOPT_JSON_RC=true
 
-source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/envvars.rc"
+source "$(dirname "${BASH_SOURCE[0]}")/envvars.rc"
 source "${BUD_HOME}/lib/core.rc"
 source "${BUD_HOME}/lib/json.rc"
 source "${BUD_HOME}/lib/arrays.rc"
