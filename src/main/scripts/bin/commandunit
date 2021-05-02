@@ -24,6 +24,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
     ["","configdir",true,[],"directory to store config files (default: current {directory/.commandunit})"],
+    ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
@@ -54,13 +55,14 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tap_enabled _ignore_mtime
+  local _default_target_directory _project_name _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tap_enabled _ignore_mtime
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
     _subcommands=(preprocess run report)
   fi
   _default_target_directory="${COMMANDUNIT_PWD:-"${PWD}"}"
+  _project_name="$(parseopt_string_value_for "project-name" "${_parsed_opts_json}")"
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
@@ -76,6 +78,7 @@ function main() {
   _test_workdir="$(__commandunit__normalize_path "${_test_workdir}")"
   _test_reportdir="$(__commandunit__normalize_path "${_test_reportdir}")"
 
+  info "project-name: '${_project_name}'"
   info "parallel: '${_is_parallel}'"
   info "filter: '${_filter}'"
   info "ignore-mtime: '${_ignore_mtime}'"
@@ -126,7 +129,7 @@ function main() {
         ${_viewer_command} || message "test failures/errors were detected."
     elif [[ "${_each}" == "report" ]]; then
 
-      "${_bindir}/reportrenderer" "${_test_reportdir}/testreport.json" >"${_test_reportdir}/testreport.adoc"
+      "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" >"${_test_reportdir}/testreport.adoc"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi

@@ -21,6 +21,7 @@ function __run_commandunit() {
     _ignore_mtime=""
   fi
   run_commandunit \
+    --project-name="commandunit" \
     --parallel \
     --tap \
     ${_ignore_mtime} \

@@ -4,10 +4,10 @@ source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/main.rc"
 source "${COMMANDUNIT_HOME}/lib/report_formatter.rc"
 
 function main() {
-  local _json_object_file="${1}"
+  local _project_name="${1}" _json_object_file="${2}"
   local _json_object
   _json_object="$(jq -crM . "${_json_object_file}")"
-  print_test_report "${_json_object}"
+  print_test_report "${_project_name}" "${_json_object}"
 }
 
 main "${@}"

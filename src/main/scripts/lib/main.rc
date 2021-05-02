@@ -16,9 +16,8 @@ function define_plugin_functions() {
   }
 }
 
-PROJECT_NAME="${PROJECT_NAME:-unknown}"
 COMMANDUNIT_HOME="${COMMANDUNIT_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
-BUD_APPCLASS_NAME="${PROJECT_NAME}"
+BUD_APPCLASS_NAME="commandunit"
 
 COMMANDUNIT_DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 COMMANDUNIT_HOSTFSROOT_MOUNTPOINT="$(cat "$(dirname "${BASH_SOURCE[0]}")/hostfsroot_mountpoint")"
