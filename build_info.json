@@ -2,7 +2,8 @@
   "projectName": "commandunit",
   "homepage": "https://github.com/dakusui/commandunit",
   "docker": {
-    "user": "dakusui"
+    "user": "dakusui",
+    "inContainerRoot": "/var/lib"
   },
   "version": {
     "latestReleased": {

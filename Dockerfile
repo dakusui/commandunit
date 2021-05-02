@@ -9,5 +9,6 @@ RUN export LC_ALL=C && \
     apt-get update && \
     apt-get install -y gettext-base && \
     mkdir -p /var/lib/commandunit && \
-    echo $VERSION > /var/lib/commandunit/version_file
+    mkdir -p /app/lib/commandunit && \
+    echo $VERSION > /app/lib/commandunit/version_file
 ENTRYPOINT ["/app/bin/commandunit"]

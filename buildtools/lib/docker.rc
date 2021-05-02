@@ -43,15 +43,15 @@ function __run_command_unit_with_docker() {
   shift
   local _me
   local _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
-  local _commandunit_root_in_docker_container="/var/lib/commandunit"
+  local _commandunit_home_in_docker_container="/var/lib/commandunit"
   _me="$(whoami)"
   message "Running commandunit(docker): '${_image_name}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
-    --env OUTDIR="${_commandunit_root_in_docker_container}${OUTDIR}" \
-    -v "$(pwd):${_commandunit_root_in_docker_container}$(pwd)" \
+    --env PROJECT_DIR="${PROJECT_DIR}" \
+    -v "$(pwd):${_commandunit_home_in_docker_container}$(pwd)" \
     -i "${_image_name}" \
     "${@}"
 }
@@ -61,15 +61,15 @@ function __run_command_unit_with_docker_from_entrypoint() {
   shift 2
   local _me
   local _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
-  local _commandunit_root_in_docker_container="/var/lib/commandunit"
+  local _commandunit_home_in_docker_container="/var/lib/commandunit"
   _me="$(whoami)"
   message "Running commandunit(docker): '${_image_name}'"
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
     --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
-    --env OUTDIR="${_commandunit_root_in_docker_container}${OUTDIR}" \
-    -v "$(pwd):${_commandunit_root_in_docker_container}$(pwd)" \
+    --env PROJECT_DIR="${PROJECT_DIR}" \
+    -v "$(pwd):${_commandunit_home_in_docker_container}$(pwd)" \
     --entrypoint="${_entrypoint}" \
     -i "${_image_name}" \
     "${@}"
