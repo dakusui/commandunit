@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "${COMMANDUNIT_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/main.rc"
 source "${COMMANDUNIT_HOME}/lib/report_formatter.rc"
 
 function main() {
