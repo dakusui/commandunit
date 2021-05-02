@@ -17,11 +17,6 @@ BUD_LIB="${BUD_HOME}/lib"
 BUD_APP_NAME="${BUD_APP_NAME:-$(basename "$(pwd)")}"
 BUD_APP_NAME="${BUD_APP_NAME%.*}"
 
-BUD_APP_HOME=${BUD_APP_HOME:-"$(pwd)"}
-BUD_TEST_SRCDIR=${BUD_TEST_SRCDIR:-${BUD_APP_HOME}/src/test/scripts}
-BUD_TEST_BASEDIR="${BUD_TEST_BASEDIR:-${BUD_TEST_SRCDIR}}"
-BUD_TEST_REPORTDIR=${BUD_TEST_REPORTDIR:-${BUD_APP_HOME}/target/classes}
-
 export BUD_VOID
 export BUD_LIB
 export BUD_HOME
@@ -30,6 +25,3 @@ export BUD_INFO="${BUD_INFO:-enabled}"
 export BUD_DEBUG="${BUD_DEBUG:-disabled}"
 export BUD_LOG_FILE=${BUD_LOG_FILE:-""}
 export BUD_APP_NAME
-export BUD_TEST_SRCDIR
-export BUD_TEST_BASEDIR
-export BUD_TEST_REPORTDIR
