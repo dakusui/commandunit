@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+source "${COMMANDUNIT_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
 
 TESTCOMPILER_SPECIFICATION='{
   "usage": "testpreprocessor [OPTION]... [DIRECTORY]",
@@ -22,7 +22,7 @@ TESTCOMPILER_SPECIFICATION='{
     "github project": "https://github.com/dakusui/bud"
   }
 }'
-APP_LIB="${APP_HOME}/lib"
+APP_LIB="${COMMANDUNIT_HOME}/lib"
 
 function main() {
   local _parsed_opts_json

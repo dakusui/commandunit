@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
-source "${APP_HOME}/lib/report_formatter.rc"
+source "${COMMANDUNIT_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+source "${COMMANDUNIT_HOME}/lib/report_formatter.rc"
 
 function main() {
   local _json_object_file="${1}"

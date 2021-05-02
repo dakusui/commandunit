@@ -93,7 +93,7 @@ bud/
   build_info.json
   LICENSE
   README.adoc
-{app}/                 BUD_APP_HOME
+{app}/                 BUD_COMMANDUNIT_HOME
   src/
     test/
       scripts/         BUD_TEST_SRCCDIR

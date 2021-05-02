@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "${APP_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
-source "${APP_HOME}/lib/commandunit-core.rc"
+source "${COMMANDUNIT_HOME:="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"}/lib/main.rc"
+source "${COMMANDUNIT_HOME}/lib/commandunit-core.rc"
 
 TESTRUNNER_SPECIFICATION='{
   "usage": "testrunner [OPTION]... [DIRECTORY]",
@@ -137,7 +137,7 @@ function run_each_test() {
     if [[ -e "${COMMANDUNIT_CONFDIR}/testdrivers/scripttest.rc" ]]; then
       __run_each_test_test_driver_name="${COMMANDUNIT_CONFDIR}/testdrivers/scripttest.rc"
     else
-      __run_each_test_test_driver_name="${APP_HOME}/lib/testdrivers/scripttest.rc"
+      __run_each_test_test_driver_name="${COMMANDUNIT_HOME}/lib/testdrivers/scripttest.rc"
     fi
   elif [[ "${_testname}" == *.json ]]; then
     local _content _test_type
@@ -148,7 +148,7 @@ function run_each_test() {
     if [[ -e "${_custom_driver}" ]]; then
       __run_each_test_test_driver_name="${_custom_driver}"
     else
-      __run_each_test_test_driver_name="${APP_HOME}/lib/testdrivers/json_${_test_type}.rc"
+      __run_each_test_test_driver_name="${COMMANDUNIT_HOME}/lib/testdrivers/json_${_test_type}.rc"
     fi
   else
     abort "Unsupported test type: '${_testname}'"

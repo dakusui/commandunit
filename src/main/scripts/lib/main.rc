@@ -17,7 +17,7 @@ function define_plugin_functions() {
 }
 
 PROJECT_NAME="${PROJECT_NAME:-unknown}"
-APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
+COMMANDUNIT_HOME="${COMMANDUNIT_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APPCLASS_NAME="${PROJECT_NAME}"
 
 COMMANDUNIT_DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
@@ -42,7 +42,7 @@ fi
 
 export COMMANDUNIT_DOCKERDIR_PREFIX
 export COMMANDUNIT_DEPENDENCIES_ROOT
-export APP_HOME
+export COMMANDUNIT_HOME
 export BUD_APPCLASS_NAME
 export BUD_INFO
 export BUD_DEBUG

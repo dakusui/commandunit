@@ -1,4 +1,4 @@
-source "${APP_HOME}/lib/commandunit-core.rc"
+source "${COMMANDUNIT_HOME}/lib/commandunit-core.rc"
 
 export BUD_DEBUG=enabled
 
