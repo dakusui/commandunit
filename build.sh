@@ -34,45 +34,41 @@ function __execute_stage() {
   return 0
 }
 
-function main() {
-  if [[ $# == 0 ]]; then
-    main clean prepare doc test
+function execute() {
+  if [[ "${#@}" == 0 ]]; then
     return 0
   fi
-  if [[ ${1} == DOC ]]; then
-    main clean prepare doc
-    return 0
-  fi
-  if [[ ${1} == TEST ]]; then
-    main clean prepare test
-    return 0
-  fi
-  if [[ ${1} == COVERAGE ]]; then
-    main clean prepare doc coverage
-    return 0
-  fi
-  if [[ ${1} == PACKAGE ]]; then
-    #    check_release    doc test package_release test_release release post_release
-    main clean prepare test build:snapshot test:snapshot
-    return 0
-  fi
-  if [[ ${1} == RELEASE ]]; then
-    #    check_release    doc test package_release test_release release post_release
-    main clean release-precheck prepare test build:release test:release push:release release-postmortem
-    return 0
-  fi
-  if [[ ${1} == PUBLISH_DOC ]]; then
-    #    check_release    doc test package_release test_release release post_release
-    main clean prepare publish-doc
-    return 0
-  fi
-  local -a _stages=()
-  _stages+=("$@")
-  for i in "${_stages[@]}"; do
-    local _args
-    IFS=':' read -r -a _args <<<"${i}"
+  local _first="${1}"
+  shift
+  if [[ "${_first}" == BUILD ]]; then
+    execute clean prepare doc test "${@}"
+  elif [[ "${_first}" == DOC ]]; then
+    execute clean prepare doc "${@}"
+  elif [[ ${_first} == DOC ]]; then
+    execute clean prepare doc "${@}"
+  elif [[ ${_first} == TEST ]]; then
+    execute clean prepare test "${@}"
+  elif [[ ${_first} == COVERAGE ]]; then
+    execute clean prepare doc coverage "${@}"
+  elif [[ ${_first} == PACKAGE ]]; then
+    execute clean prepare test build:snapshot test:snapshot "${@}"
+  elif [[ ${_first} == RELEASE ]]; then
+    execute clean release-precheck prepare test build:release test:release push:release release-postmortem "${@}"
+  elif [[ ${_first} == PUBLISH_DOC ]]; then
+    execute clean prepare publish-doc "${@}"
+  else
+    IFS=':' read -r -a _args <<<"${_first}"
     __execute_stage "${_args[@]}" || exit 1
-  done
+    execute "${@}"
+  fi
+}
+
+function main() {
+  if [[ "${#@}" == 0 ]]; then
+    execute BUILD
+  else
+    execute "${@}"
+  fi
 }
 
 main "${@}"
