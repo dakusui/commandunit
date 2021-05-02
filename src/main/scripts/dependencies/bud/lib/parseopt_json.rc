@@ -2,9 +2,9 @@
 readonly __BUD__PARSEOPT_JSON_RC=true
 
 source "${BUD_LIB:="$(dirname "${BASH_SOURCE[0]}")"}/envvars.rc"
-source "${BUD_LIB}/core.rc"
-source "${BUD_LIB}/json.rc"
-source "${BUD_LIB}/arrays.rc"
+source "${BUD_HOME}/lib/core.rc"
+source "${BUD_HOME}/lib/json.rc"
+source "${BUD_HOME}/lib/arrays.rc"
 
 # Following is an example JSON object that should be passed to
 # the this function as its first argument.
