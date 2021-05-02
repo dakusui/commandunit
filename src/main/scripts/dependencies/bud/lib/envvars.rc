@@ -8,20 +8,17 @@ BUD_VOID="BUD_VOID:$(echo -n BUD_VOID | md5sum | cut -d ' ' -f 1)"
 
 ####
 # {PROJECT_ROOT_DIRECTORY}/  _ BUD_HOME
-#   lib/                     - BUD_LIB
 BUD_HOME="$(dirname "$(dirname "${BASH_SOURCE[0]}")")"
-BUD_LIB="${BUD_HOME}/lib"
 
 ####
 # The name of the application that sourced this file.
-BUD_APP_NAME="${BUD_APP_NAME:-$(basename "$(pwd)")}"
-BUD_APP_NAME="${BUD_APP_NAME%.*}"
+# This environment variable is used when a temporary file (fifo) is created by functions in io.rc.
+BUD_APPCLASS_NAME="${BUD_APPCLASS_NAME:-$(basename "$(pwd)")}"
+BUD_APPCLASS_NAME="${BUD_APPCLASS_NAME%.*}"
 
 export BUD_VOID
-export BUD_LIB
 export BUD_HOME
 export BUD_ERROR="${BUD_ERROR:-enabled}"
 export BUD_INFO="${BUD_INFO:-enabled}"
 export BUD_DEBUG="${BUD_DEBUG:-disabled}"
 export BUD_LOG_FILE=${BUD_LOG_FILE:-""}
-export BUD_APP_NAME

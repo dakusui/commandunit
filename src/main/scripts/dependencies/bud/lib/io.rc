@@ -7,12 +7,12 @@ source "${BUD_HOME}/lib/core.rc"
 __BUD_SESSION_ID=$(date +"%Y-%m-%d_%T-%6N" | sed 's![/:]!-!g')
 
 function bud_temp_file() {
-  mktemp -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
+  mktemp -p "${TEMP:-/tmp}/bud/${BUD_APPCLASS_NAME}/${__BUD_SESSION_ID}"
 }
 
 function bud_temp_fifo() {
   local _ret
-  _ret="$(mktemp -d -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}")/0"
+  _ret="$(mktemp -d -p "${TEMP:-/tmp}/bud/${BUD_APPCLASS_NAME}/${__BUD_SESSION_ID}")/0"
   mkfifo "${_ret}"
   echo "${_ret}"
 }
@@ -41,5 +41,5 @@ function map_file() {
 }
 
 
-mkdir -p "${TEMP:-/tmp}/bud/${BUD_APP_NAME}/${__BUD_SESSION_ID}"
+mkdir -p "${TEMP:-/tmp}/bud/${BUD_APPCLASS_NAME}/${__BUD_SESSION_ID}"
 
