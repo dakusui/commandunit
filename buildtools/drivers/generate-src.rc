@@ -1,13 +1,24 @@
 function execute_stage() {
   message "Preprocess '.x' files: '${SRCDIR}'"
   local _basedir="buildtools/resources/generate-src"
-  find "${_basedir}" -type f -name '*.x' \
-    -exec bash -eu -E -c '
-    echo -n "Preprocessing: <${1}>: " &&
-    dest="${1%.x}" &&
-    dest="${dest#${2}/}"  &&
-    mkdir -p "$(dirname "${dest}")" &&
-    bash -eu -E "${1}" "${2}" > ${dest} &&
-    echo "...done"' - {} "${_basedir}" \; || abort "Failed to process!"
+#  find "${_basedir}" -type f -name '*.x' \
+#    -exec bash -eu -E -c '
+#    echo -n "Preprocessing: <${1}>: " &&
+#    dest="${1%.x}" &&
+#    dest="${dest#${2}/}"  &&
+#    mkdir -p "$(dirname "${dest}")" &&
+#    bash -eu -E "${1}" "${2}" > ${dest} &&
+#    echo "...done"' - {} "${_basedir}" \; || abort "Failed to process!"
+
+  local _each
+  while read _each; do
+    local _dest="${_each%.x}"
+    _dest="${_dest#${_basedir}/}"
+    echo -n "Preprocessing: <${_each}>: <_dest: '${_dest}'>" >&2
+    mkdir -p "$(dirname "${_each}")"
+    bash -eu -E "${_each}" "${_basedir}" > "${_dest}" || abort "FAILED TO PROCESS: '${_each}'"
+    echo "...done" >&2
+  done < <(find "${_basedir}" -type f -name '*.x')
+
   message "Done.'${SRCDIR}'"
 }
