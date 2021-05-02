@@ -104,7 +104,7 @@ function main() {
       local _viewer_command="cat"
       if [[ "${_is_tap_enabled}" == true ]]; then
         # shellcheck disable=SC2089
-        _viewer_command="/usr/bin/env bash -eu -E ""${DEPENDENCIES_ROOT}/tapview/tapview"
+        _viewer_command="/usr/bin/env bash -eu -E ""${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
       fi
       export COMMANDUNIT_CONFDIR="${_configdir}"
       mkdir -p "${_test_reportdir}"
@@ -137,7 +137,7 @@ function main() {
 function __commandunit__normalize_path() {
   local _path="${1}"
   _path="$(realpath -m "${1}")"
-  _path="${COMMANDUNIT_DOCKERDIR_PREFIX}/${_path#/}"
+  _path="${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_DOCKERDIR_PREFIX}}/${_path#/}"
   echo "${_path}"
 }
 

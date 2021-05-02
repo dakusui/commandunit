@@ -25,8 +25,6 @@ function __run_commandunit() {
 
 # source
 function handle_source() {
-  _docker_prefix=""
-  export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
   function run_commandunit() {
     run_command_unit_with_source "${@}"
   }
@@ -35,9 +33,6 @@ function handle_source() {
 
 # snapshot
 function handle_snapshot() {
-  _docker_prefix="/var/lib/commandunit"
-  export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
-  message "COMMANDUNIT_DOCKERDIR_PREFIX: '${COMMANDUNIT_DOCKERDIR_PREFIX}'"
   function run_commandunit() {
     run_command_unit_with_snapshot_docker_image "${@}"
   }
@@ -46,8 +41,6 @@ function handle_snapshot() {
 
 # release
 function handle_release() {
-  _docker_prefix="/var/lib/commandunit"
-  export COMMANDUNIT_DOCKERDIR_PREFIX="${_docker_prefix}"
   function run_commandunit() {
     run_command_unit_with_released_docker_image "${@}"
   }

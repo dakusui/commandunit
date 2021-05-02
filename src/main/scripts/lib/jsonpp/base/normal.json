@@ -39,7 +39,7 @@
     "source": [
     ],
     "environmentVariables": {
-      "DEPENDENCIES_ROOT": "eval:string:${DEPENDENCIES_ROOT}"
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
     },
     "cmd": "eval:string:$(error 'missing attribute!')",
     "args": [

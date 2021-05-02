@@ -17,10 +17,10 @@ function define_plugin_functions() {
 }
 
 PROJECT_NAME="${PROJECT_NAME:-unknown}"
-DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
+COMMANDUNIT_DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APP_NAME="${PROJECT_NAME}"
-COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX:-""}"
+COMMANDUNIT_DOCKERDIR_PREFIX="/var/lib/commandunit"
 COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}"
 if [[ "${COMMANDUNIT_LOGLEVEL}" == DEBUG ]]; then
   BUD_ERROR=enabled
@@ -39,12 +39,13 @@ else
   exit 1
 fi
 
-export DEPENDENCIES_ROOT
+export COMMANDUNIT_DOCKERDIR_PREFIX
+export COMMANDUNIT_DEPENDENCIES_ROOT
 export APP_HOME
 export BUD_APP_NAME
 export BUD_INFO
 export BUD_DEBUG
 export BUD_ERROR
-source "${DEPENDENCIES_ROOT}/bud/lib/bud.rc"
+source "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/bud.rc"
 
 define_plugin_functions
