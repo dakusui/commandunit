@@ -49,6 +49,7 @@ function __run_command_unit_with_docker() {
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
+    --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
     --env OUTDIR="${_commandunit_root_in_docker_container}${OUTDIR}" \
     -v "$(pwd):${_commandunit_root_in_docker_container}$(pwd)" \
     -i "${_image_name}" \
@@ -66,6 +67,7 @@ function __run_command_unit_with_docker_from_entrypoint() {
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
     --env PROJECT_NAME="commandunit" \
+    --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
     --env OUTDIR="${_commandunit_root_in_docker_container}${OUTDIR}" \
     -v "$(pwd):${_commandunit_root_in_docker_container}$(pwd)" \
     --entrypoint="${_entrypoint}" \

@@ -21,10 +21,30 @@ DEPENDENCIES_ROOT="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/dependencies"
 APP_HOME="${APP_HOME:-$(dirname "$(dirname "${BASH_SOURCE[0]}")")}"
 BUD_APP_NAME="${PROJECT_NAME}"
 COMMANDUNIT_DOCKERDIR_PREFIX="${COMMANDUNIT_DOCKERDIR_PREFIX:-""}"
+COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}"
+if [[ "${COMMANDUNIT_LOGLEVEL}" == DEBUG ]]; then
+  BUD_ERROR=enabled
+  BUD_INFO=enabled
+  BUD_DEBUG=enabled
+elif [[ "${COMMANDUNIT_LOGLEVEL}" == INFO ]]; then
+  BUD_ERROR=enabled
+  BUD_INFO=enabled
+  BUD_DEBUG=disabled
+elif [[ "${COMMANDUNIT_LOGLEVEL}" == ERROR ]]; then
+  BUD_ERROR=enabled
+  BUD_INFO=disabled
+  BUD_DEBUG=disabled
+else
+  echo "Unknown log level COMMANDUNIT_LOGLEVEL: '${COMMANDUNIT_LOGLEVEL}' was specified."
+  exit 1
+fi
 
 export DEPENDENCIES_ROOT
 export APP_HOME
 export BUD_APP_NAME
+export BUD_INFO
+export BUD_DEBUG
+export BUD_ERROR
 source "${DEPENDENCIES_ROOT}/bud/lib/bud.rc"
 
 define_plugin_functions

@@ -10,6 +10,9 @@ when:
 then:
   description":
     - The message is printed to stdout.
+  exitCode:
+    - NOT_EQUAL
+    - 0
   stdout:
     present:
       - REGEX:1\.\.1
