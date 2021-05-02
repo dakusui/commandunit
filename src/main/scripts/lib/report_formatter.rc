@@ -4,6 +4,7 @@ readonly __COMMANDUNIT__REPORT_FORMATTER=true
 function print_test_report() {
   local _project_name="${1}" _json_object="${2}"
   local _successful="not successful" _i  _filter _testdir _summary
+  debug "_project_name: '${_project_name}'; _json_object: '${_json_object:0:40}'"
   _summary=$(json_value_at "${_json_object}" ".report.summary")
   _filter=$(json_value_at "${_summary}" ".filter")
   _testdir=$(json_value_at "${_summary}" ".testdirs[]")
@@ -12,7 +13,7 @@ function print_test_report() {
     _successful="successful"
   fi
 
-  echo '= Test Report: `'"${_project_name:-unknown}"'`'
+  echo '= Test Report: `'"${_project_name}"'`'
   echo ":toc: left"
   echo
   echo "This test suite was ${_successful}."

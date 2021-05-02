@@ -35,12 +35,14 @@ function run_command_unit_with_released_docker_image_from_entrypoint() {
 function __run_command_unit_with_source() {
   local _executable="${EXEC_BASEDIR}/bin/commandunit"
   message "Running commandunit(source): '${_executable}'"
+  export COMMANDUNIT_PWD="${PROJECT_BASEDIR}"
   "${_executable}" "${@}"
 }
 
 function __run_command_unit_with_docker() {
   local _suffix="${1}"
   shift
+  message "Running commandunit(docker): repo:'${DOCKER_REPO_NAME}' version:'${TARGET_VERSION}' suffix: '${_suffix}'"
   __docker__run_command_unit \
     "${PROJECT_BASEDIR}" \
     "${BUILD_HOSTFSROOT_MOUNTPOINT}" \

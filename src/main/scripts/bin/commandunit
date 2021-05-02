@@ -102,6 +102,11 @@ function main() {
   if [[ "${#_unknown_subcommands[@]}" -gt 0 ]]; then
     abort "Unknown subcommand(s) are given: [$(join_by "," "${_unknown_subcommands[@]}")]."
   fi
+  local _viewer_command="cat"
+  if [[ "${_is_tap_enabled}" == true ]]; then
+    # shellcheck disable=SC2089
+    _viewer_command="/usr/bin/env bash -eu -E ""${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
+  fi
   for _each in "${_subcommands[@]}"; do
     if [[ "${_each}" == "preprocess" ]]; then
       # _parallel_option is passed to the command without being quoted.
@@ -110,13 +115,9 @@ function main() {
         ${_ignore_mtime_option} \
         --output-dir="${_test_workdir}" \
         --filter="${_filter}" \
-        "${_test_srcdir}"
+        "${_test_srcdir}" |
+        ${_viewer_command} || abort "preprocessing errors were detected."
     elif [[ "${_each}" == "run" ]]; then
-      local _viewer_command="cat"
-      if [[ "${_is_tap_enabled}" == true ]]; then
-        # shellcheck disable=SC2089
-        _viewer_command="/usr/bin/env bash -eu -E ""${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
-      fi
       export COMMANDUNIT_CONFDIR="${_configdir}"
       mkdir -p "${_test_reportdir}"
       # shellcheck disable=SC2090
@@ -128,8 +129,7 @@ function main() {
         "${_test_workdir}" |
         ${_viewer_command} || message "test failures/errors were detected."
     elif [[ "${_each}" == "report" ]]; then
-
-      "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" >"${_test_reportdir}/testreport.adoc"
+      "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi

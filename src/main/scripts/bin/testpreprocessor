@@ -61,16 +61,27 @@ function main() {
     "${_ignore_mtime}"
 }
 
+function print_ok() {
+  local _id="${1}" _message="${2}"
+  echo "ok ${_id} ${_message}"
+}
+
+function print_not_ok() {
+  local _id="${1}" _message="${2}"
+  echo "not ok ${_id} ${_message}"
+}
+
 function prepare_tests() {
   local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}" _ignore_mtime="${5}"
   info_begin "Preprocessing"
+  echo "1..4"
   info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'; _ignore_mtime: '${_ignore_mtime}'"
   # Copy contents in srcdir to outdir
   if [[ "${_srcdir}" != "${_outdir}" ]]; then
     # Create a directory for output.
     mkdir -p "${_outdir}"
     cp -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
-  fi
+  fi && print_ok "1" "resource copy" || print_not_ok "1" "resource copy"
   # Compile tests
   __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
   info_end "Preprocessing"
@@ -174,15 +185,15 @@ function __process_files() {
 function __compile_tests() {
   local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
 
-  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
+  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "2" "yaml++ processing" || print_not_ok "2" "yaml++ processing"
 
-  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
+  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "3" "yaml processing" || print_not_ok "3" "yaml processing"
 
   local _pwd
   _pwd="$(pwd)"
   export JF_PATH="${_pwd}:${_output_dir}:${APP_LIB}/jsonpp"
   info "JF_PATH: '${JF_PATH}'"
-  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
+  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "4" "json++ processing" || print_not_ok "4" "json++ processing"
 }
 
 function __list_test_sources() {
