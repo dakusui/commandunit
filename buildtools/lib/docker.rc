@@ -13,7 +13,7 @@ function run_command_unit_with_source() {
 }
 
 function run_command_unit_with_snapshot_docker_image() {
-  __run_command_unit_with_docker "-snapshot" "${@}"
+  __run_command_unit_with_docker "snapshot" "${@}"
 }
 
 function run_command_unit_with_released_docker_image() {
@@ -23,7 +23,7 @@ function run_command_unit_with_released_docker_image() {
 function run_command_unit_with_snapshot_docker_image_from_entrypoint() {
   local _entrypoint="${1}"
   shift
-  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "-snapshot" "${@}"
+  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "snapshot" "${@}"
 }
 
 function run_command_unit_with_released_docker_image_from_entrypoint() {
@@ -41,36 +41,47 @@ function __run_command_unit_with_source() {
 function __run_command_unit_with_docker() {
   local _suffix="${1}"
   shift
-  local _me
-  local _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
-  local _commandunit_home_in_docker_container="${BUILD_HOSTFSROOT_MOUNTPOINT}"
-  _me="$(whoami)"
-  message "Running commandunit(docker): '${_image_name}'"
-  docker run \
-    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
-    --env PROJECT_NAME="commandunit" \
-    --env COMMANDUNIT_PWD="${PROJECT_BASEDIR}" \
-    --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
-    -v "$(pwd):${_commandunit_home_in_docker_container}$(pwd)" \
-    -i "${_image_name}" \
+  __docker__run_command_unit "commandunit" \
+    "${PROJECT_BASEDIR}" \
+    "${BUILD_HOSTFSROOT_MOUNTPOINT}" \
+    "${DOCKER_REPO_NAME}" \
+    "${TARGET_VERSION}" \
+    "${_suffix}" \
+    "" \
+    "${COMMANDUNIT_LOGLEVEL:-ERROR}" \
     "${@}"
 }
 
 function __run_command_unit_with_docker_from_entrypoint() {
   local _entrypoint="${1}" _suffix="${2}"
   shift 2
+  __docker__run_command_unit "commandunit" \
+    "${PROJECT_BASEDIR}" \
+    "${BUILD_HOSTFSROOT_MOUNTPOINT}" \
+    "${DOCKER_REPO_NAME}" \
+    "${TARGET_VERSION}" \
+    "${_suffix}" \
+    "${_entrypoint}" \
+    "${COMMANDUNIT_LOGLEVEL:-ERROR}" \
+    "${@}"
+}
+
+function __docker__run_command_unit() {
+  local _project_name="${1}" _project_basedir="${2}" _hostfsroot_mountpoint="${3}"
+  local _docker_repo_name="${4}" _image_version="${5:-latest}" _suffix="${6:+-${6}}"
+  local _entrypoint="${7:+--entrypoint="${7}"}" _loglevel="${8:-ERROR}"
+  shift 8
   local _me
-  local _image_name="${DOCKER_REPO_NAME}:${TARGET_VERSION}${_suffix}"
-  local _commandunit_home_in_docker_container="${BUILD_HOSTFSROOT_MOUNTPOINT}"
-  _me="$(whoami)"
-  message "Running commandunit(docker): '${_image_name}'"
+  local _image_name="${_docker_repo_name}:${_image_version}${_suffix}"
+  _me="${USER}"
+  # shellcheck disable=SC2086
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
-    --env PROJECT_NAME="commandunit" \
-    --env COMMANDUNIT_PWD="${PROJECT_BASEDIR}" \
-    --env COMMANDUNIT_LOGLEVEL="${COMMANDUNIT_LOGLEVEL:-ERROR}" \
-    -v "$(pwd):${_commandunit_home_in_docker_container}$(pwd)" \
-    --entrypoint="${_entrypoint}" \
+    --env PROJECT_NAME="${_project_name}" \
+    --env COMMANDUNIT_PWD="${_project_basedir}" \
+    --env COMMANDUNIT_LOGLEVEL="${_loglevel}" \
+    -v "$(pwd):${_hostfsroot_mountpoint}$(pwd)" \
+    ${_entrypoint} \
     -i "${_image_name}" \
     "${@}"
 }
