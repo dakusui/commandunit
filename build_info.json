@@ -3,7 +3,7 @@
   "homepage": "https://github.com/dakusui/commandunit",
   "docker": {
     "user": "dakusui",
-    "inContainerRoot": "/var/lib"
+    "hostFsRootMountPoint": "/var/lib/commandunit"
   },
   "version": {
     "latestReleased": {

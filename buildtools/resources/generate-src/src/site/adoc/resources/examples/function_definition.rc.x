@@ -1,6 +1,6 @@
 export COMMANDUNIT_VERSION="${COMMANDUNIT_VERSION:="${LATEST_RELEASED_VERSION}"}"
 # shellcheck disable=SC2154
-envsubst '${COMMANDUNIT_VERSION}' <<'END'
+envsubst '${COMMANDUNIT_VERSION} ${BUILD_HOSTFSROOT_MOUNTPOINT}' <<'END'
 function commandunit() {
   local _image_version="${COMMANDUNIT_VERSION}"
   local _image_name="dakusui/commandunit:${_image_version}"
@@ -15,7 +15,7 @@ function commandunit() {
     --env PROJECT_NAME="${_project_name}" \
     --env COMMANDUNIT_PWD="${PWD}" \
     --env BUD_INFO="${_info_log}" \
-    -v "${_project_dir}:/var/lib/commandunit${_project_dir}" \
+    -v "${_project_dir}:${BUILD_HOSTFSROOT_MOUNTPOINT}${_project_dir}" \
     -i "${_image_name}" \
     "${@}"
 }

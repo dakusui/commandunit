@@ -8,6 +8,6 @@ function execute_stage() {
     dest="${dest#${2}/}"  &&
     mkdir -p "$(dirname "${dest}")" &&
     bash -eu -E "${1}" "${2}" > ${dest} &&
-    echo "...done"' - {} "${_basedir}" \;
+    echo "...done"' - {} "${_basedir}" \; || abort "Failed to process!"
   message "Done.'${SRCDIR}'"
 }

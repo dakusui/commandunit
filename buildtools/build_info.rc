@@ -20,7 +20,7 @@ HOMEPAGE="$(jq -r -c '.homepage' "${_build_info_file}")"
 
 DOCKER_USER_NAME="$(jq -r -c -M '.docker.user' "${_build_info_file}")"
 DOCKER_REPO_NAME="${DOCKER_USER_NAME}/${PROJECT_NAME}"
-DOCKER_INCONTAINER_ROOT="$(jq -crM '.docker.inContainerRoot' "${_build_info_file}")"
+BUILD_HOSTFSROOT_MOUNTPOINT="$(jq -crM '.docker.hostFsRootMountPoint' "${_build_info_file}")"
 export LATEST_RELEASED_VERSION
 export TARGET_VERSION
 export PROJECT_NAME
@@ -35,4 +35,4 @@ export LIBDIR
 export TESTDIR
 export TESTREPORTDIR
 export DOCKER_REPO_NAME
-export DOCKER_INCONTAINER_ROOT
+export BUILD_HOSTFSROOT_MOUNTPOINT

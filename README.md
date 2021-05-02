@@ -1,4 +1,4 @@
-
+<!--- DO NOT EDIT: THIS FILE IS GENERATED AUTOMATICALLY -->
 # The `commandunit` testing framework.
 
 The `commandunit` is a testing framework intended to verrify your command line
