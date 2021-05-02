@@ -8,7 +8,7 @@ function execute_stage() {
   jq '.|.version.latestReleased.minor=.version.target.minor|.version.target.minor=.version.target.minor+1' build_info.json >"${tmp}" || abort "Failed to bump up the version."
   cp "${tmp}" build_info.json
   message "Updated build_info.json"
-  source build_info.sh
+  source buildtools/build_info.rc
   message "Reloaded build_info.sh"
   message "Synchronize auto-generated sources."
   ./build.sh generate-src
