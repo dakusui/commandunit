@@ -4,7 +4,7 @@
 when:
   description:
     - Just print a help message of commandunit
-  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${PROJECT_BASEDIR}/out/main/scripts/bin/commandunit"
+  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${COMMANDUNIT_PWD}/out/main/scripts/bin/commandunit"
   args:
     - --help
 then:
