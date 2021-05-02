@@ -59,7 +59,7 @@ function __bud__compose_commandline_from_json_object() {
   for _i in "${_args[@]}"; do
     if [[ "${_i}" == "QUOTE:"* ]]; then
       _ret="${_ret} $(quote "${_i#*:}")"
-    elif [[ "${_i}" == "QUOTE:"* ]]; then
+    elif [[ "${_i}" == "QUOTE2:"* ]]; then
       _ret="${_ret} $(quote2 "${_i#*:}")"
     else
       _ret="${_ret} $(quote2 "${_i}")"
