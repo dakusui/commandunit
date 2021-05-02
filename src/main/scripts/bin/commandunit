@@ -137,7 +137,7 @@ function main() {
 function __commandunit__normalize_path() {
   local _path="${1}"
   _path="$(realpath -m "${1}")"
-  _path="${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_DOCKERDIR_PREFIX}}/${_path#/}"
+  _path="${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_INDOCKER_HOME}}/${_path#/}"
   echo "${_path}"
 }
 
