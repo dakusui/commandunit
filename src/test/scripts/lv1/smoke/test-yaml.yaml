@@ -22,7 +22,7 @@ when:
     options:
       - "-eu"
   source:
-    - "$BUD_LIB/common.rc"
+    - "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/common.rc"
   cmd: echo
   args:
     - "-e"

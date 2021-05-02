@@ -36,7 +36,7 @@
       ]
     },
     "source": [
-      "$BUD_LIB/common.rc"
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/common.rc"
     ],
     "environmentVariables": {
     },
