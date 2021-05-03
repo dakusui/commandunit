@@ -29,6 +29,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir + .commandunit/work)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
+    ["","clean",false,false,"clean working directory"],
     ["","tapview",false,false,"show test progress with 'tapview'"]
   ],
   "examples":{
@@ -55,7 +56,7 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _project_name _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tap_enabled _ignore_mtime
+  local _default_target_directory _project_name _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tapview_enabled _ignore_mtime
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
@@ -64,12 +65,13 @@ function main() {
   _default_target_directory="${COMMANDUNIT_PWD:-"${PWD}"}"
   _project_name="$(parseopt_string_value_for "project-name" "${_parsed_opts_json}")"
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
+  _do_clean="$(parseopt_boolean_value_for "clean" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
   _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit/work")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
-  _is_tap_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
+  _is_tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
 
@@ -80,6 +82,8 @@ function main() {
 
   info "project-name: '${_project_name}'"
   info "parallel: '${_is_parallel}'"
+  info "clean: '${_do_clean}'"
+  info "tapview: '${_is_tapview_enabled}'"
   info "filter: '${_filter}'"
   info "ignore-mtime: '${_ignore_mtime}'"
   info "test-srcdir: '${_test_srcdir}'"
@@ -93,6 +97,9 @@ function main() {
   if [[ "${_ignore_mtime}" == true ]]; then
     _ignore_mtime_option="--ignore-mtime"
   fi
+  if [[ "${_do_clean}" == true ]]; then
+    rm -fr "${_test_workdir}"
+  fi
   local _unknown_subcommands=()
   for _each in "${_subcommands[@]}"; do
     if ! array_contains "${_each}" "preprocess" "run" "report"; then
@@ -103,14 +110,14 @@ function main() {
     abort "Unknown subcommand(s) are given: [$(join_by "," "${_unknown_subcommands[@]}")]."
   fi
   local _viewer_command="cat"
-  if [[ "${_is_tap_enabled}" == true ]]; then
+  if [[ "${_is_tapview_enabled}" == true ]]; then
     # shellcheck disable=SC2089
     _viewer_command="/usr/bin/env bash -eu -E ""${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
   fi
   for _each in "${_subcommands[@]}"; do
     if [[ "${_each}" == "preprocess" ]]; then
       local _tapview=""
-      if [[ "${_is_tap_enabled}" == true ]]; then
+      if [[ "${_is_tapview_enabled}" == true ]]; then
         _tapview="--tapview"
       fi
       # _parallel_option is passed to the command without being quoted.
