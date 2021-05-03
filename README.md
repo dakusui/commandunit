@@ -64,7 +64,7 @@ your `~/.bashrc` or `~/.bash_profile`.
 
 ```bash
 function commandunit() {
-  local _image_version="v1.9"
+  local _image_version="v1.10"
   local _image_name="dakusui/commandunit:${_image_version}"
   local _project_name _project_basedir _pwd _me _loglevel
   _pwd="${PWD}"
