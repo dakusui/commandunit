@@ -69,9 +69,13 @@ function __run_command_unit_with_docker_from_entrypoint() {
 }
 
 function __docker__run_command_unit() {
-  local _project_basedir="${1}" _hostfsroot_mountpoint="${2}"
-  local _docker_repo_name="${3}" _image_version="${4:-latest}" _suffix="${5:+-${5}}"
-  local _entrypoint="${6:+--entrypoint="${6}"}" _loglevel="${7:-ERROR}"
+  local _project_basedir="${1}"
+  local _hostfsroot_mountpoint="${2}"
+  local _docker_repo_name="${3}"
+  local _image_version="${4:-latest}"
+  local _suffix="${5:+-${5}}"
+  local _entrypoint="${6:+--entrypoint="${6}"}"
+  local _loglevel="${7:-ERROR}"
   shift 7
   local _me
   local _image_name="${_docker_repo_name}:${_image_version}${_suffix}"

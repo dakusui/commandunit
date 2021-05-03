@@ -24,8 +24,8 @@ BUILD_HOSTFSROOT_MOUNTPOINT="$(jq -crM '.docker.hostFsRootMountPoint' "${_build_
 export LATEST_RELEASED_VERSION
 export TARGET_VERSION
 export PROJECT_NAME
-export HOMEPAGE
 export PROJECT_BASEDIR
+export HOMEPAGE
 export SRCDIR
 export OUTDIR
 export EXEC_BASEDIR

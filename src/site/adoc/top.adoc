@@ -1,6 +1,6 @@
 = The `commandunit` testing framwork
 
-[source,bash]
+[source, bash]
 ----
 include::resources/examples/function_definition.rc[]
 ----

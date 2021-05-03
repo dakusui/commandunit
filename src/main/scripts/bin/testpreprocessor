@@ -189,9 +189,7 @@ function __compile_tests() {
 
   __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "3" "yaml processing" || print_not_ok "3" "yaml processing"
 
-  local _pwd
-  _pwd="$(pwd)"
-  export JF_PATH="${_pwd}:${_output_dir}:${APP_LIB}/jsonpp"
+  export JF_PATH="${_output_dir}:${APP_LIB}/jsonpp"
   info "JF_PATH: '${JF_PATH}'"
   __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "4" "json++ processing" || print_not_ok "4" "json++ processing"
 }
