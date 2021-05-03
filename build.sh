@@ -49,7 +49,7 @@ function execute() {
   elif [[ ${_first} == TEST ]]; then
     execute clean prepare test "${@}"
   elif [[ ${_first} == COVERAGE ]]; then
-    execute clean prepare doc coverage "${@}"
+    execute clean prepare coverage "${@}"
   elif [[ ${_first} == PACKAGE ]]; then
     execute clean prepare test:::true build:snapshot test:snapshot::true "${@}"
   elif [[ ${_first} == RELEASE ]]; then

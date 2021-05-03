@@ -1,0 +1,11 @@
+---
+"$extends":
+  - logging/base.yaml
+  - loglevel.yaml
+when:
+  cmd: debug
+then:
+  stderr:
+    present:
+      - REGEX:DEBUG
+      - REGEX:Hello\!

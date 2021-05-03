@@ -1,0 +1,3 @@
+when:
+  environmentVariables:
+    COMMANDUNIT_LOGLEVEL: DEBUG

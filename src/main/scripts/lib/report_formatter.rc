@@ -112,6 +112,11 @@ function __test_details() {
       _stage="$(__find_defect_stage "${_i}")"
       echo "=== ${_test_name}"
       echo
+      echo "[source, bash]"
+      echo "----"
+      echo "include::./${_test_name}-output/script.txt[]"
+      echo "----"
+      echo
 
       echo "==== exit code"
       echo
