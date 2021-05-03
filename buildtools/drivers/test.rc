@@ -23,7 +23,7 @@ function __run_commandunit() {
   run_commandunit \
     --project-name="commandunit" \
     --parallel \
-    --tap \
+    --tapview \
     ${_ignore_mtime} \
     --filter="${_test_filter}" \
     --configdir="${TESTDIR}/.commandunit" \

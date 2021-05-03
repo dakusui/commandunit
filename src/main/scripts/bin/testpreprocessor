@@ -111,7 +111,7 @@ function prepare_tests() {
   if [[ "${_srcdir}" != "${_outdir}" ]]; then
     # Create a directory for output.
     mkdir -p "${_outdir}"
-    cp -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
+    cp --preserve -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
   fi
   # Compile tests
   __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"

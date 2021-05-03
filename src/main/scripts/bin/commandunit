@@ -29,7 +29,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir + .commandunit/work)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
-    ["","tap",false,false,"show result in 'tap' mode"]
+    ["","tapview",false,false,"show test progress with 'tapview'"]
   ],
   "examples":{
     "commandunit": "Run tests found under current directory in sequential mode.",
@@ -69,7 +69,7 @@ function main() {
   _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit/work")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
-  _is_tap_enabled="$(parseopt_boolean_value_for "tap" "${_parsed_opts_json}")"
+  _is_tap_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
 
