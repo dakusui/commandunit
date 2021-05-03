@@ -13,7 +13,7 @@ function ensure_no_bg_jobs() {
 }
 
 function wait_for_jobs() {
-  local _all_passed=true
+  local _all_passed=true _kill_all_on_first_failure="${2:-true}"
   info "Waiting for background jobs."
   while true; do
     local _num_remaining_jobs
@@ -27,6 +27,10 @@ function wait_for_jobs() {
       if [[ "${_exit_code}" != 0 ]]; then
         _all_passed=false
         error "Error was detected.: '${_exit_code}'"
+        ${_kill_all_on_first_failure} && for _job in $(jobs -p); do
+          error "Killing: '$_job'"
+          kill -9 "${_job}"
+        done
         continue
       fi
     }

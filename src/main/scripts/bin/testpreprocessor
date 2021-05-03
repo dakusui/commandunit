@@ -13,11 +13,12 @@ TESTCOMPILER_SPECIFICATION='{
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
+    ["","tapview",false,false,"enable tapview"],
     ["","output-dir",true,[],""]
   ],
   "examples":{
-    "testrunner DIR": "Run tests found under DIR with the testrunner in sequential mode.",
-    "testrunner DIR -p": "Run tests found under DIR with the testrunner in parallel mode."
+    "testpreprocessor DIR": "Proprocess tests found under DIR with the testrunner in sequential mode.",
+    "testpreprocessor DIR -p": "Preprocess tests found under DIR with the testrunner in parallel mode."
   },
   "references":{
     "github project": "https://github.com/dakusui/bud"
@@ -35,7 +36,7 @@ function main() {
     print_usage "${TESTRUNNER_SPECIFICATION}"
     return 0
   fi
-  local _is_parallel _filter _ignore_mtime _test_rootdir
+  local _is_parallel _filter _ignore_mtime _test_rootdir _tapview_enabled
   mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
   mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
     _i="$(realpath -m "${_i}")"
@@ -49,10 +50,21 @@ function main() {
   fi
 
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
+  _tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _output_dir="$(parseopt_string_value_for 'output-dir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
   _output_dir="$(realpath -m "${_output_dir}")"
+
+  if [[ "${_tapview_enabled}" == true ]]; then
+    function viewer() {
+      tapview
+    }
+  else
+    function viewer() {
+      cat
+    }
+  fi
 
   prepare_tests "${_test_rootdir[0]}" \
     "${_output_dir}" \
@@ -61,27 +73,46 @@ function main() {
     "${_ignore_mtime}"
 }
 
-function print_ok() {
+function tap_print_ok() {
   local _id="${1}" _message="${2}"
   echo "ok ${_id} ${_message}"
 }
 
-function print_not_ok() {
+function tap_print_skip() {
+  local _id="${1}" _message="${2}"
+  echo "ok # skip ${_id} ${_message}"
+}
+
+function tap_print_not_ok() {
   local _id="${1}" _message="${2}"
   echo "not ok ${_id} ${_message}"
+}
+
+function tap_print_plan() {
+  local _num="${1}"
+  echo "1..${_num}"
+}
+
+function tap_bailout() {
+  local _message="${1}"
+  echo "Bail out! ${_message}"
+  abort "${_message}"
+}
+
+function tapview() {
+  "${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
 }
 
 function prepare_tests() {
   local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}" _ignore_mtime="${5}"
   info_begin "Preprocessing"
-  echo "1..4"
   info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'; _ignore_mtime: '${_ignore_mtime}'"
   # Copy contents in srcdir to outdir
   if [[ "${_srcdir}" != "${_outdir}" ]]; then
     # Create a directory for output.
     mkdir -p "${_outdir}"
     cp -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
-  fi && print_ok "1" "resource copy" || print_not_ok "1" "resource copy"
+  fi
   # Compile tests
   __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
   info_end "Preprocessing"
@@ -161,22 +192,28 @@ function __process_files() {
   info_begin "Processing '${_extension}' files: (force: ${_ignore_mtime}})"
   ensure_no_bg_jobs
   mapfile -t _source_files < <(__list_test_sources "${_output_dir}" "${_extension}" "${_filter}")
+  tap_print_plan "${#_source_files[@]}"
+  local _id=1
   for _i in "${_source_files[@]}"; do
-    local _cmd _src _dest
+    local _cmd _src _dest _tap_message
     _src="$(__process_files_src "${_i}" "${_output_dir}")"
     _dest="$(__process_files_dest "${_i}" "${_output_dir}")"
+    _tap_message="process file: '${_i}'"
     if [[ ! -e "${_dest}" || "${_dest}" -ot "${_src}" || "${_ignore_mtime}" == true ]]; then
       info "- '${_i}'"
       _cmd="$(__process_files_convert "${_src}" "${_dest}")"
+      _cmd="(${_cmd} && tap_print_ok ${_id} '${_tap_message}')"
       debug "_cmd: '${_cmd}'"
       if [[ "${_is_parallel}" == true ]]; then
-        eval "${_cmd}" &
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>'" &
       else
-        eval "${_cmd}"
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>'"
       fi
     else
       info "-  '${_i}' (skipped)"
+      tap_print_skip "${_id}" "${_tap_message}"
     fi
+    _id=$((_id + 1))
   done
   wait_for_jobs
   info_end "Done."
@@ -185,13 +222,12 @@ function __process_files() {
 function __compile_tests() {
   local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
 
-  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "2" "yaml++ processing" || print_not_ok "2" "yaml++ processing"
-
-  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "3" "yaml processing" || print_not_ok "3" "yaml processing"
+  __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
+  __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
 
   export JF_PATH="${_output_dir}:${APP_LIB}/jsonpp"
   info "JF_PATH: '${JF_PATH}'"
-  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" && print_ok "4" "json++ processing" || print_not_ok "4" "json++ processing"
+  __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
 }
 
 function __list_test_sources() {

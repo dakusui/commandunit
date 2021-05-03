@@ -26,7 +26,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","configdir",true,[],"directory to store config files (default: current {directory/.commandunit})"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
-    ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir)"],
+    ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir + .commandunit/work)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory (default: value for --test-workdir)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
     ["","tap",false,false,"show result in 'tap' mode"]
@@ -67,7 +67,7 @@ function main() {
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
   _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
-  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}")"
+  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit/work")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
   _is_tap_enabled="$(parseopt_boolean_value_for "tap" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
@@ -109,14 +109,18 @@ function main() {
   fi
   for _each in "${_subcommands[@]}"; do
     if [[ "${_each}" == "preprocess" ]]; then
+      local _tapview=""
+      if [[ "${_is_tap_enabled}" == true ]]; then
+        _tapview="--tapview"
+      fi
       # _parallel_option is passed to the command without being quoted.
       "${_bindir}/testpreprocessor" \
         ${_parallel_option} \
         ${_ignore_mtime_option} \
+        ${_tapview} \
         --output-dir="${_test_workdir}" \
         --filter="${_filter}" \
-        "${_test_srcdir}" |
-        ${_viewer_command} || abort "preprocessing errors were detected."
+        "${_test_srcdir}" || abort "preprocessing errors were detected."
     elif [[ "${_each}" == "run" ]]; then
       export COMMANDUNIT_CONFDIR="${_configdir}"
       mkdir -p "${_test_reportdir}"
