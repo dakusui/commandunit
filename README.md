@@ -71,19 +71,24 @@ function commandunit() {
   local _suffix=""
   local _entrypoint=""
   local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
-  local _me _image_name _args _show_image_name=false _i
+  local _me _image_name _args _show_image_name=false _i _s
   _me="${USER}"
   _args=()
+  _s=to_func
   for _i in "${@}"; do
-    if [[ $_i == "--snapshot" ]]; then
-      _image_version="v1.14"
-      _suffix="-snapshot"
-    elif [[ $_i == "--debug" ]]; then
-      _entrypoint="--entrypoint=/bin/bash"
-    elif [[ $_i == "--show-image-name" ]]; then
-      _show_image_name=true
-    elif [[ $_i == "--" ]]; then
-      break
+    if [[ "${_s}" == to_func ]]; then
+        if [[ $_i == "--snapshot" ]]; then
+          _image_version="v1.14"
+          _suffix="-snapshot"
+        elif [[ $_i == "--debug" ]]; then
+          _entrypoint="--entrypoint=/bin/bash"
+        elif [[ $_i == "--show-image-name" ]]; then
+          _show_image_name=true
+        elif [[ $_i == "--" ]]; then
+          _s=to_container
+        else
+          _args+=("${_i}")
+        fi
     else
       _args+=("${_i}")
     fi

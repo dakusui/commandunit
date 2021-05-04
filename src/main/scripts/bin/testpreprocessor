@@ -15,6 +15,7 @@ TESTCOMPILER_SPECIFICATION='{
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
     ["","tapview",false,false,"enable tapview"],
+    ["","commandunit-dir",true,[],"specify commandunit directory"],
     ["","output-dir",true,[],""]
   ],
   "examples":{
@@ -37,7 +38,7 @@ function main() {
     print_usage "${TESTRUNNER_SPECIFICATION}"
     return 0
   fi
-  local _is_parallel _filter _ignore_mtime _test_rootdir _tapview_enabled
+  local _is_parallel _filter _ignore_mtime _test_rootdir _tapview_enabled _commandunit_dir
   mapfile -t _test_rootdir < <(parseopt_rest_values "${_parsed_opts_json}")
   mapfile -t _test_rootdir < <(for _i in "${_test_rootdir[@]}"; do
     _i="$(realpath -m "${_i}")"
@@ -54,6 +55,7 @@ function main() {
   _tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
+  _commandunit_dir="$(parseopt_string_value_for 'commandunit-dir' "${_parsed_opts_json}" "${_test_rootdir[0]}/.commandunit")"
   _output_dir="$(parseopt_string_value_for 'output-dir' "${_parsed_opts_json}" "${_test_rootdir[0]}")"
   _output_dir="$(realpath -m "${_output_dir}")"
 
@@ -68,6 +70,7 @@ function main() {
   fi
 
   prepare_tests "${_test_rootdir[0]}" \
+    "${_commandunit_dir}" \
     "${_output_dir}" \
     "${_is_parallel}" \
     "${_filter}" \
@@ -75,7 +78,7 @@ function main() {
 }
 
 function prepare_tests() {
-  local _srcdir="${1}" _outdir="${2}" _is_parallel="${3}" _filter="${4}" _ignore_mtime="${5}"
+  local _srcdir="${1}" _commandunit_dir="${2}" _outdir="${3}" _is_parallel="${4}" _filter="${5}" _ignore_mtime="${6}"
   info_begin "Preprocessing"
   info "_srcdir: '${_srcdir}'; _outdir: '${_outdir}'; _is_parallel: '${_is_parallel}'; _filter: '${_filter}'; _ignore_mtime: '${_ignore_mtime}'"
   # Copy contents in srcdir to outdir
@@ -85,7 +88,7 @@ function prepare_tests() {
     cp --preserve -r "${_srcdir}"/* "${_outdir}"/ || abort "Failed to copy from '${_srcdir}' to '${_outdir}'"
   fi
   # Compile tests
-  __compile_tests "${_outdir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
+  __compile_tests "${_outdir}" "${_commandunit_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}"
   info_end "Preprocessing"
 }
 
@@ -192,12 +195,12 @@ function __process_files() {
 }
 
 function __compile_tests() {
-  local _output_dir="${1}" _is_parallel="${2}" _filter="${3}" _ignore_mtime="${4}"
+  local _output_dir="${1}" _commandunit_dir="${2}" _is_parallel="${3}" _filter="${4}" _ignore_mtime="${5}"
 
   __process_yamlpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
   __process_yaml_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
 
-  export JF_PATH="${_output_dir}:${APP_LIB}/jsonpp"
+  export JF_PATH="${_output_dir}:${_commandunit_dir}/jsonpp:${APP_LIB}/jsonpp"
   info "JF_PATH: '${JF_PATH}'"
   __process_jsonpp_files "${_output_dir}" "${_is_parallel}" "${_filter}" "${_ignore_mtime}" | viewer
 }
