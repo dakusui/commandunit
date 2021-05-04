@@ -93,11 +93,19 @@ function tap_print_plan() {
   echo "1..${_num}"
 }
 
+function tap_print_diagnostics() {
+  local _i
+  for _i in "${@}"; do
+    echo "# ${_i}"
+  done
+}
+
 function tap_bailout() {
   local _message="${1}"
   echo "Bail out! ${_message}"
   abort "${_message}"
 }
+
 
 function tapview() {
   "${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
@@ -193,6 +201,7 @@ function __process_files() {
   ensure_no_bg_jobs
   mapfile -t _source_files < <(__list_test_sources "${_output_dir}" "${_extension}" "${_filter}")
   tap_print_plan "${#_source_files[@]}"
+  tap_print_diagnostics "Processing '${_extension}' files."
   local _id=1
   for _i in "${_source_files[@]}"; do
     local _cmd _src _dest _tap_message

@@ -5,21 +5,28 @@ function commandunit() {
   local _image_version="v1.10"
   local _suffix=""
   local _entrypoint=""
-  local _loglevel="ERROR"
-  local _me
-  local _image_name
+  local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
+  local _me _image_name _args _show_image_name=false _i
   _me="${USER}"
-  if [[ $1 == "--snapshot" ]]; then
-    _image_version="v1.11"
-    _suffix="-snapshot"
-    shift
-  fi
+  _args=()
+  for _i in "${@}"; do
+    if [[ $_i == "--snapshot" ]]; then
+      _image_version="v1.11"
+      _suffix="-snapshot"
+    elif [[ $_i == "--debug" ]]; then
+      _entrypoint="--entrypoint=/bin/bash"
+    elif [[ $_i == "--show-image-name" ]]; then
+      _show_image_name=true
+    elif [[ $_i == "--" ]]; then
+      break
+    else
+      _args+=("${_i}")
+    fi
+  done
   _image_name="${_docker_repo_name}:${_image_version}${_suffix}"
-  if [[ $1 == "--debug" ]]; then
-    _entrypoint="--entrypoint=/bin/bash"
-    shift
+  if ${_show_image_name}; then
+    echo "${_image_name}" >&2
   fi
-  echo "image='${_image_name}'" >&2
   # shellcheck disable=SC2086
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
@@ -28,6 +35,6 @@ function commandunit() {
     -v "${_project_basedir}:${_hostfsroot_mountpoint}${_project_basedir}" \
     ${_entrypoint} \
     -i "${_image_name}" \
-    "${@}"
+    "${_args[@]}"
 }
 export -f commandunit
