@@ -1,4 +1,4 @@
-FROM dakusui/jq-front:v0.43
+FROM dakusui/jq-front:v0.44
 ARG VERSION=unknown
 ADD out/main/scripts/ /app/
 RUN chmod 755 /app/bin/*

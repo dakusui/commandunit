@@ -134,8 +134,8 @@ function run_each_test() {
   info_begin "'${1}'"
   if [[ "${_testname}" == *.sh ]]; then
     info "Test type: 'scripttest'"
-    if [[ -e "${COMMANDUNIT_CONFDIR}/testdrivers/scripttest.rc" ]]; then
-      __run_each_test_test_driver_name="${COMMANDUNIT_CONFDIR}/testdrivers/scripttest.rc"
+    if [[ -e "${COMMANDUNIT_DIR}/testdrivers/scripttest.rc" ]]; then
+      __run_each_test_test_driver_name="${COMMANDUNIT_DIR}/testdrivers/scripttest.rc"
     else
       __run_each_test_test_driver_name="${COMMANDUNIT_HOME}/lib/testdrivers/scripttest.rc"
     fi
@@ -144,7 +144,7 @@ function run_each_test() {
     _content=$(cat "${_testdir}/${_testname}")
     _test_type="$(echo "${_content}" | jq -crM '.type')"
     info "Test type: 'JSON:${_test_type}'"
-    local _custom_driver="${COMMANDUNIT_CONFDIR}/testdrivers/json_${_test_type}.rc"
+    local _custom_driver="${COMMANDUNIT_DIR}/testdrivers/json_${_test_type}.rc"
     if [[ -e "${_custom_driver}" ]]; then
       __run_each_test_test_driver_name="${_custom_driver}"
     else
@@ -161,7 +161,7 @@ function run_each_test() {
     # .report.result.exitCode isn't the ideal place to describe the driver loading failure
     # but there's no any better place as of now.
     local _err
-    _err="$(jq -ncrM '{"report":{"result":{"exitCode":{"messages":["'"Failed to load driver for <${_testname}>(driver: <${__run_each_test_test_driver_name}>, config directory: <${COMMANDUNIT_CONFDIR}>)"'"]}}}}')"
+    _err="$(jq -ncrM '{"report":{"result":{"exitCode":{"messages":["'"Failed to load driver for <${_testname}>(driver: <${__run_each_test_test_driver_name}>, config directory: <${COMMANDUNIT_DIR}>)"'"]}}}}')"
     json_object_merge "${_test_result_json}" "$_err"
     info_end "Driver loading failed: '${_testname}': '${__run_each_test_test_driver_name}'"
     return 0

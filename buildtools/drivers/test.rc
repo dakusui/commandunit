@@ -26,7 +26,7 @@ function __run_commandunit() {
     --tapview \
     ${_ignore_mtime} \
     --filter="${_test_filter}" \
-    --configdir="${TESTDIR}/.commandunit" \
+    --commandunit-dir="${TESTDIR}/.commandunit" \
     --test-srcdir="${TESTDIR}"
 }
 

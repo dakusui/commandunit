@@ -23,7 +23,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","configdir",true,[],"directory to store config files (default: current {directory/.commandunit})"],
+    ["","commandunit-dir",true,[],"directory to store config and data files (default: current {directory/.commandunit})"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir + .commandunit/work)"],
@@ -56,7 +56,7 @@ function main() {
     return 0
   fi
   info_begin "commandunit"
-  local _default_target_directory _project_name _is_parallel _filter _configdir _test_reportdir _subcommands _bindir _is_tapview_enabled _ignore_mtime
+  local _default_target_directory _project_name _is_parallel _filter _commandunit_dir _test_reportdir _subcommands _bindir _is_tapview_enabled _ignore_mtime
   _bindir="$(dirname "${BASH_SOURCE[0]}")"
   mapfile -t _subcommands < <(parseopt_rest_values "${_parsed_opts_json}")
   if [[ "${#_subcommands[@]}" == 0 ]]; then
@@ -68,14 +68,14 @@ function main() {
   _do_clean="$(parseopt_boolean_value_for "clean" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
-  _configdir="$(parseopt_string_value_for 'configdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
+  _commandunit_dir="$(parseopt_string_value_for 'commandunit-dir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit/work")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
   _is_tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
 
-  _configdir="$(__commandunit__normalize_path "${_configdir}")"
+  _commandunit_dir="$(__commandunit__normalize_path "${_commandunit_dir}")"
   _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
   _test_workdir="$(__commandunit__normalize_path "${_test_workdir}")"
   _test_reportdir="$(__commandunit__normalize_path "${_test_reportdir}")"
@@ -89,7 +89,7 @@ function main() {
   info "test-srcdir: '${_test_srcdir}'"
   info "test-workdir: '${_test_workdir}'"
   info "test-reportdir: '${_test_reportdir}'"
-  info "configdir: '${_configdir}'"
+  info "commandunit-dir: '${_commandunit_dir}'"
   local _each _parallel_option="" _ignore_mtime_option=""
   if [[ "${_is_parallel}" == true ]]; then
     _parallel_option="--parallel"
@@ -129,7 +129,7 @@ function main() {
         --filter="${_filter}" \
         "${_test_srcdir}" || abort "preprocessing errors were detected."
     elif [[ "${_each}" == "run" ]]; then
-      export COMMANDUNIT_CONFDIR="${_configdir}"
+      export COMMANDUNIT_DIR="${_commandunit_dir}"
       mkdir -p "${_test_reportdir}"
       # shellcheck disable=SC2090
       # _parallel_option is passed to the command without being quoted.
@@ -138,27 +138,43 @@ function main() {
         --test-reportdir="${_test_reportdir}" \
         --filter="${_filter}" \
         "${_test_workdir}" |
-        ${_viewer_command} || message "test failures/errors were detected."
+        ${_viewer_command} || :
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi
   done
+  local _ret=0
   if array_contains "run" "${_subcommands[@]}"; then
-    local _successful
-    _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
-    if [[ "${_successful}" != true ]]; then
-      message "TESTS FAILED"
-      return 1
+    local _dir="${_test_reportdir#${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}"
+    _ret=1
+    if [[ -e "${_test_reportdir}/testreport.json" ]]; then
+      if [[ -e "${_test_reportdir}/testreport.adoc" ]]; then
+        _successful="$(jq '.wasSuccessful' "${_test_reportdir}/testreport.json")"
+        if [[ "${_successful}" == true ]]; then
+          message "SUCCESSFUL ${_dir}/testreport.adoc"
+          _ret=0
+        else
+          message "FAILED: CHECK ${_dir}/testreport.adoc"
+        fi
+      else
+        message "ERROR: CHECK ${_dir}/testreport.json ('${_dir}/testreport.adoc' was not properly generated)"
+      fi
+    else
+      message "ERROR: LOOK INTO FILES IN ${_dir} ('${_dir}/testreport.json' was not properly generated) "
     fi
   fi
   info_end "commandunit"
+  return "${_ret}"
 }
 
 function __commandunit__normalize_path() {
   local _path="${1}"
-  _path="$(realpath -m "${1}")"
+  if [[ "${_path}" != /* ]]; then
+    _path="${COMMANDUNIT_PWD}/${_path}"
+  fi
+  _path="$(realpath -m "${_path}")" # Clean up ../ ./ etc in _path.
   _path="${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}/${_path#/}"
   echo "${_path}"
 }

@@ -19,5 +19,5 @@ then:
       - REGEX:not ok 1 test-failing\.json
   stderr:
     present:
-      - REGEX:TESTS FAILED
+      - REGEX:FAILED.+CHECK.*testreport\.adoc
       - REGEX:ERROR
