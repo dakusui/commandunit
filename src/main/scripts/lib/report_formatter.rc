@@ -18,7 +18,7 @@ function print_test_report() {
   echo
   echo "This test suite was ${_successful}."
   # shellcheck disable=SC2016
-  echo 'Tests under `'"${_testdir}"'` that match a filter `'"${_filter}"'` were executed.'
+  echo 'Tests under `'"${_testdir#${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}"'` that match a filter `'"${_filter}"'` were executed.'
   echo
   echo ".Summary"
   echo "----"

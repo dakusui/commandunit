@@ -13,7 +13,7 @@ function commandunit() {
   local _suffix=""
   local _entrypoint=""
   local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
-  local _me _image_name _args _show_image_name=false _i _s
+  local _me _image_name _args _show_image_name=false _i _s _quit=false
   _me="${USER}"
   _args=()
   _s=to_func
@@ -26,6 +26,8 @@ function commandunit() {
           _entrypoint="--entrypoint=/bin/bash"
         elif [[ $_i == "--show-image-name" ]]; then
           _show_image_name=true
+        elif [[ $_i == "--quit" ]]; then
+          _quit=true
         elif [[ $_i == "--" ]]; then
           _s=to_container
         else
@@ -37,8 +39,9 @@ function commandunit() {
   done
   _image_name="${_docker_repo_name}:${_image_version}${_suffix}"
   if ${_show_image_name}; then
-    echo "${_image_name}" >&2
+    echo "${_image_name}"
   fi
+  ${_quit} && return 0
   # shellcheck disable=SC2086
   docker run \
     --user="$(id -u "${_me}"):$(id -g "${_me}")" \
