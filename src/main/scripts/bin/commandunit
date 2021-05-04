@@ -139,7 +139,7 @@ function main() {
         --test-reportdir="${_test_reportdir}" \
         --filter="${_filter}" \
         "${_test_workdir}" |
-        ${_viewer_command} || :
+        ${_viewer_command} || break
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
     else

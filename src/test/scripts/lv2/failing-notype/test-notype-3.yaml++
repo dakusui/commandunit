@@ -1,0 +1,17 @@
+---
+when:
+  source:
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/strings.rc
+  cmd: urlencode
+  args:
+    - 'hello, world'
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - hello%2C%20world
+  stderr:
+    absent:
+      - REGEX:.+

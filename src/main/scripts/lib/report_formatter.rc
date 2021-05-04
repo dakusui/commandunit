@@ -116,7 +116,13 @@ function __test_details() {
       echo "----"
       echo "include::./${_test_name}-output/script.txt[]"
       echo "----"
-      echo
+      echo "[%collapsible]"
+      echo "===="
+      echo "[source, json]"
+      echo "----"
+      echo "include::./${_test_name}[]"
+      echo "----"
+      echo "===="
 
       echo "==== exit code"
       echo

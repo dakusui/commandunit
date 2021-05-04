@@ -176,13 +176,15 @@ function __process_files() {
     _tap_message="process file: '${_i}'"
     if [[ ! -e "${_dest}" || "${_dest}" -ot "${_src}" || "${_ignore_mtime}" == true ]]; then
       info "- '${_i}'"
+      local _err
+      _err="$(bud_temp_file)"
       _cmd="$(__process_files_convert "${_src}" "${_dest}")"
-      _cmd="(${_cmd} && tap_print_ok ${_id} '${_tap_message}')"
+      _cmd="(${_cmd} 2> >(head --lines=1 > ${_err}) && tap_print_ok ${_id} '${_tap_message})')"
       debug "_cmd: '${_cmd}'"
       if [[ "${_is_parallel}" == true ]]; then
-        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>'" &
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: $(cat ${_err})'" &
       else
-        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>'"
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: $(cat ${_err})'"
       fi
     else
       info "-  '${_i}' (skipped)"
