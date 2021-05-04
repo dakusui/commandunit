@@ -18,7 +18,7 @@ function commandunit() {
   _args=()
   for _i in "${@}"; do
     if [[ $_i == "--snapshot" ]]; then
-      _image_version="v1.11"
+      _image_version="${COMMANDUNIT_SNAPSHOT_VERSION}"
       _suffix="-snapshot"
     elif [[ $_i == "--debug" ]]; then
       _entrypoint="--entrypoint=/bin/bash"

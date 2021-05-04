@@ -194,7 +194,7 @@ function print_usage() {
   mapfile -t _references < <(json_value_at "${_spec_json}" '.references|keys[]')
   for _i in "${_references[@]}"; do
     local _v
-    echo "${_i}: <$(json_value_at "${_spec_json}" '.references."'"${_i}"'"')>"
+    echo "- ${_i}: <$(json_value_at "${_spec_json}" '.references."'"${_i}"'"')>"
   done
 }
 
