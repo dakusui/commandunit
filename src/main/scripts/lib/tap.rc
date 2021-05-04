@@ -1,0 +1,39 @@
+"${__COMMANDUNIT__TAP_RC:-false}" && return 0
+readonly __COMMANDUNIT__TAP_RC=true
+
+function tap_print_ok() {
+  local _id="${1}" _message="${2}"
+  printf "ok %s %s\n" "${_id}" "${_message}"
+}
+
+function tap_print_skip() {
+  local _id="${1}" _message="${2}"
+  printf "ok # skip %s %s\n" "${_id}" "${_message}"
+}
+
+function tap_print_not_ok() {
+  local _id="${1}" _message="${2}"
+  printf "not ok %s %s\n" "${_id}" "${_message}"
+}
+
+function tap_print_plan() {
+  local _num="${1}"
+  printf "1..%s\n" "${_num}"
+}
+
+function tap_print_diagnostics() {
+  local _i
+  for _i in "${@}"; do
+    printf "# %s\n" "${_i}"
+  done
+}
+
+function tap_bailout() {
+  local _message="${1}"
+  printf "Bail out! %s\n" "${_message}"
+  abort "${_message}"
+}
+
+function tapview() {
+  /bin/sh "${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
+}

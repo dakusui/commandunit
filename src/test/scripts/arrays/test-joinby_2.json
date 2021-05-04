@@ -1,0 +1,63 @@
+{
+  "type": "NORMAL",
+  "description": [],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [],
+    "environmentVariables": {},
+    "cmd": ":",
+    "args": []
+  },
+  "when": {
+    "description": [
+      "Run 'join_by' with a delimiter '-' and an array (A, B, C)."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+      "${BUD_LIB}/arrays.rc"
+    ],
+    "environmentVariables": {},
+    "cmd": "join_by",
+    "args": [
+      "-",
+      "A",
+      "B"
+    ]
+  },
+  "then": {
+    "description": [],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [
+        "raw:A-B"
+      ],
+      "absent": []
+    },
+    "stderr": {
+      "present": [],
+      "absent": [
+        "regex:.+"
+      ]
+    }
+  }
+}

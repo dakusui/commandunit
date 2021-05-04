@@ -6,29 +6,13 @@
 # This code is intended to be embedded in your project. The author
 # grants permission for it to be distributed under the prevailing
 # license of your project if you choose, provided that license is
-# OSD-compliant; otherwise the following SPDX tag incorporates a
-# license by reference.
+# OSD-compliant; otherwise the following SPDX tag applies.
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
-# This is version 1.1
+# This is version 1.0
 # A newer version may be available at https://gitlab.com/esr/tapview
 #
-# POSIX allows but does not mandate that -n suppresses emission of a
-# trailing newline in echo. Thus, some shell builtin echos don't do
-# that.  Cope gracefully.
-# shellcheck disable=SC2039
-if [ "$(echo -n "a"; echo "b")" != "ab" ]
-then
-    ECHO="echo"
-elif [ "$(/bin/echo -n "a"; /bin/echo "b")" = "ab" ]
-then
-    ECHO="/bin/echo"
-else
-    echo "tapview: bailing out, your echo lacks -n support."
-    exit 3
-fi
-
 OK="."
 FAIL="F"
 SKIP="s"
@@ -37,7 +21,7 @@ TODO_OK="u"
 
 ship_char() {
     # shellcheck disable=SC2039
-    "${ECHO}" -n "$1"
+    printf '%s' "$1"
 }
 
 ship_line() {
@@ -64,7 +48,7 @@ do
 	status=2
 	break
     fi
-    if expr "$line" : '1\.\.[0-9][0-9]*' >/dev/null
+    if expr "$line" : '1\.\.[0-9][0-9]*' >/dev/null >/dev/null
     then
 	if [ "$expect" != "" ]
 	then
@@ -161,7 +145,7 @@ if [ -z "$expect" ]
 then
     ship_line "Missing a plan."
     status=1
-elif [ "$test_before_plan" = "yes" ] && [ "$test_after_plan" = "yes" ] 
+elif [ "$test_before_plan" = "yes" ] && [ "$test_after_plan" = "yes" ]
 then
     ship_line "A plan line may only be placed before or after all tests."
     status=1
@@ -185,9 +169,7 @@ then
     report="${report}, ${skipcount} SKIPs"
 fi
 
-# This line was modified by Hiroshi Ukai.
-# Because '\n' sequence inside ${report} is not interpreted by some 'echo'es.
-printf "${report}.\n"
+echo "${report}."
 
 exit "${status}"
 

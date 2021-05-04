@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/main.rc"
+source "${COMMANDUNIT_HOME}/lib/tap.rc"
 
 TESTCOMPILER_SPECIFICATION='{
   "usage": "testpreprocessor [OPTION]... [DIRECTORY]",
@@ -71,44 +72,6 @@ function main() {
     "${_is_parallel}" \
     "${_filter}" \
     "${_ignore_mtime}"
-}
-
-function tap_print_ok() {
-  local _id="${1}" _message="${2}"
-  echo "ok ${_id} ${_message}"
-}
-
-function tap_print_skip() {
-  local _id="${1}" _message="${2}"
-  echo "ok # skip ${_id} ${_message}"
-}
-
-function tap_print_not_ok() {
-  local _id="${1}" _message="${2}"
-  echo "not ok ${_id} ${_message}"
-}
-
-function tap_print_plan() {
-  local _num="${1}"
-  echo "1..${_num}"
-}
-
-function tap_print_diagnostics() {
-  local _i
-  for _i in "${@}"; do
-    echo "# ${_i}"
-  done
-}
-
-function tap_bailout() {
-  local _message="${1}"
-  echo "Bail out! ${_message}"
-  abort "${_message}"
-}
-
-
-function tapview() {
-  "${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
 }
 
 function prepare_tests() {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/main.rc"
+source "${COMMANDUNIT_HOME}/lib/tap.rc"
 
 COMMANDUNIT_SPECIFICATION="$(
   cat <<'END'
@@ -112,7 +113,7 @@ function main() {
   local _viewer_command="cat"
   if [[ "${_is_tapview_enabled}" == true ]]; then
     # shellcheck disable=SC2089
-    _viewer_command="/usr/bin/env bash -eu -E ""${COMMANDUNIT_DEPENDENCIES_ROOT}/tapview/tapview"
+    _viewer_command="tapview"
   fi
   for _each in "${_subcommands[@]}"; do
     if [[ "${_each}" == "preprocess" ]]; then
