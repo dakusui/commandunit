@@ -126,6 +126,26 @@ __run_each_test_test_result_json_template='{
   "id": "%s"
 }'
 function run_each_test() {
+  function find_driver() {
+    local _driver_name="${1}"
+    for _i in "${_driver_dirs[@]}"; do
+      local _cand="${_i}/${_driver_name}"
+      if [[ -e "${_cand}" ]]; then
+        echo "${_cand}"
+        return 0
+      fi
+    done
+    return 1
+    # abort "Failed to find a driver: '${_driver_name}' in (""$(__format_filename_for_hostside "{_driver_dirs[@]}")"")"
+  }
+  function handle_driver_not_found() {
+    local _err
+    # shellcheck disable=SC2016
+    _err="$(__compose_failure_with_message "Failed to find a driver: <${_driver_name}> in (""$(__format_filename_for_hostside "${_driver_dirs[@]}" | map_file 'printf "<${_each}> "')"")")"
+    json_object_merge "${_test_result_json}" "$_err"
+    info_end "Driver not found ('${_driver_name}')"
+  }
+  local _driver_dirs=("${COMMANDUNIT_DIR}/testdrivers" "${COMMANDUNIT_HOME}/lib/testdrivers")
   local _testname="${1}" _testdir="${2}" _testreportdir="${3}" _id="${4}"
   local _precheck_result_file _execution_result_file
   local _test_result_json
@@ -134,34 +154,31 @@ function run_each_test() {
   info_begin "'${1}'"
   if [[ "${_testname}" == *.sh ]]; then
     info "Test type: 'scripttest'"
-    if [[ -e "${COMMANDUNIT_DIR}/testdrivers/scripttest.rc" ]]; then
-      __run_each_test_test_driver_name="${COMMANDUNIT_DIR}/testdrivers/scripttest.rc"
-    else
-      __run_each_test_test_driver_name="${COMMANDUNIT_HOME}/lib/testdrivers/scripttest.rc"
-    fi
+    __run_each_test_test_driver_name="$(find_driver "scripttest.rc")" || {
+      handle_driver_not_found
+      return 0
+    }
   elif [[ "${_testname}" == *.json ]]; then
     local _content _test_type _has_type _test_filename
     _test_filename="${_testdir}/${_testname}"
     _content=$(cat "${_test_filename}")
     _has_type="$(json_has_key "${_content}" "type" ".")"
     if [[ "${_has_type}" != true ]]; then
-      # should fail. not abort.
-      # abort "${_testdir}/${_testname} does not have test type. (.type)"
+      local _err
       _err="$(__compose_failure_with_message "Test type was not defined for <$(__format_filename_for_hostside "${_test_filename}")>")"
       json_object_merge "${_test_result_json}" "$_err"
-      info_end "Type was not defined for '$(__format_filename_for_hostside "${_test_filename}")'"
+      info_end "Type was not defined (.type attribute was not found) for '$(__format_filename_for_hostside "${_test_filename}")'"
       return 0
     fi
     _test_type="$(echo "${_content}" | jq -crM '.type')"
     info "Test type: 'JSON:${_test_type}'"
-    local _custom_driver="${COMMANDUNIT_DIR}/testdrivers/json_${_test_type}.rc"
-    if [[ -e "${_custom_driver}" ]]; then
-      __run_each_test_test_driver_name="${_custom_driver}"
-    else
-      __run_each_test_test_driver_name="${COMMANDUNIT_HOME}/lib/testdrivers/json_${_test_type}.rc"
-    fi
+    local _driver_name="json_${_test_type}.rc"
+    __run_each_test_test_driver_name="$(find_driver "${_driver_name}")" || {
+      handle_driver_not_found
+      return 0
+    }
   else
-    abort "Unsupported test type: '${_testname}'"
+    abort "RUNTIME ERROR: Unsupported test file extension: '${_testname##*.}' (test name: ${_testname})"
   fi
 
   ####
@@ -217,8 +234,10 @@ function run_each_test() {
 }
 
 function __format_filename_for_hostside() {
-  local _test_filename="${1}"
-  echo "${_test_filename#${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}"
+  local _i
+  for _i in "${@}"; do
+    echo "${_i#${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}"
+  done
 }
 
 function __compose_failure_with_message() {
