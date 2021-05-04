@@ -24,7 +24,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","commandunit-dir",true,[],"directory to store config and data files (default: current {directory/.commandunit})"],
+    ["","commandunit-dir",true,[],"directory to store config and data files (default: current directory + .commandunit)"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"write test reports under the specified directory (default: current directory)"],
     ["","test-workdir",true,[],"write test reports under the specified directory (default: value for --test-srcdir + .commandunit/work)"],
@@ -40,7 +40,9 @@ COMMANDUNIT_SPECIFICATION="$(
   },
   "references":{
     "github project": "https://github.com/dakusui/bud",
-    "documentation": "https://dakusui.github.io/commandunit/"
+    "documentation": "https://dakusui.github.io/commandunit/",
+    "Test Anything Protocol": "https://testanything.org/",
+    "tapview": "https://gitlab.com/esr/tapview"
   }
 }
 END

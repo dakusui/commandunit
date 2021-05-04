@@ -1,5 +1,6 @@
 cat <<'END'
 <!--- DO NOT EDIT: THIS FILE IS GENERATED AUTOMATICALLY -->
+
 # The `commandunit` testing framework.
 
 The `commandunit` is a testing framework intended to verrify your command line
@@ -61,7 +62,7 @@ Run tests found under DIR in parallel mode.
 Although it is possible to install `commandunit` scripts in your directory
 struture, it is highly adviced to use Docker to use `commandrunner` to avoid
 compatibility issues. Have the following bash function definition in
-your `~/.bashrc` or `~/.bash_profile`.
+your `~/.bashrc`.
 
 ```bash
 END
@@ -70,6 +71,19 @@ bash -eu -E ""$(dirname ${0})"/src/site/adoc/resources/examples/function_definit
 
 cat <<'END'
 ```
+
+Or run the following one-liner.
+
+```bash
+app="commandunit"
+rc="$HOME/.${app}rc" && \
+target="$HOME/.bashrc" && \
+tag="#-${app^^}" && \
+cat <(curl "https://raw.githubusercontent.com/dakusui/commandunit/main/src/site/adoc/resources/examples/function_definition.rc") > "${rc}" && \
+sh -c 'grep "$4" "$1" >& /dev/null || printf "source $3$2$3 $4\n" >> "$1"' - "${target}" "${rc}" '"' "${tag}"
+```
+
+If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
 
 ## Authors
 
