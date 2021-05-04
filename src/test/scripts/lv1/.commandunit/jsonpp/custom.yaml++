@@ -1,0 +1,7 @@
+---
+"$extends":
+  - base/normal.json
+when:
+  cmd: echo
+  args:
+    - hello

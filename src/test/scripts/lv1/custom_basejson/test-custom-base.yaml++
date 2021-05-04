@@ -1,0 +1,13 @@
+---
+"$extends":
+  - custom.yaml++
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - RAW:hello
+  stderr:
+    absent:
+      - REGEX:.+
