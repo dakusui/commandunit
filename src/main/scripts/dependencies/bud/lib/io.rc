@@ -40,6 +40,5 @@ function map_file() {
   done <"${_file}"
 }
 
-
 mkdir -p "${TEMP:-/tmp}/bud/${BUD_APPCLASS_NAME}/${__BUD_SESSION_ID}"
 

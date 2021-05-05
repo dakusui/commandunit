@@ -1,0 +1,33 @@
+== Installation
+
+Although you can install `commandunit` scripts in your directory
+structure, it is highly advised to use Docker to use `commandrunner` to avoid
+compatibility issues.
+Have the following bash function definition in
+your `~/.bashrc`.
+
+[%collapsible]
+====
+[source, bash]
+----
+include::resources/examples/function_definition.rc[]
+----
+====
+
+Or  just run the following one-liner to do it.
+
+[source, bash]
+----
+include::resources/examples/oneline_installer.sh[]
+----
+
+What the one-liner does is the following.
+
+1. grab the script from our github repo save it as `$HOME/.commandunitrc`.
+2. If a string that contains `#-COMMANDUNIT` in your `$HOME/.bashrc`, add a line
+`source "$HOME/.commandunitrc"`
+
+If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
+
+[.text-right]
+link:index.html[top]

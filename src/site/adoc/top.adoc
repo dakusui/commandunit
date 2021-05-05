@@ -1,6 +1,3 @@
 = The `commandunit` testing framwork
 
-[source, bash]
-----
-include::resources/examples/function_definition.rc[]
-----
+The `commandunit` is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.
