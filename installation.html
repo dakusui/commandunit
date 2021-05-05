@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Project Directory Structure</title>
+<title>Installation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,208 +441,136 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_project_directory_structure">Project Directory Structure</a></li>
-<li><a href="#_running_the_testrunner">Running the <code>testrunner</code></a></li>
+<li><a href="#_installation">Installation</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_project_directory_structure">Project Directory Structure</h2>
+<h2 id="_installation">Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(WIP)</p>
+<p>Although you can install <code>commandunit</code> scripts in your directory
+structure, it is highly advised to use Docker to use <code>commandrunner</code> to avoid
+compatibility issues.
+Have the following bash function definition in
+your <code>~/.bashrc</code>.</p>
+</div>
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">function commandunit() {
+  local _project_basedir="${PWD}"
+  local _hostfsroot_mountpoint="/var/lib/commandunit"
+  local _docker_repo_name="dakusui/commandunit"
+  local _image_version="v1.17"
+  local _suffix=""
+  local _entrypoint=""
+  local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
+  local _me _image_name _args _show_image_name=false _i _s _quit=false _help=false
+  _me="${USER}"
+  _args=()
+  _s=to_func
+  for _i in "${@}"; do
+    if [[ "${_s}" == to_func ]]; then
+        if [[ $_i == "--snapshot" ]]; then
+          _image_version="v1.18"
+          _suffix="-snapshot"
+        elif [[ $_i == "--debug" ]]; then
+          _entrypoint="--entrypoint=/bin/bash"
+        elif [[ $_i == "--show-image-name" ]]; then
+          _show_image_name=true
+        elif [[ $_i == "--quit" ]]; then
+          _quit=true
+        elif [[ $_i == "--help" ]]; then
+          _help=true
+          _args+=("${_i}")
+        elif [[ $_i == "--" ]]; then
+          _s=to_container
+        else
+          _args+=("${_i}")
+        fi
+    else
+      _args+=("${_i}")
+    fi
+  done
+  _image_name="${_docker_repo_name}:${_image_version}${_suffix}"
+  if ${_show_image_name}; then
+    echo "${_image_name}"
+  fi
+  if ${_help}; then
+    echo "Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]..."
+    echo ""
+    echo "A wrapper function for 'commandunit' to invoke its docker image.".
+    echo "Followings are switching options to control the wrapper's behaviour."
+    echo "Options not listed here or ones after the separator (--) are passed to the docker image directly."
+    echo ""
+    echo "Wrapper options:"
+    echo "--snapshot        Use the snapshot image instead of the latest released one. Development purpose only."
+    echo "--debug           Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only."
+    echo "--show-image-name Print the image name. Useful to figure out the version."
+    echo "--quit            Quit before running the image. With --show-image-name, useful to figure out the image version"
+    echo "--help            Show this help and pass the --help option to the docker image."
+    echo "--                A separator to let this wrapper know the options after it should be passed directly to the image"
+    echo ""
+  fi
+  ${_quit} &amp;&amp; return 0
+  # shellcheck disable=SC2086
+  docker run \
+    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
+    --env COMMANDUNIT_PWD="${_project_basedir}" \
+    --env COMMANDUNIT_LOGLEVEL="${_loglevel}" \
+    -v "${_project_basedir}:${_hostfsroot_mountpoint}${_project_basedir}" \
+    ${_entrypoint} \
+    -i "${_image_name}" \
+    "${_args[@]}"
+}
+export -f commandunit</code></pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>Or  just run the following one-liner to do it.</p>
 </div>
 <div class="listingblock">
-<div class="title">Directory Structure</div>
 <div class="content">
-<pre class="highlight"><code class="language-folder" data-lang="folder">                      build_info.rc       (direct run)
-                      ------------------- --------------
-bud/                  PROJECT_DIR
-  src/                SRCDIR              EXEC_BASEDIR
-    adoc/
-    lib/                                  LIBDIR
-    test/                                 TESTDIR
-    testreport/                           TESTREPORTDIR
-  buildtools/
-  out/                OUTDIR,EXEC_BASEDIR
-    adoc/             DOCSRCDIR
-    doc/              DOCDIR
-    lib/              LIBDIR
-    test/             TESTDIR
-    testreport/       TESTREPORTDIR
-  build.sh
-  build_info.json
-  LICENSE
-  README.adoc</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">app="commandunit"
+rc="$HOME/.${app}rc" &amp;&amp; \
+target="$HOME/.bashrc" &amp;&amp; \
+tag="#-${app^^}" &amp;&amp; \
+cat &lt;(curl "https://raw.githubusercontent.com/dakusui/commandunit/main/src/site/adoc/resources/examples/function_definition.rc") &gt; "${rc}" &amp;&amp; \
+sh -c 'grep "$4" "$1" &gt;&amp; /dev/null || printf "source $3$2$3 $4\n" &gt;&gt; "$1"' - "${target}" "${rc}" '"' "${tag}"</code></pre>
 </div>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Environment Variables</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">build_info.rc</th>
-<th class="tableblock halign-left valign-top">(direct run)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PROJECT_DIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>$(pwd)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>$(pwd)</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EXEC_BASEDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/src</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SRCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/src</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OUTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DOCSRCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/adoc</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DOCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/doc</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LIBDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/lib</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/lib</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TESTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/test</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/test</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TESTREPORTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/testreport</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/testreport</code></p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>What the one-liner does is the following.</p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>grab the script from our github repo save it as <code>$HOME/.commandunitrc</code>.</p>
+</li>
+<li>
+<p>If a string that contains <code>#-COMMANDUNIT</code> in your <code>$HOME/.bashrc</code>, add a line
+<code>source "$HOME/.commandunitrc"</code></p>
+</li>
+</ol>
 </div>
-<div class="sect1">
-<h2 id="_running_the_testrunner">Running the <code>testrunner</code></h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="title">Directory Structure</div>
-<div class="content">
-<pre class="highlight"><code class="language-folder" data-lang="folder">                      build_info.rc
-                      -------------------
-bud/
-  src/                BUD_HOME
-    adoc/
-    lib/                                   LIBDIR
-    test/                                 TESTDIR
-    testreport/                           TESTREPORTDIR
-  buildtools/
-  out/                OUTDIR,EXEC_BASEDIR
-    adoc/             DOCSRCDIR
-    doc/              DOCDIR
-    lib/              LIBDIR
-    test/             TESTDIR
-    testreport/       TESTREPORTDIR
-  build.sh
-  build_info.json
-  LICENSE
-  README.adoc
-{app}/                 BUD_APP_HOME
-  src/
-    test/
-      scripts/         BUD_TEST_SRCCDIR
-  target
-    test-classes/      BUD_TEST_BASEDIR
-  bud-testrepors/      BUD_TEST_REPORTDIR</code></pre>
+<div class="paragraph">
+<p>If you are on <code>macOS</code>, make sure <code>~/.bashrc</code> is read by <code>~/.bash_profile</code>.</p>
 </div>
+<div class="paragraph text-right">
+<p><a href="index.html">top</a></p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Environment Variables</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">build_info.rc</th>
-<th class="tableblock halign-left valign-top">(direct run)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PROJECT_DIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>$(pwd)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>$(pwd)</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EXEC_BASEDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/src</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SRCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/src</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OUTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_DIR}/out</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DOCSRCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/adoc</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DOCDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/doc</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LIBDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/lib</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/lib</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TESTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/test</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/test</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TESTREPORTDIR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${OUTDIR}/testreport</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${EXEC_BASEDIR}/testreport</code></p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-28 19:38:59 UTC
+Last updated 2021-05-04 21:04:07 UTC
 </div>
 </div>
 </body>

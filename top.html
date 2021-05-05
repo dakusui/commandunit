@@ -441,33 +441,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>The <code>commandunit</code> testing framwork</h1>
 </div>
 <div id="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function commandunit() {
-  local _image_version="v1.6"
-  local _image_name="dakusui/commandunit:${_image_version}"
-  local _project_name _project_dir _pwd _me _info_log
-  _pwd="${PWD}"
-  _me="${USER}"
-  _project_name="unknown"
-  _project_dir="${_pwd}"
-  _info_log="${BUD_INFO:-disabled}"
-  docker run \
-    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
-    --env PROJECT_NAME="${_project_name}" \
-    --env COMMANDUNIT_PWD="${PWD}" \
-    --env BUD_INFO="${_info_log}" \
-    -v "${_project_dir}:/var/lib/commandunit${_project_dir}" \
-    -i "${_image_name}" \
-    "${@}"
-}
-export -f commandunit</code></pre>
-</div>
+<div class="paragraph">
+<p>The <code>commandunit</code> is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.</p>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-29 12:52:39 UTC
+Last updated 2021-05-04 20:59:41 UTC
 </div>
 </div>
 </body>
