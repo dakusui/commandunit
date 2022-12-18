@@ -8,7 +8,6 @@ function execute_stage() {
   shift 3
   message "BEGIN HANDLER(test): target: '${_target}'; filter: '${_filter}'; ignore_mtime: '${_ignore_mtime}'; '${*}'"
   buildtools__execute_stage "${_target}" "${_filter}" "${_ignore_mtime}" "${@}"
-  __check_testreport_json_file "${TESTDIR}/.commandunit/work/testreport.json"
   message "END HANDLER(test)"
 }
 
