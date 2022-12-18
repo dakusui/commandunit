@@ -68,7 +68,7 @@ function commandunit() {
   local _project_basedir="${PWD}"
   local _hostfsroot_mountpoint="/var/lib/commandunit"
   local _docker_repo_name="dakusui/commandunit"
-  local _image_version="v1.19"
+  local _image_version="v1.20"
   local _suffix=""
   local _entrypoint=""
   local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
@@ -79,7 +79,7 @@ function commandunit() {
   for _i in "${@}"; do
     if [[ "${_s}" == to_func ]]; then
         if [[ $_i == "--snapshot" ]]; then
-          _image_version="v1.20"
+          _image_version="v1.21"
           _suffix="-snapshot"
         elif [[ $_i == "--debug" ]]; then
           _entrypoint="--entrypoint=/bin/bash"
