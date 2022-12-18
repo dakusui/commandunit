@@ -29,8 +29,8 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","commandunit-dir",true,[],"directory to store config and data files (default: current directory + .commandunit)"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory)"],
-    ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: value for --test-srcdir + .commandunit/work)"],
-    ["","test-reportdir",true,[],"write test reports under the specified directory* (default: value for --test-workdir)"],
+    ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /out/work)"],
+    ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /out/report)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
     ["","clean",false,false,"clean working directory"],
     ["","tapview",false,false,"show test progress with 'tapview'"]
