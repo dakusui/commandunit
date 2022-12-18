@@ -68,7 +68,7 @@ function commandunit() {
   local _project_basedir="${PWD}"
   local _hostfsroot_mountpoint="/var/lib/commandunit"
   local _docker_repo_name="dakusui/commandunit"
-  local _image_version="v1.17"
+  local _image_version="v1.18"
   local _suffix=""
   local _entrypoint=""
   local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
@@ -79,7 +79,7 @@ function commandunit() {
   for _i in "${@}"; do
     if [[ "${_s}" == to_func ]]; then
         if [[ $_i == "--snapshot" ]]; then
-          _image_version="v1.18"
+          _image_version="v1.19"
           _suffix="-snapshot"
         elif [[ $_i == "--debug" ]]; then
           _entrypoint="--entrypoint=/bin/bash"
@@ -145,6 +145,12 @@ sh -c 'grep "$4" "$1" >& /dev/null || printf "source $3$2$3 $4\n" >> "$1"' - "${
 ```
 
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
+
+## Building commandunit
+
+### Dependencies
+
+- `jq-front`: Native version of `jq-front` somewhere on the `PATH`.
 
 ## Authors
 
