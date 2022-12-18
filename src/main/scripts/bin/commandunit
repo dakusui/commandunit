@@ -28,9 +28,9 @@ COMMANDUNIT_SPECIFICATION="$(
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
     ["","commandunit-dir",true,[],"directory to store config and data files (default: current directory + .commandunit)"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
-    ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory)"],
-    ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /out/work)"],
-    ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /out/report)"],
+    ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory/src/test)"],
+    ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],
+    ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /target/commandunit/report)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
     ["","clean",false,false,"clean working directory"],
     ["","tapview",false,false,"show test progress with 'tapview'"]
@@ -67,15 +67,15 @@ function main() {
   if [[ "${#_subcommands[@]}" == 0 ]]; then
     _subcommands=(preprocess run report)
   fi
-  _default_target_directory="${COMMANDUNIT_PWD:-"${PWD}"}"
+  _default_target_directory="${COMMANDUNIT_PWD:-"${PWD}"}/src/test"
   _project_name="$(parseopt_string_value_for "project-name" "${_parsed_opts_json}")"
   _is_parallel="$(parseopt_boolean_value_for "parallel" "${_parsed_opts_json}")"
   _do_clean="$(parseopt_boolean_value_for "clean" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
   _test_srcdir="$(parseopt_string_value_for 'test-srcdir' "${_parsed_opts_json}" "${_default_target_directory}")"
   _commandunit_dir="$(parseopt_string_value_for 'commandunit-dir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
-  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_default_target_directory}/out/work")"
-  _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_default_target_directory}/out/report")"
+  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${COMMANDUNIT_PWD}/target/commandunit/work")"
+  _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${COMMANDUNIT_PWD}/target/commandunit/report")"
   _is_tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"

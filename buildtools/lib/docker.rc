@@ -36,7 +36,7 @@ function __run_command_unit_with_source() {
   local _executable="${EXEC_BASEDIR}/bin/commandunit"
   message "Running commandunit(source): '${_executable}'"
   export COMMANDUNIT_PWD="${PROJECT_BASEDIR}"
-  "${_executable}" --test-workdir="out/.commandunit/work" --test-reportdir="out/.commandunit/work" "${@}"
+  "${_executable}" --test-workdir="out/docker-commandunit/work" --test-reportdir="out/docker-commandunit/report" "${@}"
 }
 
 function __run_command_unit_with_docker() {
