@@ -37,8 +37,8 @@ COMMANDUNIT_SPECIFICATION="$(
   ],
   "examples":{
     "commandunit": "Run tests found under current directory in sequential mode.",
-    "commandunit --srcdir=DIR": "Run tests found under DIR in sequential mode.",
-    "commandunit --srcdir=DIR -p": "Run tests found under DIR in parallel mode."
+    "commandunit --test-srcdir=DIR": "Run tests found under DIR in sequential mode.",
+    "commandunit --test-srcdir=DIR -p": "Run tests found under DIR in parallel mode."
   },
   "references":{
     "github project": "https://github.com/dakusui/bud",
@@ -76,8 +76,6 @@ function main() {
   _commandunit_dir="$(parseopt_string_value_for 'commandunit-dir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit")"
   _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "$(pwd)/out/work")"
   _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "$(pwd)/out/report")"
-  _test_workdir="$(parseopt_string_value_for 'test-workdir' "${_parsed_opts_json}" "${_test_srcdir}/.commandunit/work")"
-  _test_reportdir="$(parseopt_string_value_for 'test-reportdir' "${_parsed_opts_json}" "${_test_workdir}")"
   _is_tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
