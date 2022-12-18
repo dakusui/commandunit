@@ -10,3 +10,4 @@ coverage/
 */.DS_Store
 .bud
 **/.commandunit/work
+target/

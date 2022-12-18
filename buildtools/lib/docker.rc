@@ -13,17 +13,17 @@ function run_command_unit_with_source() {
 }
 
 function run_command_unit_with_snapshot_docker_image() {
-  __run_command_unit_with_docker "snapshot" "${@}"
+  __run_command_unit_with_docker "snapshot"  --test-workdir="out/commandunit-docker/work" --test-reportdir="out/commandunit-docker/report" "${@}"
 }
 
 function run_command_unit_with_released_docker_image() {
-  __run_command_unit_with_docker "" "${@}"
+  __run_command_unit_with_docker ""  --test-workdir="out/commandunit-docker/work" --test-reportdir="out/commandunit-docker/report" "${@}"
 }
 
 function run_command_unit_with_snapshot_docker_image_from_entrypoint() {
   local _entrypoint="${1}"
   shift
-  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "snapshot" "${@}"
+  __run_command_unit_with_docker_from_entrypoint "${_entrypoint}" "snapshot" --test-workdir="out/commandunit-docker/work" --test-reportdir="out/commandunit-docker/report" "${@}"
 }
 
 function run_command_unit_with_released_docker_image_from_entrypoint() {
@@ -36,7 +36,7 @@ function __run_command_unit_with_source() {
   local _executable="${EXEC_BASEDIR}/bin/commandunit"
   message "Running commandunit(source): '${_executable}'"
   export COMMANDUNIT_PWD="${PROJECT_BASEDIR}"
-  "${_executable}" --test-workdir="out/docker-commandunit/work" --test-reportdir="out/docker-commandunit/report" "${@}"
+  "${_executable}" --test-workdir="out/commandunit-source/work" --test-reportdir="out/commandunit-source/report" "${@}"
 }
 
 function __run_command_unit_with_docker() {
