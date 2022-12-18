@@ -10,7 +10,6 @@ DOCDIR="${PROJECT_BASEDIR}/out/doc"
 DOCSRCDIR="${PROJECT_BASEDIR}/out/site/adoc"
 LIBDIR="${OUTDIR}/lib"
 TESTDIR="${OUTDIR}/test/scripts/lv1"
-TESTREPORTDIR="${OUTDIR}/testreport"
 LATEST_RELEASED_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.latestReleased.major' "${_build_info_file}")" \
   "$(jq -r -c '.version.latestReleased.minor' "${_build_info_file}")")"
 TARGET_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.target.major' "${_build_info_file}")" \
@@ -33,6 +32,5 @@ export DOCDIR
 export DOCSRCDIR
 export LIBDIR
 export TESTDIR
-export TESTREPORTDIR
 export DOCKER_REPO_NAME
 export BUILD_HOSTFSROOT_MOUNTPOINT

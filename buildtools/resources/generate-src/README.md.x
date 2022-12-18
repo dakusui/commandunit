@@ -84,6 +84,12 @@ cat <<'END'
 
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
 
+## Building commandunit
+
+### Dependencies
+
+- `jq-front`: Native version of `jq-front` somewhere on the `PATH`.
+
 ## Authors
 
 * **Hrioshi Ukai** - *Initial work* - <a href="https://github.com/dakusui">
