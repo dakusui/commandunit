@@ -1,4 +1,4 @@
-FROM dakusui/jq-front:v0.43
+FROM dakusui/jq-front:v0.52
 ADD files/ /app/commandunit/
 RUN chmod 755 /app/commandunit
 RUN find /app/commandunit/plugins -name '*.sh' -exec chmod 755 {} \;
