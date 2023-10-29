@@ -9,12 +9,12 @@ shopt -s inherit_errexit
 source "$(dirname "${BASH_SOURCE[0]}")/utils.rc"
 
 function extract_style() {
-  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - | sed -E 's/^<\/?style>$//g'
+  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - 2>/dev/null| sed -E 's/^<\/?style>$//g'
 }
 
 function extract_content() {
   local _filestem="${1}"
-  cat "${DOCDIR}/${_filestem}.html" | xmllint --html --xpath '//div[@id="content"]' - | sed -E 's/<div id="content">/<div id="'"${_filestem}"'_content">/g'
+  cat "${DOCDIR}/${_filestem}.html" | xmllint --html --xpath '//div[@id="content"]' - 2>/dev/null| sed -E 's/<div id="content">/<div id="'"${_filestem}"'_content">/g'
 }
 
 function render_style() {
