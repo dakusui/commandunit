@@ -182,9 +182,9 @@ function __process_files() {
       _cmd="(${_cmd} 2> >(head --lines=1 > ${_err}) && tap_print_ok ${_id} '${_tap_message})')"
       debug "_cmd: '${_cmd}'"
       if [[ "${_is_parallel}" == true ]]; then
-        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: with: <${_cmd}> $(cat ${_err})'" &
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: $(cat ${_err})'" &
       else
-        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: with: <${_cmd}> $(cat ${_err})'"
+        eval "${_cmd} || tap_bailout 'Failed to process: <${_src}>: $(cat ${_err})'"
       fi
     else
       info "-  '${_i}' (skipped)"
