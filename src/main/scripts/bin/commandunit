@@ -19,6 +19,8 @@ COMMANDUNIT_SPECIFICATION="$(
     "  report:",
     "    Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)",
     "    under the same directory.",
+    "  none:",
+    "    Does nothing",
     "",
     "Options: (* - for development use only)"
   ],
@@ -32,7 +34,8 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /target/commandunit/report)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
-    ["","clean",false,false,"clean working directory before execution"],
+    ["","clean",false,false,"clean directories under which commandunit creates files before execution"],
+    ["","none",false,false,"equls to '--filter=$^', which preprocesses, runs, or reports no test."],
     ["","tapview",false,false,"show test progress with 'tapview'"]
   ],
   "examples":{
@@ -79,6 +82,9 @@ function main() {
   _is_tapview_enabled="$(parseopt_boolean_value_for "tapview" "${_parsed_opts_json}")"
   _ignore_mtime="$(parseopt_boolean_value_for "ignore-mtime" "${_parsed_opts_json}")"
   _filter="$(parseopt_string_value_for 'filter' "${_parsed_opts_json}")"
+  if [[ "$(parseopt_boolean_value_for "none" "${_parsed_opts_json}")" == true ]]; then
+    _filter="$^"
+  fi
 
   _commandunit_dir="$(__commandunit__normalize_path "${_commandunit_dir}")"
   _test_srcdir="$(__commandunit__normalize_path "${_test_srcdir}")"
@@ -103,11 +109,11 @@ function main() {
     _ignore_mtime_option="--ignore-mtime"
   fi
   if [[ "${_do_clean}" == true ]]; then
-    rm -fr "${COMMANDUNIT_PWD}/commandunit"
+    rm -fr "${COMMANDUNIT_PROJECT_DIR}/target/commandunit" "${_test_workdir}" "${_test_reportdir}"
   fi
   local _unknown_subcommands=()
   for _each in "${_subcommands[@]}"; do
-    if ! array_contains "${_each}" "preprocess" "run" "report"; then
+    if ! array_contains "${_each}" "preprocess" "run" "report" "none"; then
       _unknown_subcommands+=("${_each}")
     fi
   done
@@ -146,6 +152,9 @@ function main() {
         ${_viewer_command} || break
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
+    elif [[ "${_each}" == "none" ]]; then
+      # does nothing.
+      :
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi
