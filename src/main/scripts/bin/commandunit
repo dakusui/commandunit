@@ -32,7 +32,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],
     ["","test-reportdir",true,[],"write test reports under the specified directory* (default: current directory + /target/commandunit/report)"],
     ["","ignore-mtime",false,false,"ignore mtime and forcibly compile tests"],
-    ["","clean",false,false,"clean working directory"],
+    ["","clean",false,false,"clean working directory before execution"],
     ["","tapview",false,false,"show test progress with 'tapview'"]
   ],
   "examples":{
@@ -103,7 +103,7 @@ function main() {
     _ignore_mtime_option="--ignore-mtime"
   fi
   if [[ "${_do_clean}" == true ]]; then
-    rm -fr "${_test_workdir}"
+    rm -fr "${COMMANDUNIT_PWD}/commandunit"
   fi
   local _unknown_subcommands=()
   for _each in "${_subcommands[@]}"; do
