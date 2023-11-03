@@ -9,7 +9,7 @@ shopt -s inherit_errexit
 source "$(dirname "${BASH_SOURCE[0]}")/utils.rc"
 
 function extract_style() {
-  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - 2>/dev/null| sed -E 's/^<\/?style>$//g'
+  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - 2>/dev/null| sed -E 's/^.*<\/?style>$//g'
 }
 
 function extract_content() {
