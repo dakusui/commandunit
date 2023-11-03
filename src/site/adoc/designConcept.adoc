@@ -1,3 +1,55 @@
 == Design Concept of `commandunit`
 
-(t.b.d.)
+
+Gherkin is one notation widely used in "Cucumber"'s ecosystem.
+
+[source, gherkin]
+.A Gherkin (Cucumber) Example
+----
+Feature: Guess the word
+
+  # The first example has two steps
+  Scenario: Maker starts a game
+    When the Maker starts a game
+    Then the Maker waits for a Breaker to join
+
+  # The second example has three steps
+  Scenario: Breaker joins a game
+    Given the Maker has started a game with the word "silky"
+    When the Breaker joins the Maker's game
+    Then the Breaker must guess a word with 5 characters
+----
+From https://cucumber.io/docs/gherkin/reference/
+
+If we write this in YAML, it will be like this:
+
+
+[source, yaml]
+.YAML version of Gherkin Example
+----
+---
+Feature:
+  Name: Guess the word <1>
+  Scenarios:
+  # The first example has two steps
+  - Name: Maker starts a game
+    When: the Maker starts a game
+    Then: the Maker waits for a Breaker to join
+  # The second example has three steps
+  - Name: Breaker joins a game <1>
+    Given: the Maker has started a game with the word "silky"
+    When: the Breaker joins the Maker's game
+    Then: the Breaker must guess a word with 5 characters
+----
+<1> Introduced to define names of a feature and a scenario, which is defined without explicit attribute name in Gherkin.
+
+Isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
+
+`yaml{plus}{plus}` -> `json{plus}{plus}` -> `json` -> execute test
+(plus)
+YAML, JSON, JSON++
+
+Given, when, then
+
+Separating concerns
+

@@ -1,0 +1,27 @@
+== System Requirements
+
+=== On Linux
+Dockerized version::
+- git (tested with 2.34.1)
+- Distribution: Ubuntu 22.04
+- dockerd: ???
+
+"native" version::
+- git (tested with 2.34.1)
+- `jq-front` (`0.54`, Dockerized)
+- `jq` (`jq-1.5-1-a5b5cbe` or later)
+- `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
+
+=== On macOS
+Dockerized version::
+- git (tested with 2.34.1)
+- `docker`: Docker version 23.0.5, build bc4487a (macOS)
+- `dockerd`: Docker Desktop 4.19.0 (106363)
+
+"native" version::
+- git (tested with 2.34.1)
+- `jq-front` (`0.54`, Dockerized)
+- `jq` (`jq-1.6`)
+- `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
+
+- link:systemRequirements.adoc[System Requirements]

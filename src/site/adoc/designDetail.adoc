@@ -42,9 +42,29 @@ Design of `commandunit` should come to here.
 - 2.2 `run` subcommand
 - 2.3 `report` subcommand
 
+
 Compiled Test Repository:: (t.b.d.)
 Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structnre)
 Test Report:: `testreport.adoc`
+
+The data flow diagram.
+
+=== Key Elements
+
+Technical Elements::
+- Docker
+- jq-front
+- Preprocessing pipeline
+- "wrapper" module
+- native mode
+
+Dependencies::
+- jq-front
+
+wrapper
+native mode
+
+
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

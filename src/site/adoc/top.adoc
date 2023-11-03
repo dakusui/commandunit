@@ -1,3 +1,135 @@
 = The `commandunit` testing framwork
+:toc:
 
 The `commandunit` is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.
+
+// suppress inspection "CucumberUndefinedStep" for whole file
+
+
+== Introduction
+
+Automated tests can become easily repetitive and not uniformed very often.
+`commandunit` addresses this problem for your UNIX-based CLI tools.
+It allows you to define your test cases in YAML but with the help of `jq-front`[<<jq-front>>].
+With this tool, your test will look like this:
+
+[source, yaml]
+.test-contains_true.yaml++
+----
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'array_contains' with the first argument contained by the rest.
+  source:
+    - /path/to/arrays.rc
+  cmd: array_contains
+  args:
+    - hello
+    - hello
+    - world
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    absent:
+      - REGEX:.+
+  stderr:
+    absent:
+      - REGEX:.+
+----
+
+
+
+== Design Concept
+
+Test definitions are repetitive.
+But any single test is not (should not be) identical to any other one.
+In generic programming languages have features, we can address it with their features such  user define functions, data types, inheritance, and others.
+Those are not available in popular data notations.
+`commandunit` doesn't try to solve it by itself, but by using `jq-front`[<<jq-front>>], it separates this concern from the test management and execution model.
+
+For more detail, check link:designConcept.adoc[Design Concept].
+
+== Design Detail
+
+To implement the concepts shown in the previous section, `commandunit` has a pipeline that takes `jq-front` powered yaml as its input and produces JSON files that defines test cases.
+
+For more detail, check link:designDetail.adoc[Design Detail].
+
+== System Requirements
+
+For the requirements of `commandunit` for your system (or software components and their version used in testing of `commandunit`), check link:systemRequirements.adoc[System Requirements].
+
+== User Manual
+
+(t.b.d.)
+
+=== Command-line Manual
+
+(t.b.d.)
+Wrapper options
+
+options
+
+"native" mode
+
+- link:userManualCommandLine.adoc[Command Line Manual]
+
+=== Installation Manual
+
+The wrapper script.
+- Docker version
+- Native version
+
+One-liner.
+(t.b.d.)
+
+
+- link:userManualInstallation.adoc[Installation Manual]
+
+=== Programming Manual
+
+Directory structure
+Environment variables
+
+Syntax::
+Given, When, Then,
+
+
+Execution::
+subcommands:: preprocess, run, report, none
+
+built-in libraries
+
+`base/normal.json`:: (t.b.d.)
+`bud/lib/core.rc`:: (t.b.d.)
+
+
+=== Tips
+
+`none` subcommand.
+
+macOS `yaml2json` doesn't work.
+
+
+== Walking Through Examples
+
+(t.b.d.)
+
+- link:walkingThroughExamples.adoc[Walking through Examples]
+
+== FAQ
+
+(t.b.d.)
+
+if macOS `yaml2json` doesn't work. -> Workaround
+
+`/opt/homebrew/bin/yaml2json` `0.3.0`[<<jq-front>>]
+
+
+== References
+
+* [[jq-front,1]] jq-front project in github.org https://github.com/dakusui/jq-front[jq-front]: 2019
