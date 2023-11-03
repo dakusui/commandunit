@@ -8,12 +8,19 @@ function handle_source() {
 #build-snapshot
 function handle_snapshot() {
   docker login
-  docker push "${DOCKER_REPO_NAME}:${TARGET_VERSION}-snapshot"
+  __push_image "${DOCKER_REPO_NAME}:${TARGET_VERSION}-snapshot"
 }
 
 #build-release
 function handle_release() {
   docker login
-  docker push "${DOCKER_REPO_NAME}:${TARGET_VERSION}"
-  docker push "${DOCKER_REPO_NAME}:latest"
+  __push_image "${DOCKER_REPO_NAME}:${TARGET_VERSION}"
+  __push_image "${DOCKER_REPO_NAME}:latest"
+}
+
+function __push_image() {
+  local _image_name="${1}"
+  message "pushing image: ${_image_name}"
+  docker push "${_image_name}"
+  message "pushed image: ${_image_name}"
 }
