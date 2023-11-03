@@ -69,26 +69,16 @@ For the requirements of `commandunit` for your system (or software components an
 
 === Command-line Manual
 
-(t.b.d.)
-Wrapper options
+`commandunit` come with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
+The wrapper has its own options.
 
-options
-
-"native" mode
-
-- link:userManualCommandLine.adoc[Command Line Manual]
+For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
 
 === Installation Manual
 
-The wrapper script.
-- Docker version
-- Native version
-
-One-liner.
-(t.b.d.)
-
-
-- link:userManualInstallation.adoc[Installation Manual]
+You can install `commandunit` easily with its "wrapper" script.
+Just please check link:userManualInstallation.adoc[Installation Manual] for its installation.
+The documentation also discusses some tips to use it for non-bash users.
 
 === Programming Manual
 

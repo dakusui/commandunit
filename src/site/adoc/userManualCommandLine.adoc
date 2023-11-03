@@ -1,3 +1,71 @@
 == Command Line tool Manual
 
 (t.b.d.)
+
+
+(t.b.d.)
+Wrapper options
+
+options
+
+"native" mode
+
+-
+
+
+[source]
+----
+$ commandunit --help
+Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]...
+
+A wrapper function for 'commandunit' to invoke its docker image..
+Followings are switching options to control the wrapper's behaviour.
+Options not listed here or ones after the separator (--) are passed to the docker image directly.
+
+Wrapper options:
+--native            Use the 'native' version of commandunit.
+--version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: v1.24).
+--debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only.
+--show-image-name   Print the image name. Useful to figure out the version.
+--quit              Quit before running the image. With --show-image-name, useful to figure out the image version
+--help              Show this help and pass the --help option to the docker image.
+--                  A separator to let this wrapper know the options after it should be passed directly to the image
+
+Usage: commandunit [OPTION]... [SUBCOMMAND]...
+
+Runs tests.
+
+Sub-commands:
+  preprocess:
+    Preprocesses test definition files (yaml++, yaml, and json++) and convert them into executable JSON test files
+  run:
+    Runs tests under a directory specified by --test-workdir and writes a report file: testreport.json under a
+    directory specified by --test-reportdir.
+  report:
+    Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)
+    under the same directory.
+
+Options: (* - for development use only)
+
+ -h, --help            show this help
+ -p, --parallel        execute the tests in parallel
+ -f, --filter          filter tests with the specified regular expression(default:'.*')
+     --commandunit-dir directory to store config and data files (default: current directory + .commandunit)
+     --project-name    set project name of the test execution. used as the report's title(default:'unknown')
+     --test-srcdir     specify directory under which tests are stored (default: current directory/src/test)
+     --test-workdir    specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)
+     --test-reportdir  write test reports under the specified directory* (default: current directory + /target/commandunit/report)
+     --ignore-mtime    ignore mtime and forcibly compile tests
+     --clean           clean working directory
+     --tapview         show test progress with 'tapview'
+
+Examples:
+  commandunit                      Run tests found under current directory in sequential mode.
+  commandunit --test-srcdir=DIR    Run tests found under DIR in sequential mode.
+  commandunit --test-srcdir=DIR -p Run tests found under DIR in parallel mode.
+
+- Test Anything Protocol: <https://testanything.org/>
+- documentation: <https://dakusui.github.io/commandunit/>
+- github project: <https://github.com/dakusui/bud>
+- tapview: <https://gitlab.com/esr/tapview>
+----

@@ -1,5 +1,15 @@
 == Installation
 
+The wrapper script.
+- Docker version
+- Native version
+
+For non-bash users.
+One-liner.
+(t.b.d.)
+
+
+=== Archived
 Although you can install `commandunit` scripts in your directory
 structure, it is highly advised to use Docker to use `commandrunner` to avoid
 compatibility issues.
