@@ -1,4 +1,4 @@
-== Design
+== Design Detail
 
 Design of `commandunit` should come to here.
 
@@ -6,11 +6,12 @@ Design of `commandunit` should come to here.
 [ditaa]
 .The Processing Pipeline of the `commandunit`.
 ----
-+-----------+       +-----------+
+     You
+/-----------\       +-----------+
 |   Write   | 1     |{s}        |
 |    your   +=----->|   Test    |<----------+
 |   Tests   |       |Repository |           |
-+-----------+       +-----------+           |
+\-----------/       +-----------+           |
                                             |
                     +-----------+    +------+-----+    +------------+
                     |           |2.1 |{io}        |    |  Compiled  |
@@ -19,9 +20,9 @@ Design of `commandunit` should come to here.
                     |           |    +------------+    +------------+
                     |           |                             ^
                     |           |    +------------+           |
-+-----------+ 2     |           |2.2 |{io}        +-----------+
+/-----------\ 2     |           |2.2 |{io}        +-----------+
 |    Run    +------>*commandunit+--->*  Executor  |
-+-----------+       |           |    |            +-----------+
+\-----------/       |           |    |            +-----------+
                     |           |    +------------+           :
                     |           |                             V
                     |           |    +------------+    +------------+
@@ -30,12 +31,21 @@ Design of `commandunit` should come to here.
                     |           |    |{io}        |    |{s}         |
                     +-----------+    +------+-----+    +------------+
                                             |
-+-----------+       +-----------+           :
+/-----------\       +-----------+           :
 |  Examine  | 3     |{d} Test   |           |
 |    the    +------>|   Report  |<----------+
 |   Report  |       |           |
-+-----------+       +-----------+
+\-----------/       +-----------+
 ----
 
+- 2.1 `preprocess` subcommand
+- 2.2 `run` subcommand
+- 2.3 `report` subcommand
+
+Compiled Test Repository:: (t.b.d.)
+Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structnre)
+Test Report:: `testreport.adoc`
+
 [.text-right]
+// suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

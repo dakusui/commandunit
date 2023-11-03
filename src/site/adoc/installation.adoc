@@ -30,4 +30,5 @@ What the one-liner does is the following.
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
 
 [.text-right]
+// suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]
