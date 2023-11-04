@@ -1,5 +1,8 @@
+:toc:
+
 == Design Concept of `commandunit`
 
+=== YAML, not Gherkin
 
 Gherkin is one notation widely used in "Cucumber"'s ecosystem.
 
@@ -19,7 +22,6 @@ Feature: Guess the word
     When the Breaker joins the Maker's game
     Then the Breaker must guess a word with 5 characters
 ----
-From https://cucumber.io/docs/gherkin/reference/
 
 If we write this in YAML, it will be like this:
 
@@ -41,9 +43,13 @@ Feature:
     When: the Breaker joins the Maker's game
     Then: the Breaker must guess a word with 5 characters
 ----
-<1> Introduced to define names of a feature and a scenario, which is defined without explicit attribute name in Gherkin.
+<1>: These attributes are introduced to define names of a feature and a scenario, which is defined without explicit attribute name in Gherkin.
 
-Isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
+Gherkin seems slightly simpler and cleaner since you will need fewer keywords, however, is it really worth adapting a dedicated notation not used anything but it?
+By using Gherkin, you will need a set of plugins to support Gherkin for every tool used in a software development project such as browser, editor, or IDE.
+
+If so, wouldn't YAML be good enough to define your test cases?
+isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
 
 `yaml{plus}{plus}` -> `json{plus}{plus}` -> `json` -> execute test
 (plus)
