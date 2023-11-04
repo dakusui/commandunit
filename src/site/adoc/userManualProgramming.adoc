@@ -22,10 +22,6 @@ built-in libraries
 
 (t.b.d.)
 
-== References
-
-include::_references.adoc[]
-
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

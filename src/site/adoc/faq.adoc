@@ -9,9 +9,6 @@ if macOS `yaml2json` doesn't work. -> Workaround
 `none` subcommand.
 
 macOS `yaml2json` doesn't work.
-== References
-
-include::_references.adoc[]
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

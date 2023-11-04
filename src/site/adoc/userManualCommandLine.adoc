@@ -69,10 +69,6 @@ Examples:
 - tapview: <https://gitlab.com/esr/tapview>
 ....
 
-== References
-
-include::_references.adoc[]
-
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

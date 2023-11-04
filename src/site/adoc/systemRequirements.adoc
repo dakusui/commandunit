@@ -37,10 +37,6 @@ Dockerized version::
 - `jq` (`jq-1.6`)
 - `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
 
-- link:systemRequirements.adoc[System Requirements]
-== References
-
-include::_references.adoc[]
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
