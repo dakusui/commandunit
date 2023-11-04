@@ -1,0 +1,15 @@
+== FAQ
+
+(t.b.d.)
+
+if macOS `yaml2json` doesn't work. -> Workaround
+
+`/opt/homebrew/bin/yaml2json` `0.3.0`[<<jq-front>>]
+
+`none` subcommand.
+
+macOS `yaml2json` doesn't work.
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

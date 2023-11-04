@@ -1,10 +1,8 @@
 = The `commandunit` testing framwork
+// suppress inspection "CucumberUndefinedStep" for whole file
 :toc:
 
 The `commandunit` is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.
-
-// suppress inspection "CucumberUndefinedStep" for whole file
-
 
 == Introduction
 
@@ -63,63 +61,37 @@ For more detail, check link:designDetail.adoc[Design Detail].
 
 For the requirements of `commandunit` for your system (or software components and their version used in testing of `commandunit`), check link:systemRequirements.adoc[System Requirements].
 
-== User Manual
-
-(t.b.d.)
-
-=== Command-line Manual
-
-`commandunit` come with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
-The wrapper has its own options.
-
-For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
+== User Manuals
 
 === Installation Manual
 
 You can install `commandunit` easily with its "wrapper" script.
-Just please check link:userManualInstallation.adoc[Installation Manual] for its installation.
-The documentation also discusses some tips to use it for non-bash users.
+Just please check link:userManualInstallation.adoc[Installation and Quick Start Manual] for its installation.
+The documentation also discusses some tips (or ideas) to use it for non-bash users.
+
+=== Command-line Manual
+
+`commandunit` comes with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
+The wrapper has its own options.
+
+For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
 
 === Programming Manual
 
-Directory structure
-Environment variables
+Like JUnit and other testing tools, `commandunit` has its own programming model.
+Also, it assumes a directory structure, which is designed to be compatible with Maven.
 
-Syntax::
-Given, When, Then,
-
-
-Execution::
-subcommands:: preprocess, run, report, none
-
-built-in libraries
-
-`base/normal.json`:: (t.b.d.)
-`bud/lib/core.rc`:: (t.b.d.)
-
-
-=== Tips
-
-`none` subcommand.
-
-macOS `yaml2json` doesn't work.
-
+You can start using `commandunit` by cloning, trying and modifying an example project.
+But for more details, such as syntax of the tool, you can check link:userManualProgramming.adoc[Programming Manual].
 
 == Walking Through Examples
 
-(t.b.d.)
-
-- link:walkingThroughExamples.adoc[Walking through Examples]
+Check a link:walkingThroughExamples.adoc[Walking through Examples] for a use case scenario of `commandunit` to learn how you can use it.
 
 == FAQ
 
-(t.b.d.)
-
-if macOS `yaml2json` doesn't work. -> Workaround
-
-`/opt/homebrew/bin/yaml2json` `0.3.0`[<<jq-front>>]
-
+The list of frequently asked questions and their answers is available here: link:faq.adoc[FAQ].
 
 == References
 
-* [[jq-front,1]] jq-front project in github.org https://github.com/dakusui/jq-front[jq-front]: 2019
+include::_references.adoc[]

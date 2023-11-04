@@ -1,3 +1,27 @@
 == Programming Test Cases with `commandunit`
 
+
+Directory structure:
+
+- related commandline options
+- how it behave on each subcommand.
+
+Environment variables
+
+Syntax::
+Given, When, Then,
+
+
+Execution::
+subcommands:: preprocess, run, report, none
+
+built-in libraries
+
+`base/normal.json`:: (t.b.d.)
+`bud/lib/core.rc`:: (t.b.d.)
+
 (t.b.d.)
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

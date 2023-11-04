@@ -12,9 +12,8 @@ options
 
 -
 
-
-[source]
-----
+[verse]
+....
 $ commandunit --help
 Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]...
 
@@ -68,4 +67,8 @@ Examples:
 - documentation: <https://dakusui.github.io/commandunit/>
 - github project: <https://github.com/dakusui/bud>
 - tapview: <https://gitlab.com/esr/tapview>
-----
+....
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

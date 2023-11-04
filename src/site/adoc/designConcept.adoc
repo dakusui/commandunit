@@ -53,3 +53,6 @@ Given, when, then
 
 Separating concerns
 
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

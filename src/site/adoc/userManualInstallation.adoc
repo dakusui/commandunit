@@ -1,4 +1,4 @@
-== Installation
+== Installation and Quick Start manual
 
 The wrapper script.
 - Docker version

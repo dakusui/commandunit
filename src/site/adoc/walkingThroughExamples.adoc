@@ -116,4 +116,5 @@ then:
 ====
 
 [.text-right]
+// suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

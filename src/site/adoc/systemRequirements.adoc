@@ -38,3 +38,7 @@ Dockerized version::
 - `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
 
 - link:systemRequirements.adoc[System Requirements]
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]
