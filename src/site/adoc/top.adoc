@@ -79,7 +79,7 @@ For the detail of `commandunit` 's options the wrapper's options, check link:use
 === Programming Manual
 
 Like JUnit and other testing tools, `commandunit` has its own programming model.
-Also, it assumes a directory structure, which is designed to be compatible with Maven.
+Also, it assumes a directory structure, which is designed to be compatible with Maven[<<maven>>].
 
 You can start using `commandunit` by cloning, trying and modifying an example project.
 But for more details, such as syntax of the tool, you can check link:userManualProgramming.adoc[Programming Manual].

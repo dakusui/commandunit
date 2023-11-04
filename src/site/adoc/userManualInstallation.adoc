@@ -39,6 +39,10 @@ What the one-liner does is the following.
 
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
 
+== References
+
+include::_references.adoc[]
+
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

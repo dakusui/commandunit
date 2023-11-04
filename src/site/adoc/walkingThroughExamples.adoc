@@ -115,6 +115,10 @@ then:
 ----
 ====
 
+== References
+
+include::_references.adoc[]
+
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]
