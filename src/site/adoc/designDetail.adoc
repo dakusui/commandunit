@@ -1,7 +1,6 @@
 == Design Detail
 
-Design of `commandunit` should come to here.
-
+The following diagram illustrates data flows of the `commandunit`.
 
 [ditaa]
 .The Processing Pipeline of the `commandunit`.
@@ -36,6 +35,14 @@ Design of `commandunit` should come to here.
 |    the    +------>|   Report  |<----------+
 |   Report  |       |           |
 \-----------/       +-----------+
+
+                                                         +-+    +-+
+                                        A writes to B:   |A+=-->|B|
+                                                         +-+    +-+
+
+                                                         +-+    +-+
+                                        A reads from B:  |A+--->|B|
+                                                         +-+    +-+
 ----
 
 - 2.1 `preprocess` subcommand
@@ -48,6 +55,18 @@ Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "stan
 Test Report:: `testreport.adoc`
 
 The data flow diagram.
+
+=== Preprocess
+
+(t.b.d.)
+
+=== Run
+
+(t.b.d.)
+
+=== Report
+
+(t.b.d.)
 
 === Key Elements
 

@@ -20,6 +20,10 @@ built-in libraries
 `base/normal.json`:: (t.b.d.)
 `bud/lib/core.rc`:: (t.b.d.)
 
+=== Syntax: `Given`, `When`, and `Then`
+
+
+
 (t.b.d.)
 
 [.text-right]

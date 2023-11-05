@@ -184,7 +184,7 @@ function render() {
 function main() {
   local _dir="${1:?Directory must be specified}"
   local _targets
-  _targets=$(ls "${_dir}/"*.adoc | sed -E 's!.*/!!'| sed -E 's/\.adoc$//' | grep -v _style | sort)
+  _targets=$(ls "${_dir}/"*.adoc | sed -E 's!.*/!!'| sed -E 's/\.adoc$//' | grep -v -E '_.*' | sort)
   # shellcheck disable=SC2068
   render ${_targets[@]}
 }

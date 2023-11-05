@@ -54,11 +54,12 @@ isn't YAML good enough, if we have a way to avoid repeating the same thing over 
 
 === Powered by `jq-front`
 
-`jq-front` is a tool to enable your JSON files to extend other JSON files.
+`jq-front` <<jq-front-designConcept>> is a tool to enable your JSON files to extend other JSON files.
 Not only that it allows you to reference another node in the same file to compute a node's value.
 
 Following is an example of `jq-front` 's input data.
 [source, json]
+[[yamlpp-example-designConcept]]
 .JSON++ example, `foo.json{plus}{plus}`
 ----
 {
@@ -84,11 +85,12 @@ Let's go one step forward.
 We use YAML in order to ensure the test case definitions readable for human.
 We also use `jq-front`, which processes JSON files(`.json{plus}{plus}`) and renders into normal JSON files.
 
-`yaml{plus}{plus}` -> `json{plus}{plus}` -> `json` -> execute test
-(plus)
-YAML, JSON, JSON++
+In short, instead of coming up with a single notation that solves all the problems at once, it applies tools that solve them one by one.
+
+Following is an example of a file that written in YAML, using `jq-front` 's feature.
 
 [source, yaml]
+.YAML++ example, `foo.yaml{plus}{plus}`
 ----
 foo_database:
   "$extends":
@@ -100,9 +102,11 @@ foo_database:
     password: foo_root
 ----
 
-Given, when, then
+This can be converted into a JSON file that uses `jq-front` feature, which is shown as the <<yamlpp-example-designConcept>>
 
-Separating concerns
+=== References
+
+- [[[jq-front-designConcept, 1]]] jq-front
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
