@@ -52,28 +52,142 @@ If so, wouldn't YAML be good enough to define your test cases?
 isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
 
 
-=== Powered by `jq-front`
+=== Given-When-Then structure
 
-`jq-front` <<jq-front-designConcept>> is a tool to enable your JSON files to extend other JSON files.
-Not only that it allows you to reference another node in the same file to compute a node's value.
+The `commandunit` has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<<cucumber-designConcept>>.
+It has three sections.
 
-Following is an example of `jq-front` 's input data.
+Given:: A step that defines a procedure to prepare a state of system under test before starting a test's main part.
+This corresponds to "set up" phase in "four phase testing" model
+When:: A step that interacts with the SUT.
+This corresponds to "execute" phase in "four phase testing" model
+Then:: A step that verifies the output and the state of the SUT.
+This corresponds to "verify" phase in "four phase testing" model
+
+Following is one example of a test definition for `commandunit` in plain JSON.
+
 [source, json]
-[[yamlpp-example-designConcept]]
-.JSON++ example, `foo.json{plus}{plus}`
+[[json-example-designConcept]]
+.JSON example
 ----
 {
-  "foo_database": {
-    "$extends": [ "database_default.json" ],
-    "db_name": "foo",
-    "user": {
-      "password": "foo_root"
+  "type": "NORMAL",
+  "description": [],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": ":",
+    "args": []
+  },
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "description": [],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
     }
   }
 }
 ----
 
-`jq-front` renders this file into a normal JSON file, where the values defined inside `database_default.json` are expended and then overridden by the values in `foo.json{plus}{plus}` file.
+=== Powered by `jq-front`
+
+`jq-front` <<jq-front-designConcept>> is a tool to enable your JSON files to extend other JSON files.
+Not only that it allows you to reference another node in the same file to compute a node's value.
+
+Test case definition tends to be repetitive, however, if we use `jq-front` to define common attribute values in `base/normal.json`, which can be used by other JSON files, it can be as simple as the following example.
+
+[source, json]
+[[jsonpp-example-designConcept]]
+.JSON++ example
+----
+{
+  "$extends": [
+    "base/normal.json"
+  ],
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}
+----
+
+`jq-front` renders this file into a normal JSON file, where the values defined inside `base/normal.json` are expended and then overridden by the values in `foo.json{plus}{plus}` file.
 
 It is a very flexible, yet still your files are JSON, as you see.
 This means that you don't need to find supports of the new format.
@@ -90,23 +204,44 @@ In short, instead of coming up with a single notation that solves all the proble
 Following is an example of a file that written in YAML, using `jq-front` 's feature.
 
 [source, yaml]
-.YAML++ example, `foo.yaml{plus}{plus}`
+[[yamlpp-example-designConcept]]
+.YAML++ example, `test-contains_true.yaml{plus}{plus}`
 ----
-foo_database:
-  "$extends":
-    - database_default
-  server:
-    port: 2001
-  db_name: foo
-  user:
-    password: foo_root
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'array_contains' with the first argument contained by the rest.
+  source:
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc
+  cmd: array_contains
+  args:
+    - hello
+    - hello
+    - world
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    absent:
+      - REGEX:.+
+  stderr:
+    absent:
+      - REGEX:.+
+
 ----
 
-This can be converted into a JSON file that uses `jq-front` feature, which is shown as the <<yamlpp-example-designConcept>>
+This can be converted into a JSON file (a .json++ file) that uses `jq-front` feature, which is shown as the <<jsonpp-example-designConcept>>.
+Then it can be converted into normal JSON file, shown as <<json-example-designConcept>>
 
+
+
+[bibliography]
 === References
 
-- [[[jq-front-designConcept, 1]]] jq-front
+- [[[jq-front-designConcept, 1]]] jq-front: JSON with inheritance and templating https://dakusui.github.io/jq-front/[dakusui.github.io/jq-front]
+- [[[cucumber-designConcept, 2]]] Cucumber Testing and Collaboration tool https://cucumber.io/[cucumber.io]
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

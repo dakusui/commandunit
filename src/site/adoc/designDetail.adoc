@@ -1,3 +1,35 @@
+:toc:
+
+== Directory Layout
+
+[source]
+.Default Directory Layout
+----
+src/
+  main/
+  test/                                 <1>
+    .commandunit/                       <2>
+      jsonpp/
+    scripts/
+target/
+  commandunit/
+    report/                             <3>
+    work/                               <4>
+      scripts/
+        core/
+          {testcase-1}.json
+          {testcase-1}.json++
+          {testcase-1}.yaml++
+----
+
+<1> A directory to store test scripts. (test script directory)
+<2> A directory to store `commandunit` 's configuration. (test project configuration directory)
+<3> A directory to which `commandunit` writes report.
+(report directory)
+<4> A directory to which `commandunit` stores processed test scripts.
+
+(work directory)
+
 == Design Detail
 
 The following diagram illustrates data flows of the `commandunit`.
@@ -45,30 +77,20 @@ The following diagram illustrates data flows of the `commandunit`.
                                                          +-+    +-+
 ----
 
-- 2.1 `preprocess` subcommand
-- 2.2 `run` subcommand
-- 2.3 `report` subcommand
+2.1 `preprocess` subcommand:: This step converts test case definitions into JSON files, which can be executed by the step that comes the next: `run` step.
+2.2 `run` subcommand:: This step runs the test case definitions.
+Test result is accumulated under
+2.3 `report` subcommand:: A step to compile human readable report from the output of the previous step (`run`).
 
 
 Compiled Test Repository:: (t.b.d.)
 Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structnre)
-Test Report:: `testreport.adoc`
+Test Report:: `testreport.adochttps://xxx[`]
 
 The data flow diagram.
 
-=== Preprocess
 
-(t.b.d.)
-
-=== Run
-
-(t.b.d.)
-
-=== Report
-
-(t.b.d.)
-
-=== Key Elements
+== Key Elements
 
 Technical Elements::
 - Docker
@@ -76,6 +98,7 @@ Technical Elements::
 - Preprocessing pipeline
 - "wrapper" module
 - native mode
+- pipeline
 
 Dependencies::
 - jq-front

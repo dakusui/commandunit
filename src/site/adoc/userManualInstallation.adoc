@@ -16,11 +16,12 @@ compatibility issues.
 Have the following bash function definition in
 your `~/.bashrc`.
 
+[source, bash]
 [%collapsible]
 ====
 [source, bash]
 ----
-include::resources/examples/function_definition.rc[]
+include::resources/examples/function_definition.rc[function_definition.rc]
 ----
 ====
 
