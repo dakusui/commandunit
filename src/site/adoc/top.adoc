@@ -92,6 +92,7 @@ Check a link:walkingThroughExamples.adoc[Walking through Examples] for a use cas
 
 The list of frequently asked questions and their answers is available here: link:faq.adoc[FAQ].
 
+[bibliography]
 == References
 
 - [[[jq-front, 1]]] jq-front project in github.org. https://github.com/dakusui/jq-front[jq-front]: 2019
@@ -101,37 +102,3 @@ The list of frequently asked questions and their answers is available here: link
 - [[[asciidoc-intellij-plugin, 5]]] Asciidoctor Intellij Plugin Project https://plugins.jetbrains.com/plugin/7391-asciidoc[Asciidoctor Intellij Plugin Project]: 2022
 - [[[asciidoc2html, 6]]] Generate HTML from AsciiDoc https://docs.asciidoctor.org/asciidoctor/latest/html-backend/[Generate HTML from AsciiDoc]: 2022
 - [[[gherkin, 7]]] Gherkin Reference https://cucumber.io/docs/gherkin/reference/[Gherkin]
-
-
-// Following is to show empty lines so that a user can be navigated to an appropriate anchor item above when you click a cross-reference on a browser.
-:hardbreaks-option:
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}
-{empty}

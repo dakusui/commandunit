@@ -12,19 +12,20 @@ options
 
 -
 
-[verse]
+[%nowrap, verse]
 ....
 $ commandunit --help
 Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]...
 
-A wrapper function for 'commandunit' to invoke its docker image..
+A wrapper function for 'commandunit' to invoke its docker image.
 Followings are switching options to control the wrapper's behaviour.
 Options not listed here or ones after the separator (--) are passed to the docker image directly.
 
 Wrapper options:
---native            Use the 'native' version of commandunit.
+--native            Use the 'native' version of commandunit.  <1>
 --version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: v1.24).
 --debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only.
+                    <2>
 --show-image-name   Print the image name. Useful to figure out the version.
 --quit              Quit before running the image. With --show-image-name, useful to figure out the image version
 --help              Show this help and pass the --help option to the docker image.
@@ -68,6 +69,9 @@ Examples:
 - github project: <https://github.com/dakusui/bud>
 - tapview: <https://gitlab.com/esr/tapview>
 ....
+- <1>: "native" mode means an execution mode of `commandunit`, where it is executed without using docker.
+- <2>: This option gives you a shell inside the docker image of `commandunit`.
+Values environment variables are guaranteed to be the same as the ones, when you execute it without this position.
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
