@@ -1,3 +1,137 @@
 = The `commandunit` testing framwork
+// suppress inspection "CucumberUndefinedStep" for whole file
+:toc:
 
 The `commandunit` is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.
+
+== Introduction
+
+Automated tests can become easily repetitive and not uniformed very often.
+`commandunit` addresses this problem for your UNIX-based CLI tools.
+It allows you to define your test cases in YAML but with the help of `jq-front`<<jq-front>>.
+With this tool, your test will look like this:
+
+[source, yaml]
+.test-contains_true.yaml++
+----
+---
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'array_contains' with the first argument contained by the rest.
+  source:
+    - /path/to/arrays.rc
+  cmd: array_contains
+  args:
+    - hello
+    - hello
+    - world
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    absent:
+      - REGEX:.+
+  stderr:
+    absent:
+      - REGEX:.+
+----
+
+
+
+== Design Concept
+
+Test definitions are repetitive.
+But any single test is not (should not be) identical to any other one.
+In generic programming languages have features, we can address it with their features such  user define functions, data types, inheritance, and others.
+Those are not available in popular data notations.
+`commandunit` doesn't try to solve it by itself, but by using `jq-front`<<jq-front>>, it separates this concern from the test management and execution model.
+
+For more detail, check link:designConcept.adoc[Design Concept].
+
+== Design Detail
+
+To implement the concepts shown in the previous section, `commandunit` has a pipeline that takes `jq-front` powered yaml as its input and produces JSON files that defines test cases.
+
+For more detail, check link:designDetail.adoc[Design Detail].
+
+== System Requirements
+
+For the requirements of `commandunit` for your system (or software components and their version used in testing of `commandunit`), check link:systemRequirements.adoc[System Requirements].
+
+== User Manuals
+
+=== Installation Manual
+
+You can install `commandunit` easily with its "wrapper" script.
+Just please check link:userManualInstallation.adoc[Installation and Quick Start Manual] for its installation.
+The documentation also discusses some tips (or ideas) to use it for non-bash users.
+
+=== Command-line Manual
+
+`commandunit` comes with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
+The wrapper has its own options.
+
+For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
+
+=== Programming Manual
+
+Like JUnit and other testing tools, `commandunit` has its own programming model.
+Also, it assumes a directory structure, which is designed to be compatible with Maven<<maven>>.
+
+You can start using `commandunit` by cloning, trying and modifying an example project.
+But for more details, such as syntax of the tool, you can check link:userManualProgramming.adoc[Programming Manual].
+
+== Walking Through Examples
+
+Check a link:walkingThroughExamples.adoc[Walking through Examples] for a use case scenario of `commandunit` to learn how you can use it.
+
+== FAQ
+
+The list of frequently asked questions and their answers is available here: link:faq.adoc[FAQ].
+
+== References
+
+- [[[jq-front, 1]]] jq-front project in github.org. https://github.com/dakusui/jq-front[jq-front]: 2019
+- [[[maven, 2]]] Apache Maven Project https://maven.apache.org/[Apache Maven Project]: 2002-2022
+- [[[asciidocfx, 3]]] Asciidoc Book Editor based on JavaFX 18 https://asciidocfx.com/[Asciidoc Book Editor based on JavaFX 18]: 2022
+- [[[intellij, 4]]] IntelliJ IDEA https://www.jetbrains.com/idea/[IntelliJ IDEA]: 2000-2022
+- [[[asciidoc-intellij-plugin, 5]]] Asciidoctor Intellij Plugin Project https://plugins.jetbrains.com/plugin/7391-asciidoc[Asciidoctor Intellij Plugin Project]: 2022
+- [[[asciidoc2html, 6]]] Generate HTML from AsciiDoc https://docs.asciidoctor.org/asciidoctor/latest/html-backend/[Generate HTML from AsciiDoc]: 2022
+- [[[gherkin, 7]]] Gherkin Reference https://cucumber.io/docs/gherkin/reference/[Gherkin]
+
+
+// Following is to show empty lines so that a user can be navigated to an appropriate anchor item above when you click a cross-reference on a browser.
+:hardbreaks-option:
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}
+{empty}

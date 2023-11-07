@@ -1,0 +1,248 @@
+:toc:
+
+== Design Concept of `commandunit`
+
+=== YAML, not Gherkin
+
+Gherkin is one notation widely used in "Cucumber"'s ecosystem.
+
+[source, gherkin]
+.A Gherkin (Cucumber) Example
+----
+Feature: Guess the word
+
+  # The first example has two steps
+  Scenario: Maker starts a game
+    When the Maker starts a game
+    Then the Maker waits for a Breaker to join
+
+  # The second example has three steps
+  Scenario: Breaker joins a game
+    Given the Maker has started a game with the word "silky"
+    When the Breaker joins the Maker's game
+    Then the Breaker must guess a word with 5 characters
+----
+
+If we write this in YAML, it will be like this:
+
+
+[source, yaml]
+.YAML version of Gherkin Example
+----
+---
+Feature:
+  Name: Guess the word <1>
+  Scenarios:
+  # The first example has two steps
+  - Name: Maker starts a game
+    When: the Maker starts a game
+    Then: the Maker waits for a Breaker to join
+  # The second example has three steps
+  - Name: Breaker joins a game <1>
+    Given: the Maker has started a game with the word "silky"
+    When: the Breaker joins the Maker's game
+    Then: the Breaker must guess a word with 5 characters
+----
+<1>: These attributes are introduced to define names of a feature and a scenario, which is defined without explicit attribute name in Gherkin.
+
+Gherkin seems slightly simpler and cleaner since you will need fewer keywords, however, is it really worth adapting a dedicated notation not used anything but it?
+By using Gherkin, you will need a set of plugins to support Gherkin for every tool used in a software development project such as browser, editor, or IDE.
+
+If so, wouldn't YAML be good enough to define your test cases?
+isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
+
+
+=== Given-When-Then structure
+
+The `commandunit` has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<<cucumber-designConcept>>.
+It has three sections.
+
+Given:: A step that defines a procedure to prepare a state of system under test before starting a test's main part.
+This corresponds to "set up" phase in "four phase testing" model
+When:: A step that interacts with the SUT.
+This corresponds to "execute" phase in "four phase testing" model
+Then:: A step that verifies the output and the state of the SUT.
+This corresponds to "verify" phase in "four phase testing" model
+
+Following is one example of a test definition for `commandunit` in plain JSON.
+
+[source, json]
+[[json-example-designConcept]]
+.JSON example
+----
+{
+  "type": "NORMAL",
+  "description": [],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": ":",
+    "args": []
+  },
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "description": [],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}
+----
+
+=== Powered by `jq-front`
+
+`jq-front` <<jq-front-designConcept>> is a tool to enable your JSON files to extend other JSON files.
+Not only that it allows you to reference another node in the same file to compute a node's value.
+
+Test case definition tends to be repetitive, however, if we use `jq-front` to define common attribute values in `base/normal.json`, which can be used by other JSON files, it can be as simple as the following example.
+
+[source, json]
+[[jsonpp-example-designConcept]]
+.JSON++ example
+----
+{
+  "$extends": [
+    "base/normal.json"
+  ],
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}
+----
+
+`jq-front` renders this file into a normal JSON file, where the values defined inside `base/normal.json` are expended and then overridden by the values in `foo.json{plus}{plus}` file.
+
+It is a very flexible, yet still your files are JSON, as you see.
+This means that you don't need to find supports of the new format.
+You can just keep using your favorite tools (editor, browser, IDE, etc) because in general they support popular formats such as JSON, YAML, or the good old XML.
+
+=== YAML -> JSON Pipeline
+
+Let's go one step forward.
+We use YAML in order to ensure the test case definitions readable for human.
+We also use `jq-front`, which processes JSON files(`.json{plus}{plus}`) and renders into normal JSON files.
+
+In short, instead of coming up with a single notation that solves all the problems at once, it applies tools that solve them one by one.
+
+Following is an example of a file that written in YAML, using `jq-front` 's feature.
+
+[source, yaml]
+[[yamlpp-example-designConcept]]
+.YAML++ example, `test-contains_true.yaml{plus}{plus}`
+----
+"$extends":
+  - base/normal.json
+when:
+  description:
+    - Run 'array_contains' with the first argument contained by the rest.
+  source:
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc
+  cmd: array_contains
+  args:
+    - hello
+    - hello
+    - world
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    absent:
+      - REGEX:.+
+  stderr:
+    absent:
+      - REGEX:.+
+
+----
+
+This can be converted into a JSON file (a .json++ file) that uses `jq-front` feature, which is shown as the <<jsonpp-example-designConcept>>.
+Then it can be converted into normal JSON file, shown as <<json-example-designConcept>>
+
+
+
+[bibliography]
+=== References
+
+- [[[jq-front-designConcept, 1]]] jq-front: JSON with inheritance and templating https://dakusui.github.io/jq-front/[dakusui.github.io/jq-front]
+- [[[cucumber-designConcept, 2]]] Cucumber Testing and Collaboration tool https://cucumber.io/[cucumber.io]
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

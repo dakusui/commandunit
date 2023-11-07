@@ -1,0 +1,111 @@
+:toc:
+
+== Directory Layout
+
+[source]
+.Default Directory Layout
+----
+src/
+  main/
+  test/                                 <1>
+    .commandunit/                       <2>
+      jsonpp/
+    scripts/
+target/
+  commandunit/
+    report/                             <3>
+    work/                               <4>
+      scripts/
+        core/
+          {testcase-1}.json
+          {testcase-1}.json++
+          {testcase-1}.yaml++
+----
+
+<1> A directory to store test scripts. (test script directory)
+<2> A directory to store `commandunit` 's configuration. (test project configuration directory)
+<3> A directory to which `commandunit` writes report.
+(report directory)
+<4> A directory to which `commandunit` stores processed test scripts.
+
+(work directory)
+
+== Design Detail
+
+The following diagram illustrates data flows of the `commandunit`.
+
+[ditaa]
+.The Processing Pipeline of the `commandunit`.
+----
+     You
+/-----------\       +-----------+
+|   Write   | 1     |{s}        |
+|    your   +=----->|   Test    |<----------+
+|   Tests   |       |Repository |           |
+\-----------/       +-----------+           |
+                                            |
+                    +-----------+    +------+-----+    +------------+
+                    |           |2.1 |{io}        |    |  Compiled  |
+                    |           +--->*Preprocessor+=-->|{s} Test    |
+                    |           |    |            |    | Repository |
+                    |           |    +------------+    +------------+
+                    |           |                             ^
+                    |           |    +------------+           |
+/-----------\ 2     |           |2.2 |{io}        +-----------+
+|    Run    +------>*commandunit+--->*  Executor  |
+\-----------/       |           |    |            +-----------+
+                    |           |    +------------+           :
+                    |           |                             V
+                    |           |    +------------+    +------------+
+                    |           |2.3 |   Report   |    |   Result   |
+                    |           +--->*  Renderer  +--->| Repository |
+                    |           |    |{io}        |    |{s}         |
+                    +-----------+    +------+-----+    +------------+
+                                            |
+/-----------\       +-----------+           :
+|  Examine  | 3     |{d} Test   |           |
+|    the    +------>|   Report  |<----------+
+|   Report  |       |           |
+\-----------/       +-----------+
+
+                                                         +-+    +-+
+                                        A writes to B:   |A+=-->|B|
+                                                         +-+    +-+
+
+                                                         +-+    +-+
+                                        A reads from B:  |A+--->|B|
+                                                         +-+    +-+
+----
+
+2.1 `preprocess` subcommand:: This step converts test case definitions into JSON files, which can be executed by the step that comes the next: `run` step.
+2.2 `run` subcommand:: This step runs the test case definitions.
+Test result is accumulated under
+2.3 `report` subcommand:: A step to compile human readable report from the output of the previous step (`run`).
+
+
+Compiled Test Repository:: (t.b.d.)
+Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structnre)
+Test Report:: `testreport.adochttps://xxx[`]
+
+The data flow diagram.
+
+
+== Key Elements
+
+Technical Elements::
+- Docker
+- jq-front
+- Preprocessing pipeline
+- "wrapper" module
+- native mode
+- pipeline
+
+Dependencies::
+- jq-front
+
+wrapper
+native mode
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

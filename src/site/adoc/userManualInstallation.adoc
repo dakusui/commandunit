@@ -1,16 +1,27 @@
-== Installation
+== Installation and Quick Start manual
 
+The wrapper script.
+- Docker version
+- Native version
+
+For non-bash users.
+One-liner.
+(t.b.d.)
+
+
+=== Archived
 Although you can install `commandunit` scripts in your directory
 structure, it is highly advised to use Docker to use `commandrunner` to avoid
 compatibility issues.
 Have the following bash function definition in
 your `~/.bashrc`.
 
+[source, bash]
 [%collapsible]
 ====
 [source, bash]
 ----
-include::resources/examples/function_definition.rc[]
+include::resources/examples/function_definition.rc[function_definition.rc]
 ----
 ====
 
@@ -30,4 +41,5 @@ What the one-liner does is the following.
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
 
 [.text-right]
+// suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]

@@ -9,7 +9,7 @@ shopt -s inherit_errexit
 source "$(dirname "${BASH_SOURCE[0]}")/utils.rc"
 
 function extract_style() {
-  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - 2>/dev/null| sed -E 's/^<\/?style>$//g'
+  cat "${DOCDIR}/_style.html" | xmllint --html --xpath '//style' - 2>/dev/null| sed -E 's/^(.*)<\/?style>$/\1/g'| sed -E 's/<\!\[CDATA\[//g'| sed -E 's/\]\]>//g'
 }
 
 function extract_content() {
@@ -184,7 +184,7 @@ function render() {
 function main() {
   local _dir="${1:?Directory must be specified}"
   local _targets
-  _targets=$(ls "${_dir}/"*.adoc | sed -E 's!.*/!!'| sed -E 's/\.adoc$//' | grep -v _style | sort)
+  _targets=$(ls "${_dir}/"*.adoc | sed -E 's!.*/!!'| sed -E 's/\.adoc$//' | grep -v -E '_.*' | sort)
   # shellcheck disable=SC2068
   render ${_targets[@]}
 }

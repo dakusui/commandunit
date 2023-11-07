@@ -1,0 +1,21 @@
+== FAQ
+
+(t.b.d.)
+
+if macOS `yaml2json` doesn't work. -> Workaround
+
+`/opt/homebrew/bin/yaml2json` `0.3.0`<<jq-front-faq>>
+
+`none` subcommand.
+
+macOS `yaml2json` doesn't work.
+
+
+[bibliography]
+=== References
+
+- [[[jq-front-faq, 1]]] jq-front: JSON with inheritance and templating https://dakusui.github.io/jq-front/[dakusui.github.io/jq-front]
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]
