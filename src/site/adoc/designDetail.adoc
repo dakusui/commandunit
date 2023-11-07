@@ -4,6 +4,7 @@
 
 Technical Elements::
 - Docker
+- bash
 - jq-front
 - Preprocessing pipeline
 - "wrapper" module
