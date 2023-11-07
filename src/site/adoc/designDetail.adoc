@@ -1,5 +1,19 @@
 :toc:
 
+== Key Elements
+
+Technical Elements::
+- Docker
+- jq-front
+- Preprocessing pipeline
+- "wrapper" module
+- native mode
+- pipeline
+
+Dependencies::
+- jq-front
+
+
 == Directory Layout
 
 [source]
@@ -86,22 +100,6 @@ Test result is accumulated under
 Compiled Test Repository:: (t.b.d.)
 Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structnre)
 Test Report:: `testreport.adochttps://xxx[`]
-
-The data flow diagram.
-
-
-== Key Elements
-
-Technical Elements::
-- Docker
-- jq-front
-- Preprocessing pipeline
-- "wrapper" module
-- native mode
-- pipeline
-
-Dependencies::
-- jq-front
 
 wrapper
 native mode
