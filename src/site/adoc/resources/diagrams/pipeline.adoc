@@ -1,5 +1,5 @@
 [ditaa]
-.The Processing Pipeline of the `commandunit`.
+.The Processing Pipeline of the `commandunit`
 ----
      You
 /-----------\       +-----------+

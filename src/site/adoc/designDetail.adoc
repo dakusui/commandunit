@@ -40,26 +40,29 @@ src/                                    <1>
   main/
   test/                                 <2>
     .commandunit/                       <3>
-      jsonpp/
-      testdrivers/
+      jsonpp/                           <4>
+      testdrivers/                      <5>
     scripts/
 target/
   commandunit/
-    report/                             <4>
-    work/                               <5>
+    report/                             <6>
+    work/                               <7>
       scripts/
         core/
           {testcase-1}.json
           {testcase-1}.json++
           {testcase-1}.yaml++
 ----
-<1> Current directory
+<1> Current directory (project root directory)
 <2> A directory to store test scripts. (test script directory, can be changed through `--test-srcdir=` option)
 <3> A directory to store `commandunit` 's configuration. (test project configuration directory)
-exported as COMMANDUNIT_DIR environment variable.
-<4> A directory to which `commandunit` writes report.
+exported as `COMMANDUNIT_DIR` environment variable.
+This can be configured through `--commandunit-dir` option.
+<4> A base directory from which files specified by `$extends` attribute are searched..
+<5> A base directory from which "driver" files are searched.
+<6> A directory to which `commandunit` writes report.
 (report directory, can be changed through `--test-reportdir=` option)
-<5> A directory to which `commandunit` stores processed test scripts and intermediate files. (working directory, can be changed through `--test-workdir` option)
+<7> A directory to which `commandunit` stores processed test scripts and intermediate files. (working directory, can be changed through `--test-workdir` option)
 
 
 === `commandunit` 's Pipeline
@@ -68,19 +71,19 @@ The following diagram illustrates data flows of the `commandunit`.
 
 include::resources/diagrams/pipeline.adoc[]
 
-2.1 `preprocess` subcommand:: This step converts test case definitions into JSON files, which can be executed by the step that comes the next: `run` step.
-2.2 `run` subcommand:: This step runs the test case definitions.
+`preprocess` subcommand (2.1):: This step converts test case definitions into JSON files, which can be executed by the step that comes the next: `run` step.
+`run` subcommand (2.2):: This step runs the test case definitions.
 Test result is accumulated in Result Repository
-2.3 `report` subcommand:: A step to compile human readable report from the output of the previous step (`run`).
+`report` subcommand (2.3):: A step to compile human readable report from the output of the previous step (`run`).
 
-Compiled Test Repository:: (t.b.d.) `--test-srcdir`
-Result Repository:: `testreport.json` (t.b.d.) / default (directory in the "standard" directory structure) `--test-reportdir`
+Test Repository:: Specified by `--test-srcdir`.
+A directory under which users store test definition files, typically `yaml{plus}{plus}` files, as source.
+Compiled Test Repository:: Specified by `--test-workdir`.
+A directory under which files generated during the execution of `preprocessor` subcommand.
+Result Repository:: Specified by `--test-reportdir`.
+A directory under which test report files are stored.
+Executor stores `testreport.json` here and report renderer reads it and generates `testreport.adoc` hre from the JSON file.
 Test Report:: `testreport.adoc`
-
-wrapper
-native mode
-
-ignore-mtime
 
 [bibliography]
 == References

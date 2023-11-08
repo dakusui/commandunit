@@ -3,6 +3,8 @@
 Following is the description of command line options of `commandunit`.
 
 [%nowrap, verse]
+[[commandLineOptions]]
+.Command Line Options
 ....
 $ commandunit --help
 Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]...
@@ -47,7 +49,7 @@ Options: (* - for development use only)
      --test-srcdir     specify directory under which tests are stored (default: current directory/src/test)
      --test-workdir    specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)
      --test-reportdir  write test reports under the specified directory* (default: current directory + /target/commandunit/report)
-     --ignore-mtime    ignore mtime and forcibly compile tests
+     --ignore-mtime    ignore mtime and forcibly compile tests <5>
      --clean           clean working directory
      --tapview         show test progress with 'tapview'
 
@@ -66,6 +68,7 @@ Examples:
 - <3>: This option gives you a shell inside the docker image of `commandunit`.
 Values environment variables are guaranteed to be the same as the ones, when you execute it without this position.
 - <4>: Check <<Sub-commands>> section for more detail.
+- <5>: Forcibly `commandunit` preprocesses the test source files and intermediate files.
 
 === Wrapper Options and Normal Options
 
@@ -87,9 +90,23 @@ To execute `commandunit` in native mode, you can just give `--native` wrapper op
 
 === Sub-commands
 
+[[commandUnitPipeline]]
 include::resources/diagrams/pipeline.adoc[Commandunit's Pipeline]
 
-`none` is a
+As described in the <<commandLineOptions>>, `commandunit` has four subcommands, which are:
+
+- `preprocess`
+- `execute`
+- `report`
+- `none`
+
+`preprocess`, `execute`, and `report` correspond to the actions 2.1, 2.2, and 2.3 respectively in the diagram:<<commandUnitPipeline>>,
+`none` does nothing and it is useful to use in combination with `--clean` option, which removes all the generated files in the project.
+
+[source, bash]
+----
+$ commandunit --clean none
+----
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
