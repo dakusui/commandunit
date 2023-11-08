@@ -26,7 +26,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","commandunit-dir",true,[],"directory to store config and data files (default: current directory + .commandunit)"],
+    ["","commandunit-dir",true,[],"directory to store config and data files (default: {test-srcdir}/.commandunit)"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory/src/test)"],
     ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],

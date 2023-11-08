@@ -14,6 +14,7 @@ There is NO WARRANTY, to the extent permitted by law.
 ----
 
 === On Linux
+
 Dockerized version::
 - git (tested with 2.34.1)
 - Distribution: Ubuntu 22.04

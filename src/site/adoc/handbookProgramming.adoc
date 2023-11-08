@@ -1,0 +1,100 @@
+== `commandunit`:  Programming Handbook
+
+
+Directory structure:
+
+- related commandline options
+- how it behave on each subcommand.
+
+Environment variables
+
+Syntax::
+Given, When, Then,
+
+
+Execution::
+subcommands:: preprocess, run, report, none
+
+built-in libraries
+
+
+=== Syntax: `Given`, `When`, and `Then`
+
+
+
+(t.b.d.)
+
+=== Built-in Test Templates
+
+`base/normal.json`:: A basic test base file.
+You can "extend" this file to define your own test.
+
+[source, json]
+.Example
+----
+{
+  "$extends": [ "base/normal.json" ],
+  "...": {
+  }
+}
+----
+In side this file, `type` attribute at the top level is defined `NORMAL` and therefore, this file will be handled by functions defined in `json_NORMAL.rc`.
+
+=== Built-in Libraries
+
+`commandunit` comes with built-in libraries.
+
+Functions listed in this section are guaranteed across `commandunit` versions and they are called "public functions".
+In case you find any incompatibility in them, please file a bug ticket.
+However, the libraries are  also used by the `commandunit` itself and some of them are designed for internal use only.
+Specifications of such internal functions may be changed in future, and it is advised not to use them.
+
+To use the public functions, you first need to `source` it using an environment variable `COMMANDUNIT_BUILTIN_ROOT`.
+
+[source, bash]
+----
+source "${COMMANDUNIT_BUILTIN_ROOT}/bud/lib/core.rc"
+----
+
+public functions are defined one of the following libraries.
+
+- `bud/lib/core.rc`:: Core functions such as printing message to `stderr`.
+- `bud/lib/arrays.rc`:: Functions to handle array data.
+- `bud/lib/json.rc`:: Functions to handle/create JSON nodes.
+
+Note that only functions listed in this section are public.
+The other functions found in the libraries above are not public and designed for internal use of `commandunit`.
+Programmatically, you can use such non-public functions, but their compatibilities are not guaranteed and you need to use them at your own risk.
+
+==== `bud/lib/core.rc`
+
+message:: Prints given arguments to `stderr`.
+assert_that:: do `eval` for the second and the following arguments.
+If it resulted in non-zero exit code, the first and the value passed to the `eval` will be printed in `stderr` and then the process will be aborted.
+print_stacktrace:: Prints a current stack trace to `stderr`.
+abort:: Aborts the current process with exit code `1`.
+
+==== `bud/lib/arrays.rc`
+
+join_by:: Joins the second and the following arguments joining with the first argument.
+The resulting string will be printed to `stdout`.
+array_contains:: Search for the first argument from the second and the following argument.
+The search is done by using a `grep -q -E` command.
+If no element matches the keyword(the first argument), non-0 value will be returned based on `grep` command's behavior.
+
+==== `bud/lib/json.rc`
+
+to_json_array:: Converts given arguments in to a JSON array.
+json_value_at:: Prints a JSON node found at the path specified by the second argument in the JSON node specified by the first argument.
+json_has_key:: Checks if a key (second argument) is found at the path (third argument. If omitted, `.` will be used) in a JSON object given by the first argument.
+If and only if the key is found, `0` will be returned.
+json_type_of:: Prints a type of JSON node specified by the first argument.
+The type will be one of: `object`, `array`, `string`, `number`, and `null`
+If non-welformed JSON node is given, the execution will be aborted.
+json_object_merge:: "Merges" two JSON objects specified by the first and the second arguments.
+If the same key exists in both the first and second arguments, the one from the second will override the one from the other.
+json_array_append:: Prints an array created by appending a JSON array specified by the second argument to another specified by the first argument.
+
+[.text-right]
+// suppress inspection "AsciiDocLinkResolve"
+link:index.html[top]

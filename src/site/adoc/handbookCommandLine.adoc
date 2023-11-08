@@ -1,16 +1,6 @@
-== Command Line tool Manual
+== `commandunit`: Command Line Interface Handbook
 
-(t.b.d.)
-
-
-(t.b.d.)
-Wrapper options
-
-options
-
-"native" mode
-
--
+Following is the description of command line options of `commandunit`.
 
 [%nowrap, verse]
 ....
@@ -21,11 +11,11 @@ A wrapper function for 'commandunit' to invoke its docker image.
 Followings are switching options to control the wrapper's behaviour.
 Options not listed here or ones after the separator (--) are passed to the docker image directly.
 
-Wrapper options:
---native            Use the 'native' version of commandunit.  <1>
+Wrapper options: <1>
+--native            Use the 'native' version of commandunit.  <2>
 --version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: v1.24).
 --debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only.
-                    <2>
+                    <3>
 --show-image-name   Print the image name. Useful to figure out the version.
 --quit              Quit before running the image. With --show-image-name, useful to figure out the image version
 --help              Show this help and pass the --help option to the docker image.
@@ -35,7 +25,7 @@ Usage: commandunit [OPTION]... [SUBCOMMAND]...
 
 Runs tests.
 
-Sub-commands:
+Sub-commands: <4>
   preprocess:
     Preprocesses test definition files (yaml++, yaml, and json++) and convert them into executable JSON test files
   run:
@@ -44,6 +34,8 @@ Sub-commands:
   report:
     Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)
     under the same directory.
+  none:
+    Does nothing.
 
 Options: (* - for development use only)
 
@@ -69,9 +61,35 @@ Examples:
 - github project: <https://github.com/dakusui/bud>
 - tapview: <https://gitlab.com/esr/tapview>
 ....
-- <1>: "native" mode means an execution mode of `commandunit`, where it is executed without using docker.
-- <2>: This option gives you a shell inside the docker image of `commandunit`.
+- <1>: Check <<Wrapper Options and Normal Options>> section for more detail.
+- <2>: "native" mode means an execution mode of `commandunit`, where it is executed without using docker. Check <<sectionNativeExecution>> for more Detail.
+- <3>: This option gives you a shell inside the docker image of `commandunit`.
 Values environment variables are guaranteed to be the same as the ones, when you execute it without this position.
+- <4>: Check <<Sub-commands>> section for more detail.
+
+=== Wrapper Options and Normal Options
+
+As described in the link:designDetail.html[Design Detail], `commandunit` comes with its "wrapper" script.
+The wrapper has its own options, and it interprets command line arguments as wrapper options, first.
+If `--` is present and any non-valid wrapper option is found before it, an error will be reported and `commandunit` will quit with non-0 exit code.
+The arguments that cannot be interpreted as wrapper options will be passed to the `commandunit` 's main part.
+The main part parses them as "normal" options using `getopt`.
+
+
+[[sectionNativeExecution]]
+=== "Native" execution
+
+It is possible to use `commandunit` without Docker solutions.
+The mode is called "native" mode, although it is executed as a bash script, not a binary executable.
+
+
+To execute `commandunit` in native mode, you can just give `--native` wrapper option to its command line.
+
+=== Sub-commands
+
+include::resources/diagrams/pipeline.adoc[Commandunit's Pipeline]
+
+`none` is a
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

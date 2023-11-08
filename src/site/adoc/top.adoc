@@ -66,7 +66,7 @@ For the requirements of `commandunit` for your system (or software components an
 === Installation Manual
 
 You can install `commandunit` easily with its "wrapper" script.
-Just please check link:userManualInstallation.adoc[Installation and Quick Start Manual] for its installation.
+Just please check link:handbookInstallation.adoc[Installation and Quick Start Manual] for its installation.
 The documentation also discusses some tips (or ideas) to use it for non-bash users.
 
 === Command-line Manual
@@ -74,7 +74,7 @@ The documentation also discusses some tips (or ideas) to use it for non-bash use
 `commandunit` comes with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
 The wrapper has its own options.
 
-For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
+For the detail of `commandunit` 's options the wrapper's options, check link:handbookCommandLine.adoc[Command Line Manual].
 
 === Programming Manual
 
@@ -82,7 +82,7 @@ Like JUnit and other testing tools, `commandunit` has its own programming model.
 Also, it assumes a directory structure, which is designed to be compatible with Maven<<maven>>.
 
 You can start using `commandunit` by cloning, trying and modifying an example project.
-But for more details, such as syntax of the tool, you can check link:userManualProgramming.adoc[Programming Manual].
+But for more details, such as syntax of the tool, you can check link:handbookProgramming.adoc[Programming Manual].
 
 == Walking Through Examples
 
