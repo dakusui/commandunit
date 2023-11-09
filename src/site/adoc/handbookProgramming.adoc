@@ -1,50 +1,200 @@
-== `commandunit`:  Programming Handbook
+
+:toc:
+
+= `commandunit`:  Programming Handbook
+
+== Syntax
+
+=== `given`, `when`, and `then` structure
+
+`given`:: You can define an action which should be executed before `when` clause.
+If the execution of this clause fails, i.e., if it results in non-0 exit code, the rest of the test (`when` and `then` clauses) will not be executed.
+This corresponds to the "set-up" phase in "four phase testing" model.
+`when`:: You can define an action whose behavior should be tested in this clause.
+This section has the same structure as the `given` clause.
+This corresponds to the "execute" phase in "four phase testing" model.
+`then`:: This clause defines a check to be exercised for the result of `when` clause.
+This corresponds to the "verify" phase in "four phase testing" model.
+
+As discussed later in this section, it is advised to a built-in test template: `base/normal.json` directly or indirectly always.
+If no preparation is necessary for your test, you do not need to define anything for `given` clause explicitly as long as you are extending it.
+
+=== `type` attribute
+
+`commandunit` specifies the structure of a test case, which has `given`, `when`, and `then`.
+However, the syntax inside the `given` and `when` clauses is user customizable, although it doesn't need to be modified under usual usages.
+If you specify a value of `type` attribute `NORMAL`, it searches for handler functions from `json_NORMAL.rc` and `scripttest.rc` files.
+These `.rc` files are placed under test drivers directories.
+Test driver directories are under the `+{commandunit-dir}+/.commandunit/testdrivers` and `+{commandunit-home}+/src/main/scripts/lib/testdrivers`.
+`commandunit` searches for the files from them in this order.
+
+Therefore, syntax inside `given` and `when` clauses can be differently defined based on the `type` attribute value.
+However, the only built-in currently available (`base/normal.json`) uses the `NORMAL` type, and it has sufficiently general-purposed design, we discuss the syntax defined by the `NORMAL` type in the rest of this document unless otherwise explicitly noted.
+
+=== `given` and `when` clauses
+
+`given` and `when` clauses have the same structure, and you can use the same set of attributes for them.
+
+`description` (array):: This part is included as a comment in the auto-generated test script.
+`environmentVariables` (object):: An object that specifies environment variables and their values.
+Those environment variables can be referenced from inside the elements in `args` array.
+`source` (array):: Files to be sourced by the `shell`.
+`stdin` (array):: An array of string, which gives to the executed command from `stdin`.
+`shell` (object):: A shell with which a command specified by `cmd` and `args`.
+`cmd` (string):: A command to be executed.
+A function in sourced files (see `source`) can also be specified.
+`args` (array):: Arguments to be passed to the command specified by `cmd` attribute.
+
+The `given` clause should be used to "set up" test fixture, while `when` clause should be used for executing the command under target itself.
+
+=== `then` clause
 
 
-Directory structure:
+`exitCode` (array):: An array that defines a condition which the exit code of the command line specified by `when` clause should satisfy.
+The first element is a name of a predicate and the rest of the element are arguments to be passed to the predicate.
+Currently available predicates are, `EQUAL` and `NOT_EQUAL`.
+`[EQUAL, 0]` is satisfied if and only if the exit code of the command in the `when` clause was `0`.
+`[NOT_EQUAL, 0]` is satisfied if and only if the exit code of the command in the `when` clause was not `0`.
+`stdout` and `stderr` (object):: Under these attributes, you can define regular expressions that should and should not be present in them.
+To define a check which examines if `stdout` contains a regular expression: `Hello world`, you can do:
+----
+  stdout:
+    present:
+      - REGEX:Hello world
+----
+Also, to define a check, `stderr` doesn't contain anything, you can do:
+----
+  stderr:
+    absent:
+      - REGEX:.+
+----
 
-- related commandline options
-- how it behave on each subcommand.
-
-Environment variables
-
-Syntax::
-Given, When, Then,
 
 
-Execution::
-subcommands:: preprocess, run, report, none
+== Built-ins
 
-built-in libraries
-
-
-=== Syntax: `Given`, `When`, and `Then`
-
-
-
-(t.b.d.)
-
-=== Built-in Test Templates
+=== Built-in Test Templates: `base/normal.json`
 
 `base/normal.json`:: A basic test base file.
-You can "extend" this file to define your own test.
 
+`commandunit` has a built-in JSON file, `base/normal.json`, which you can extend to define your own tests.
+
+[%collapsible]
+====
 [source, json]
-.Example
+.base/normal.json
 ----
 {
-  "$extends": [ "base/normal.json" ],
-  "...": {
+  "type": "NORMAL",
+  "description": [
+  ],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+    },
+    "cmd": ":",
+    "args": [
+    ]
+  },
+  "when": {
+    "description": [
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+    },
+    "cmd": "eval:string:$(error 'missing attribute!')",
+    "args": [
+    ]
+  },
+  "then": {
+    "description": [
+    ],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    },
+    "stderr": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    }
   }
 }
 ----
-In side this file, `type` attribute at the top level is defined `NORMAL` and therefore, this file will be handled by functions defined in `json_NORMAL.rc`.
+====
+
+As you see, it defines attributes the framework commonly uses and their default values.
+In this file, `type` attribute at the top level is defined `NORMAL` and therefore, this file will be handled by functions defined in `json_NORMAL.rc`.
+
+The following is an example of the usage of `base/normal.json`.
+
+[source, yaml]
+.Test Case Example
+----
+---
+"$extends":
+  - base/normal.json
+when:
+  environmentVariables:
+    SCRIPTS_DIR: "${COMMANDUNIT_PROJECT_DIR}/src/main/scripts" <1>
+  source:
+    - ${COMMANDUNIT_BUILTIN_ROOT}/bud/lib/core.rc
+    - ${SCRIPTS_DIR}/target_lib.rc                             <1>
+  cmd: cat
+  args:
+    - ${SCRIPTS_DIR}/hello.txt
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - REGEX:Hello world
+  stderr:
+    absent:
+      - REGEX:.+
+----
+<1>: `environmentVariable` array is designed to be evaluated at the beginning of `given` and `when` clause.
+Thus, you can reference the environment variables in the `source` and `args` arrays.
 
 === Built-in Libraries
 
 `commandunit` comes with built-in libraries.
 
-Functions listed in this section are guaranteed across `commandunit` versions and they are called "public functions".
+Functions listed in this section are guaranteed to be compatible across `commandunit` versions.
+They are called "public functions".
 In case you find any incompatibility in them, please file a bug ticket.
 However, the libraries are  also used by the `commandunit` itself and some of them are designed for internal use only.
 Specifications of such internal functions may be changed in future, and it is advised not to use them.
@@ -94,6 +244,15 @@ If non-welformed JSON node is given, the execution will be aborted.
 json_object_merge:: "Merges" two JSON objects specified by the first and the second arguments.
 If the same key exists in both the first and second arguments, the one from the second will override the one from the other.
 json_array_append:: Prints an array created by appending a JSON array specified by the second argument to another specified by the first argument.
+
+=== Built-in Environment Variables
+
+The se environment variables can be used in your test cases without explicit declaration.
+
+COMMANDUNIT_PROJECT_DIR:: The top level directory of you project.
+The actual value can be different depending on whether you are using `commandunit` in "native" mode or not.
+COMMANDUNIT_BUILTIN_ROOT:: The directory under which built-ins are stored.
+It points a directory under `+{commandunit-home}+/src/main/scripts/lib`
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

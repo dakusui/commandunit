@@ -44,7 +44,7 @@ Options: (* - for development use only)
  -h, --help            show this help
  -p, --parallel        execute the tests in parallel
  -f, --filter          filter tests with the specified regular expression(default:'.*')
-     --commandunit-dir directory to store config and data files (default: current directory + .commandunit)
+     --commandunit-dir directory to store config and data files (default: {test-srcdir}/.commandunit)
      --project-name    set project name of the test execution. used as the report's title(default:'unknown')
      --test-srcdir     specify directory under which tests are stored (default: current directory/src/test)
      --test-workdir    specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)
@@ -101,7 +101,7 @@ As described in the <<commandLineOptions>>, `commandunit` has four subcommands, 
 - `none`
 
 `preprocess`, `execute`, and `report` correspond to the actions 2.1, 2.2, and 2.3 respectively in the diagram:<<commandUnitPipeline>>,
-`none` does nothing and it is useful to use in combination with `--clean` option, which removes all the generated files in the project.
+`none` does nothing, and it is useful to use in combination with `--clean` option, which removes all the generated files in the project.
 
 [source, bash]
 ----

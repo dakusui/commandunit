@@ -6,6 +6,7 @@
 
 The `commandunit` comes with a "wrapper" script that defines a bash function for you.
 The function automatically downloads the specified version of `commandunit` from its repo and execute it.
+If you specify a dockerized version of it, it downloads an image for it, if you specify non-dockerized ("native") version of it, it shallow-clones a branch in the repo for it.
 
 It has two classes of options, which are "wrapper" options and normal options.
 The former controls the behavior of the wrapper and the latter controls the `commandunit` self's behavior.
@@ -13,21 +14,7 @@ The former controls the behavior of the wrapper and the latter controls the `com
 For instance, you can specify a version of `commandunit` 's main part by `--version=...`, which is one of wrapper options.
 To specify tests to be executed by a regular expression you can ue `--filter=...` option which is a normal option.
 
-=== Key Elements
-
-Technical Elements::
-- Docker
-- bash
-- jq-front
-- Preprocessing pipeline
-- "wrapper" module
-- native mode
-- pipeline
-
-Dependencies::
-- jq-front
-
-It uses `jq-front` to
+Check link:handbookCommandLine.adoc[Command Line Interface Handbook] for more detail.
 
 === Directory Layout
 
@@ -38,15 +25,16 @@ The default directory layout of `commandunit`-based project is designed to be co
 ----
 src/                                    <1>
   main/
-  test/                                 <2>
-    .commandunit/                       <3>
-      jsonpp/                           <4>
-      testdrivers/                      <5>
+    dependencies                        <2>
+  test/                                 <3>
+    .commandunit/                       <4>
+      jsonpp/                           <5>
+      testdrivers/                      <6>
     scripts/
 target/
   commandunit/
-    report/                             <6>
-    work/                               <7>
+    report/                             <7>
+    work/                               <8>
       scripts/
         core/
           {testcase-1}.json
@@ -54,15 +42,17 @@ target/
           {testcase-1}.yaml++
 ----
 <1> Current directory (project root directory)
-<2> A directory to store test scripts. (test script directory, can be changed through `--test-srcdir=` option)
-<3> A directory to store `commandunit` 's configuration. (test project configuration directory)
+<2> A directory under which "dependencies" are downloaded by the wrapper script.
+Typically used for downloading "native" versions of `commandunit`.
+<3> A directory to store test scripts. (test script directory, can be changed through `--test-srcdir=` option)
+<4> A directory to store `commandunit` 's configuration. (test project configuration directory)
 exported as `COMMANDUNIT_DIR` environment variable.
 This can be configured through `--commandunit-dir` option.
-<4> A base directory from which files specified by `$extends` attribute are searched..
-<5> A base directory from which "driver" files are searched.
-<6> A directory to which `commandunit` writes report.
+<5> A base directory from which files specified by `$extends` attribute are searched..
+<6> A base directory from which "driver" files are searched.
+<7> A directory to which `commandunit` writes report.
 (report directory, can be changed through `--test-reportdir=` option)
-<7> A directory to which `commandunit` stores processed test scripts and intermediate files. (working directory, can be changed through `--test-workdir` option)
+<8> A directory to which `commandunit` stores processed test scripts and intermediate files. (working directory, can be changed through `--test-workdir` option)
 
 
 === `commandunit` 's Pipeline
