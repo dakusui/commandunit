@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Examples</title>
+<title>A doc for style</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -433,137 +433,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_examples">Examples</a></li>
-</ul>
-</div>
+<h1>A doc for style</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_examples">Examples</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="title">Definition of <code>array_contains</code> function in <code>arrays.rc</code>.</div>
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function array_contains() {
-  local _word="${1}" &amp;&amp; shift
-  printf '%s\n' "${@}" | grep -q -E '^'"${_word}"'$'
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">test-contains_true.yaml++</div>
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
-"$extends":
-  - base/normal.json
-when:
-  description:
-    - Run 'array_contains' with the first argument contained by the rest.
-  source:
-    - /path/to/arrays.rc
-  cmd: array_contains
-  args:
-    - hello
-    - hello
-    - world
-then:
-  exitCode:
-    - EQUAL
-    - 0
-  stdout:
-    absent:
-      - REGEX:.+
-  stderr:
-    absent:
-      - REGEX:.+</code></pre>
-</div>
-</div>
-<details>
-<summary class="title"><code>base/normal.json</code></summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "type": "NORMAL",
-  "description": [
-  ],
-  "given": {
-    "description": [
-      "This test should always be executed."
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": ":",
-    "args": [
-    ]
-  },
-  "when": {
-    "description": [
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": "eval:string:$(error 'missing attribute!')",
-    "args": [
-    ]
-  },
-  "then": {
-    "description": [
-    ],
-    "exitCode": [
-      "EQUAL",
-      0
-    ],
-    "stdout": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    },
-    "stderr": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    }
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-</details>
-<div class="paragraph text-right">
-<p><a href="index.html">top</a></p>
-</div>
-</div>
+<div class="paragraph">
+<p>This file is used to generate style element for <code>index.sh</code>.</p>
 </div>
 </div>
 <div id="footer">

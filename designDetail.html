@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Examples</title>
+<title>Design Detail of commandunit</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,128 +438,161 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_examples">Examples</a></li>
+<li><a href="#_design_detail_of_commandunit">Design Detail of <code>commandunit</code></a>
+<ul class="sectlevel2">
+<li><a href="#_the_wrapper_script">The wrapper script</a></li>
+<li><a href="#_directory_layout">Directory Layout</a></li>
+<li><a href="#_commandunit_s_pipeline"><code>commandunit</code> 's Pipeline</a></li>
+</ul>
+</li>
+<li><a href="#_references">References</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_examples">Examples</h2>
+<h2 id="_design_detail_of_commandunit">Design Detail of <code>commandunit</code></h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_the_wrapper_script">The wrapper script</h3>
+<div class="paragraph">
+<p>The <code>commandunit</code> comes with a "wrapper" script that defines a bash function for you.
+The function automatically downloads the specified version of <code>commandunit</code> from its repo and execute it.
+If you specify a dockerized version of it, it downloads an image for it, if you specify non-dockerized ("native") version of it, it shallow-clones a branch in the repo for it.</p>
+</div>
+<div class="paragraph">
+<p>It has two classes of options, which are "wrapper" options and normal options.
+The former controls the behavior of the wrapper and the latter controls the <code>commandunit</code> self&#8217;s behavior.</p>
+</div>
+<div class="paragraph">
+<p>For instance, you can specify a version of <code>commandunit</code> 's main part by <code>--version=&#8230;&#8203;</code>, which is one of wrapper options.
+To specify tests to be executed by a regular expression you can ue <code>--filter=&#8230;&#8203;</code> option which is a normal option.</p>
+</div>
+<div class="paragraph">
+<p>Check <a href="handbookCommandLine.adoc">Command Line Interface Handbook</a> for more detail.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_directory_layout">Directory Layout</h3>
+<div class="paragraph">
+<p>The default directory layout of <code>commandunit</code>-based project is designed to be compatible with Maven-based project<a href="#maven-designDetail">[1]</a>.</p>
+</div>
 <div class="listingblock">
-<div class="title">Definition of <code>array_contains</code> function in <code>arrays.rc</code>.</div>
+<div class="title">Default Directory Layout</div>
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function array_contains() {
-  local _word="${1}" &amp;&amp; shift
-  printf '%s\n' "${@}" | grep -q -E '^'"${_word}"'$'
-}</code></pre>
+<pre class="highlight"><code>src/                                    <b class="conum">(1)</b>
+  main/
+    dependencies                        <b class="conum">(2)</b>
+  test/                                 <b class="conum">(3)</b>
+    .commandunit/                       <b class="conum">(4)</b>
+      jsonpp/                           <b class="conum">(5)</b>
+      testdrivers/                      <b class="conum">(6)</b>
+    scripts/
+target/
+  commandunit/
+    report/                             <b class="conum">(7)</b>
+    work/                               <b class="conum">(8)</b>
+      scripts/
+        core/
+          {testcase-1}.json
+          {testcase-1}.json++
+          {testcase-1}.yaml++</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">test-contains_true.yaml++</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Current directory (project root directory)</p>
+</li>
+<li>
+<p>A directory under which "dependencies" are downloaded by the wrapper script.
+Typically used for downloading "native" versions of <code>commandunit</code>.</p>
+</li>
+<li>
+<p>A directory to store test scripts. (test script directory, can be changed through <code>--test-srcdir=</code> option)</p>
+</li>
+<li>
+<p>A directory to store <code>commandunit</code> 's configuration. (test project configuration directory)
+exported as <code>COMMANDUNIT_DIR</code> environment variable.
+This can be configured through <code>--commandunit-dir</code> option.</p>
+</li>
+<li>
+<p>A base directory from which files specified by <code>$extends</code> attribute are searched..</p>
+</li>
+<li>
+<p>A base directory from which "driver" files are searched.</p>
+</li>
+<li>
+<p>A directory to which <code>commandunit</code> writes report.
+(report directory, can be changed through <code>--test-reportdir=</code> option)</p>
+</li>
+<li>
+<p>A directory to which <code>commandunit</code> stores processed test scripts and intermediate files. (working directory, can be changed through <code>--test-workdir</code> option)</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_commandunit_s_pipeline"><code>commandunit</code> 's Pipeline</h3>
+<div class="paragraph">
+<p>The following diagram illustrates data flows of the <code>commandunit</code>.</p>
+</div>
+<div class="imageblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
-"$extends":
-  - base/normal.json
-when:
-  description:
-    - Run 'array_contains' with the first argument contained by the rest.
-  source:
-    - /path/to/arrays.rc
-  cmd: array_contains
-  args:
-    - hello
-    - hello
-    - world
-then:
-  exitCode:
-    - EQUAL
-    - 0
-  stdout:
-    absent:
-      - REGEX:.+
-  stderr:
-    absent:
-      - REGEX:.+</code></pre>
+<img src="diag-ditaa-md5-9e8034756cbd5a16cd149a54e3857bbc.png" alt="Diagram" width="730" height="588">
 </div>
+<div class="title">Figure 1. The Processing Pipeline of the <code>commandunit</code></div>
 </div>
-<details>
-<summary class="title"><code>base/normal.json</code></summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "type": "NORMAL",
-  "description": [
-  ],
-  "given": {
-    "description": [
-      "This test should always be executed."
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": ":",
-    "args": [
-    ]
-  },
-  "when": {
-    "description": [
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": "eval:string:$(error 'missing attribute!')",
-    "args": [
-    ]
-  },
-  "then": {
-    "description": [
-    ],
-    "exitCode": [
-      "EQUAL",
-      0
-    ],
-    "stdout": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    },
-    "stderr": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    }
-  }
-}</code></pre>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>preprocess</code> subcommand (2.1)</dt>
+<dd>
+<p>This step converts test case definitions into JSON files, which can be executed by the step that comes the next: <code>run</code> step.</p>
+</dd>
+<dt class="hdlist1"><code>run</code> subcommand (2.2)</dt>
+<dd>
+<p>This step runs the test case definitions.
+Test result is accumulated in Result Repository</p>
+</dd>
+<dt class="hdlist1"><code>report</code> subcommand (2.3)</dt>
+<dd>
+<p>A step to compile human readable report from the output of the previous step (<code>run</code>).</p>
+</dd>
+<dt class="hdlist1">Test Repository</dt>
+<dd>
+<p>Specified by <code>--test-srcdir</code>.
+A directory under which users store test definition files, typically <code>yaml&#43;&#43;</code> files, as source.</p>
+</dd>
+<dt class="hdlist1">Compiled Test Repository</dt>
+<dd>
+<p>Specified by <code>--test-workdir</code>.
+A directory under which files generated during the execution of <code>preprocessor</code> subcommand.</p>
+</dd>
+<dt class="hdlist1">Result Repository</dt>
+<dd>
+<p>Specified by <code>--test-reportdir</code>.
+A directory under which test report files are stored.
+Executor stores <code>testreport.json</code> here and report renderer reads it and generates <code>testreport.adoc</code> hre from the JSON file.</p>
+</dd>
+<dt class="hdlist1">Test Report</dt>
+<dd>
+<p><code>testreport.adoc</code></p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
-</details>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
+<div class="ulist bibliography">
+<ul class="bibliography">
+<li>
+<p><a id="maven-designDetail"></a>[1] Apache Maven Project <a href="https://maven.apache.org/">Apache Maven Project</a>: 2002-2022</p>
+</li>
+</ul>
+</div>
 <div class="paragraph text-right">
 <p><a href="index.html">top</a></p>
 </div>
@@ -568,7 +601,7 @@ then:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 21:02:32 UTC
+Last updated 2023-11-08 21:38:47 UTC
 </div>
 </div>
 </body>

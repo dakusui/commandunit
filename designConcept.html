@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Examples</title>
+<title>Design Concept of commandunit</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,34 +438,259 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_examples">Examples</a></li>
+<li><a href="#_design_concept_of_commandunit">Design Concept of <code>commandunit</code></a>
+<ul class="sectlevel2">
+<li><a href="#_yaml_not_gherkin">YAML, not Gherkin</a></li>
+<li><a href="#_given_when_then_structure">Given-When-Then structure</a></li>
+<li><a href="#_powered_by_jq_front">Powered by <code>jq-front</code></a></li>
+<li><a href="#_yaml_json_pipeline">YAML &#8594; JSON Pipeline</a></li>
+<li><a href="#_references">References</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_examples">Examples</h2>
+<h2 id="_design_concept_of_commandunit">Design Concept of <code>commandunit</code></h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_yaml_not_gherkin">YAML, not Gherkin</h3>
+<div class="paragraph">
+<p>Gherkin is one notation widely used in "Cucumber"'s ecosystem.</p>
+</div>
 <div class="listingblock">
-<div class="title">Definition of <code>array_contains</code> function in <code>arrays.rc</code>.</div>
+<div class="title">A Gherkin (Cucumber) Example</div>
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function array_contains() {
-  local _word="${1}" &amp;&amp; shift
-  printf '%s\n' "${@}" | grep -q -E '^'"${_word}"'$'
+<pre class="highlight"><code class="language-gherkin" data-lang="gherkin">Feature: Guess the word
+
+  # The first example has two steps
+  Scenario: Maker starts a game
+    When the Maker starts a game
+    Then the Maker waits for a Breaker to join
+
+  # The second example has three steps
+  Scenario: Breaker joins a game
+    Given the Maker has started a game with the word "silky"
+    When the Breaker joins the Maker's game
+    Then the Breaker must guess a word with 5 characters</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we write this in YAML, it will be like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">YAML version of Gherkin Example</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
+Feature:
+  Name: Guess the word <b class="conum">(1)</b>
+  Scenarios:
+  # The first example has two steps
+  - Name: Maker starts a game
+    When: the Maker starts a game
+    Then: the Maker waits for a Breaker to join
+  # The second example has three steps
+  - Name: Breaker joins a game <b class="conum">(1)</b>
+    Given: the Maker has started a game with the word "silky"
+    When: the Breaker joins the Maker's game
+    Then: the Breaker must guess a word with 5 characters</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;1&gt;: These attributes are introduced to define names of a feature and a scenario, which is defined without explicit attribute name in Gherkin.</p>
+</div>
+<div class="paragraph">
+<p>Gherkin seems slightly simpler and cleaner since you will need fewer keywords, however, is it really worth adapting a dedicated notation not used anything but it?
+By using Gherkin, you will need a set of plugins to support Gherkin for every tool used in a software development project such as browser, editor, or IDE.</p>
+</div>
+<div class="paragraph">
+<p>If so, wouldn&#8217;t YAML be good enough to define your test cases?
+isn&#8217;t YAML good enough, if we have a way to avoid repeating the same thing over and over again?</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_given_when_then_structure">Given-When-Then structure</h3>
+<div class="paragraph">
+<p>The <code>commandunit</code> has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<a href="#cucumber-designConcept">[2]</a>.
+It has three sections.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Given</dt>
+<dd>
+<p>A step that defines a procedure to prepare a state of system under test before starting a test&#8217;s main part.
+This corresponds to "set up" phase in "four phase testing" model</p>
+</dd>
+<dt class="hdlist1">When</dt>
+<dd>
+<p>A step that interacts with the SUT.
+This corresponds to "execute" phase in "four phase testing" model</p>
+</dd>
+<dt class="hdlist1">Then</dt>
+<dd>
+<p>A step that verifies the output and the state of the SUT.
+This corresponds to "verify" phase in "four phase testing" model</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Following is one example of a test definition for <code>commandunit</code> in plain JSON.</p>
+</div>
+<div id="json-example-designConcept" class="listingblock">
+<div class="title">JSON example</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "NORMAL",
+  "description": [],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": ":",
+    "args": []
+  },
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "stdin": [],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "/home/hiroshi/Documents/github/commandunit/out/main/scripts/dependencies"
+    },
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "description": [],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "present": [],
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">test-contains_true.yaml++</div>
+</div>
+<div class="sect2">
+<h3 id="_powered_by_jq_front">Powered by <code>jq-front</code></h3>
+<div class="paragraph">
+<p><code>jq-front</code> <a href="#jq-front-designConcept">[1]</a> is a tool to enable your JSON files to extend other JSON files.
+Not only that it allows you to reference another node in the same file to compute a node&#8217;s value.</p>
+</div>
+<div class="paragraph">
+<p>Test case definition tends to be repetitive, however, if we use <code>jq-front</code> to define common attribute values in <code>base/normal.json</code>, which can be used by other JSON files, it can be as simple as the following example.</p>
+</div>
+<div id="jsonpp-example-designConcept" class="listingblock">
+<div class="title">JSON++ example</div>
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
-"$extends":
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "$extends": [
+    "base/normal.json"
+  ],
+  "when": {
+    "description": [
+      "Run 'array_contains' with the first argument contained by the rest."
+    ],
+    "source": [
+      "${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc"
+    ],
+    "cmd": "array_contains",
+    "args": [
+      "hello",
+      "hello",
+      "world"
+    ]
+  },
+  "then": {
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    },
+    "stderr": {
+      "absent": [
+        "REGEX:.+"
+      ]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>jq-front</code> renders this file into a normal JSON file, where the values defined inside <code>base/normal.json</code> are expended and then overridden by the values in <code>foo.json&#43;&#43;</code> file.</p>
+</div>
+<div class="paragraph">
+<p>It is a very flexible, yet still your files are JSON, as you see.
+This means that you don&#8217;t need to find supports of the new format.
+You can just keep using your favorite tools (editor, browser, IDE, etc) because in general they support popular formats such as JSON, YAML, or the good old XML.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_yaml_json_pipeline">YAML &#8594; JSON Pipeline</h3>
+<div class="paragraph">
+<p>Let&#8217;s go one step forward.
+We use YAML in order to ensure the test case definitions readable for human.
+We also use <code>jq-front</code>, which processes JSON files(<code>.json&#43;&#43;</code>) and renders into normal JSON files.</p>
+</div>
+<div class="paragraph">
+<p>In short, instead of coming up with a single notation that solves all the problems at once, it applies tools that solve them one by one.</p>
+</div>
+<div class="paragraph">
+<p>Following is an example of a file that written in YAML, using <code>jq-front</code> 's feature.</p>
+</div>
+<div id="yamlpp-example-designConcept" class="listingblock">
+<div class="title">YAML++ example, <code>test-contains_true.yaml&#43;&#43;</code></div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">"$extends":
   - base/normal.json
 when:
   description:
     - Run 'array_contains' with the first argument contained by the rest.
   source:
-    - /path/to/arrays.rc
+    - ${COMMANDUNIT_DEPENDENCIES_ROOT}/bud/lib/arrays.rc
   cmd: array_contains
   args:
     - hello
@@ -483,85 +708,26 @@ then:
       - REGEX:.+</code></pre>
 </div>
 </div>
-<details>
-<summary class="title"><code>base/normal.json</code></summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "type": "NORMAL",
-  "description": [
-  ],
-  "given": {
-    "description": [
-      "This test should always be executed."
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": ":",
-    "args": [
-    ]
-  },
-  "when": {
-    "description": [
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": "eval:string:$(error 'missing attribute!')",
-    "args": [
-    ]
-  },
-  "then": {
-    "description": [
-    ],
-    "exitCode": [
-      "EQUAL",
-      0
-    ],
-    "stdout": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    },
-    "stderr": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    }
-  }
-}</code></pre>
+<div class="paragraph">
+<p>This can be converted into a JSON file (a .json++ file) that uses <code>jq-front</code> feature, which is shown as the <a href="#jsonpp-example-designConcept">JSON++ example</a>.
+Then it can be converted into normal JSON file, shown as <a href="#json-example-designConcept">JSON example</a></p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_references">References</h3>
+<div class="ulist bibliography">
+<ul class="bibliography">
+<li>
+<p><a id="jq-front-designConcept"></a>[1] jq-front: JSON with inheritance and templating <a href="https://dakusui.github.io/jq-front/">dakusui.github.io/jq-front</a></p>
+</li>
+<li>
+<p><a id="cucumber-designConcept"></a>[2] Cucumber Testing and Collaboration tool <a href="https://cucumber.io/">cucumber.io</a></p>
+</li>
+</ul>
 </div>
-</details>
 <div class="paragraph text-right">
 <p><a href="index.html">top</a></p>
+</div>
 </div>
 </div>
 </div>

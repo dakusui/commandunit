@@ -435,14 +435,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1><code>commandunit</code>:  Programming Handbook</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_commandunit_programming_handbook"><code>commandunit</code>:  Programming Handbook</a>
+<li><a href="#_syntax">Syntax</a>
 <ul class="sectlevel2">
-<li><a href="#_syntax_given_when_and_then">Syntax: <code>Given</code>, <code>When</code>, and <code>Then</code></a></li>
-<li><a href="#_built_in_test_templates">Built-in Test Templates</a></li>
+<li><a href="#_given_when_and_then_structure"><code>given</code>, <code>when</code>, and <code>then</code> structure</a></li>
+<li><a href="#_type_attribute"><code>type</code> attribute</a></li>
+<li><a href="#_given_and_when_clauses"><code>given</code> and <code>when</code> clauses</a></li>
+<li><a href="#_then_clause"><code>then</code> clause</a></li>
+</ul>
+</li>
+<li><a href="#_built_ins">Built-ins</a>
+<ul class="sectlevel2">
+<li><a href="#_built_in_test_templates_basenormal_json">Built-in Test Templates: <code>base/normal.json</code></a></li>
 <li><a href="#_built_in_libraries">Built-in Libraries</a></li>
+<li><a href="#_built_in_environment_variables">Built-in Environment Variables</a></li>
 </ul>
 </li>
 </ul>
@@ -450,69 +459,264 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_commandunit_programming_handbook"><code>commandunit</code>:  Programming Handbook</h2>
+<h2 id="_syntax">Syntax</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Directory structure:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>related commandline options</p>
-</li>
-<li>
-<p>how it behave on each subcommand.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Environment variables</p>
-</div>
+<div class="sect2">
+<h3 id="_given_when_and_then_structure"><code>given</code>, <code>when</code>, and <code>then</code> structure</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Syntax</dt>
+<dt class="hdlist1"><code>given</code></dt>
 <dd>
-<p>Given, When, Then,</p>
+<p>You can define an action which should be executed before <code>when</code> clause.
+If the execution of this clause fails, i.e., if it results in non-0 exit code, the rest of the test (<code>when</code> and <code>then</code> clauses) will not be executed.
+This corresponds to the "set-up" phase in "four phase testing" model.</p>
 </dd>
-<dt class="hdlist1">Execution</dt>
-<dt class="hdlist1">subcommands</dt>
+<dt class="hdlist1"><code>when</code></dt>
 <dd>
-<p>preprocess, run, report, none</p>
+<p>You can define an action whose behavior should be tested in this clause.
+This section has the same structure as the <code>given</code> clause.
+This corresponds to the "execute" phase in "four phase testing" model.</p>
+</dd>
+<dt class="hdlist1"><code>then</code></dt>
+<dd>
+<p>This clause defines a check to be exercised for the result of <code>when</code> clause.
+This corresponds to the "verify" phase in "four phase testing" model.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>built-in libraries</p>
+<p>As discussed later in this section, it is advised to a built-in test template: <code>base/normal.json</code> directly or indirectly always.
+If no preparation is necessary for your test, you do not need to define anything for <code>given</code> clause explicitly as long as you are extending it.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_syntax_given_when_and_then">Syntax: <code>Given</code>, <code>When</code>, and <code>Then</code></h3>
+<h3 id="_type_attribute"><code>type</code> attribute</h3>
 <div class="paragraph">
-<p>(t.b.d.)</p>
+<p><code>commandunit</code> specifies the structure of a test case, which has <code>given</code>, <code>when</code>, and <code>then</code>.
+However, the syntax inside the <code>given</code> and <code>when</code> clauses is user customizable, although it doesn&#8217;t need to be modified under usual usages.
+If you specify a value of <code>type</code> attribute <code>NORMAL</code>, it searches for handler functions from <code>json_NORMAL.rc</code> and <code>scripttest.rc</code> files.
+These <code>.rc</code> files are placed under test drivers directories.
+Test driver directories are under the <code>{commandunit-dir}/.commandunit/testdrivers</code> and <code>{commandunit-home}/src/main/scripts/lib/testdrivers</code>.
+<code>commandunit</code> searches for the files from them in this order.</p>
+</div>
+<div class="paragraph">
+<p>Therefore, syntax inside <code>given</code> and <code>when</code> clauses can be differently defined based on the <code>type</code> attribute value.
+However, the only built-in currently available (<code>base/normal.json</code>) uses the <code>NORMAL</code> type, and it has sufficiently general-purposed design, we discuss the syntax defined by the <code>NORMAL</code> type in the rest of this document unless otherwise explicitly noted.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_built_in_test_templates">Built-in Test Templates</h3>
+<h3 id="_given_and_when_clauses"><code>given</code> and <code>when</code> clauses</h3>
+<div class="paragraph">
+<p><code>given</code> and <code>when</code> clauses have the same structure, and you can use the same set of attributes for them.</p>
+</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>base/normal.json</code></dt>
+<dt class="hdlist1"><code>description</code> (array)</dt>
 <dd>
-<p>A basic test base file.
-You can "extend" this file to define your own test.</p>
+<p>This part is included as a comment in the auto-generated test script.</p>
+</dd>
+<dt class="hdlist1"><code>environmentVariables</code> (object)</dt>
+<dd>
+<p>An object that specifies environment variables and their values.
+Those environment variables can be referenced from inside the elements in <code>args</code> array.</p>
+</dd>
+<dt class="hdlist1"><code>source</code> (array)</dt>
+<dd>
+<p>Files to be sourced by the <code>shell</code>.</p>
+</dd>
+<dt class="hdlist1"><code>stdin</code> (array)</dt>
+<dd>
+<p>An array of string, which gives to the executed command from <code>stdin</code>.</p>
+</dd>
+<dt class="hdlist1"><code>shell</code> (object)</dt>
+<dd>
+<p>A shell with which a command specified by <code>cmd</code> and <code>args</code>.</p>
+</dd>
+<dt class="hdlist1"><code>cmd</code> (string)</dt>
+<dd>
+<p>A command to be executed.
+A function in sourced files (see <code>source</code>) can also be specified.</p>
+</dd>
+<dt class="hdlist1"><code>args</code> (array)</dt>
+<dd>
+<p>Arguments to be passed to the command specified by <code>cmd</code> attribute.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The <code>given</code> clause should be used to "set up" test fixture, while <code>when</code> clause should be used for executing the command under target itself.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_then_clause"><code>then</code> clause</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>exitCode</code> (array)</dt>
+<dd>
+<p>An array that defines a condition which the exit code of the command line specified by <code>when</code> clause should satisfy.
+The first element is a name of a predicate and the rest of the element are arguments to be passed to the predicate.
+Currently available predicates are, <code>EQUAL</code> and <code>NOT_EQUAL</code>.
+<code>[EQUAL, 0]</code> is satisfied if and only if the exit code of the command in the <code>when</code> clause was <code>0</code>.
+<code>[NOT_EQUAL, 0]</code> is satisfied if and only if the exit code of the command in the <code>when</code> clause was not <code>0</code>.</p>
+</dd>
+<dt class="hdlist1"><code>stdout</code> and <code>stderr</code> (object)</dt>
+<dd>
+<p>Under these attributes, you can define regular expressions that should and should not be present in them.
+To define a check which examines if <code>stdout</code> contains a regular expression: <code>Hello world</code>, you can do:</p>
 </dd>
 </dl>
 </div>
 <div class="listingblock">
-<div class="title">Example</div>
+<div class="content">
+<pre>  stdout:
+    present:
+      - REGEX:Hello world</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, to define a check, <code>stderr</code> doesn&#8217;t contain anything, you can do:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  stderr:
+    absent:
+      - REGEX:.+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_built_ins">Built-ins</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_built_in_test_templates_basenormal_json">Built-in Test Templates: <code>base/normal.json</code></h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>base/normal.json</code></dt>
+<dd>
+<p>A basic test base file.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><code>commandunit</code> has a built-in JSON file, <code>base/normal.json</code>, which you can extend to define your own tests.</p>
+</div>
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="listingblock">
+<div class="title">base/normal.json</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
-  "$extends": [ "base/normal.json" ],
-  "...": {
+  "type": "NORMAL",
+  "description": [
+  ],
+  "given": {
+    "description": [
+      "This test should always be executed."
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+    },
+    "cmd": ":",
+    "args": [
+    ]
+  },
+  "when": {
+    "description": [
+    ],
+    "stdin": [
+    ],
+    "shell": {
+      "name": "bash",
+      "options": [
+        "-eu",
+        "-E"
+      ]
+    },
+    "source": [
+    ],
+    "environmentVariables": {
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+    },
+    "cmd": "eval:string:$(error 'missing attribute!')",
+    "args": [
+    ]
+  },
+  "then": {
+    "description": [
+    ],
+    "exitCode": [
+      "EQUAL",
+      0
+    ],
+    "stdout": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    },
+    "stderr": {
+      "present": [
+      ],
+      "absent": [
+      ]
+    }
   }
 }</code></pre>
 </div>
 </div>
+</div>
+</details>
 <div class="paragraph">
-<p>In side this file, <code>type</code> attribute at the top level is defined <code>NORMAL</code> and therefore, this file will be handled by functions defined in <code>json_NORMAL.rc</code>.</p>
+<p>As you see, it defines attributes the framework commonly uses and their default values.
+In this file, <code>type</code> attribute at the top level is defined <code>NORMAL</code> and therefore, this file will be handled by functions defined in <code>json_NORMAL.rc</code>.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of the usage of <code>base/normal.json</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Test Case Example</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
+"$extends":
+  - base/normal.json
+when:
+  environmentVariables:
+    SCRIPTS_DIR: "${COMMANDUNIT_PROJECT_DIR}/src/main/scripts" <b class="conum">(1)</b>
+  source:
+    - ${COMMANDUNIT_BUILTIN_ROOT}/bud/lib/core.rc
+    - ${SCRIPTS_DIR}/target_lib.rc                             <b class="conum">(1)</b>
+  cmd: cat
+  args:
+    - ${SCRIPTS_DIR}/hello.txt
+then:
+  exitCode:
+    - EQUAL
+    - 0
+  stdout:
+    present:
+      - REGEX:Hello world
+  stderr:
+    absent:
+      - REGEX:.+</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&lt;1&gt;: <code>environmentVariable</code> array is designed to be evaluated at the beginning of <code>given</code> and <code>when</code> clause.
+Thus, you can reference the environment variables in the <code>source</code> and <code>args</code> arrays.</p>
 </div>
 </div>
 <div class="sect2">
@@ -521,7 +725,8 @@ You can "extend" this file to define your own test.</p>
 <p><code>commandunit</code> comes with built-in libraries.</p>
 </div>
 <div class="paragraph">
-<p>Functions listed in this section are guaranteed across <code>commandunit</code> versions and they are called "public functions".
+<p>Functions listed in this section are guaranteed to be compatible across <code>commandunit</code> versions.
+They are called "public functions".
 In case you find any incompatibility in them, please file a bug ticket.
 However, the libraries are  also used by the <code>commandunit</code> itself and some of them are designed for internal use only.
 Specifications of such internal functions may be changed in future, and it is advised not to use them.</p>
@@ -631,6 +836,27 @@ If the same key exists in both the first and second arguments, the one from the 
 </dd>
 </dl>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_built_in_environment_variables">Built-in Environment Variables</h3>
+<div class="paragraph">
+<p>The se environment variables can be used in your test cases without explicit declaration.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">COMMANDUNIT_PROJECT_DIR</dt>
+<dd>
+<p>The top level directory of you project.
+The actual value can be different depending on whether you are using <code>commandunit</code> in "native" mode or not.</p>
+</dd>
+<dt class="hdlist1">COMMANDUNIT_BUILTIN_ROOT</dt>
+<dd>
+<p>The directory under which built-ins are stored.
+It points a directory under <code>{commandunit-home}/src/main/scripts/lib</code></p>
+</dd>
+</dl>
+</div>
 <div class="paragraph text-right text-right">
 <p><a href="index.html">top</a></p>
 </div>
@@ -638,10 +864,9 @@ If the same key exists in both the first and second arguments, the one from the 
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 20:38:43 UTC
+Last updated 2023-11-09 20:56:37 UTC
 </div>
 </div>
 </body>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Examples</title>
+<title>The commandunit testing framwork</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,25 +435,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1>The <code>commandunit</code> testing framwork</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_examples">Examples</a></li>
+<li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_design_concept">Design Concept</a></li>
+<li><a href="#_design_detail">Design Detail</a></li>
+<li><a href="#_system_requirements">System Requirements</a></li>
+<li><a href="#_user_manuals">User Manuals</a>
+<ul class="sectlevel2">
+<li><a href="#_installation_manual">Installation Manual</a></li>
+<li><a href="#_command_line_manual">Command-line Manual</a></li>
+<li><a href="#_programming_manual">Programming Manual</a></li>
+</ul>
+</li>
+<li><a href="#_walking_through_examples">Walking Through Examples</a></li>
+<li><a href="#_faq">FAQ</a></li>
+<li><a href="#_references">References</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_examples">Examples</h2>
+<div id="preamble">
 <div class="sectionbody">
-<div class="listingblock">
-<div class="title">Definition of <code>array_contains</code> function in <code>arrays.rc</code>.</div>
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function array_contains() {
-  local _word="${1}" &amp;&amp; shift
-  printf '%s\n' "${@}" | grep -q -E '^'"${_word}"'$'
-}</code></pre>
+<div class="paragraph">
+<p>The <code>commandunit</code> is a pluggable and flexible testing framework (test harness), whose testing description language is based on "JSON" (and "YAML") format.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Automated tests can become easily repetitive and not uniformed very often.
+<code>commandunit</code> addresses this problem for your UNIX-based CLI tools.
+It allows you to define your test cases in YAML but with the help of <code>jq-front</code><a href="#jq-front">[1]</a>.
+With this tool, your test will look like this:</p>
 </div>
 <div class="listingblock">
 <div class="title">test-contains_true.yaml++</div>
@@ -483,92 +501,126 @@ then:
       - REGEX:.+</code></pre>
 </div>
 </div>
-<details>
-<summary class="title"><code>base/normal.json</code></summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "type": "NORMAL",
-  "description": [
-  ],
-  "given": {
-    "description": [
-      "This test should always be executed."
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": ":",
-    "args": [
-    ]
-  },
-  "when": {
-    "description": [
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": "eval:string:$(error 'missing attribute!')",
-    "args": [
-    ]
-  },
-  "then": {
-    "description": [
-    ],
-    "exitCode": [
-      "EQUAL",
-      0
-    ],
-    "stdout": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    },
-    "stderr": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    }
-  }
-}</code></pre>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_design_concept">Design Concept</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Test definitions are repetitive.
+But any single test is not (should not be) identical to any other one.
+In generic programming languages have features, we can address it with their features such  user define functions, data types, inheritance, and others.
+Those are not available in popular data notations.
+<code>commandunit</code> doesn&#8217;t try to solve it by itself, but by using <code>jq-front</code><a href="#jq-front">[1]</a>, it separates this concern from the test management and execution model.</p>
+</div>
+<div class="paragraph">
+<p>For more detail, check <a href="designConcept.html">Design Concept</a>.</p>
 </div>
 </div>
 </div>
-</details>
-<div class="paragraph text-right">
-<p><a href="index.html">top</a></p>
+<div class="sect1">
+<h2 id="_design_detail">Design Detail</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To implement the concepts shown in the previous section, <code>commandunit</code> has a pipeline that takes <code>jq-front</code> powered yaml as its input and produces JSON files that defines test cases.</p>
+</div>
+<div class="paragraph">
+<p>For more detail, check <a href="designDetail.html">Design Detail</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_system_requirements">System Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For the requirements of <code>commandunit</code> for your system (or software components and their version used in testing of <code>commandunit</code>), check <a href="systemRequirements.html">System Requirements</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_user_manuals">User Manuals</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_installation_manual">Installation Manual</h3>
+<div class="paragraph">
+<p>You can install <code>commandunit</code> easily with its "wrapper" script.
+Just please check <a href="handbookInstallation.html">Installation and Quick Start Manual</a> for its installation.
+The documentation also discusses some tips (or ideas) to use it for non-bash users.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_command_line_manual">Command-line Manual</h3>
+<div class="paragraph">
+<p><code>commandunit</code> comes with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
+The wrapper has its own options.</p>
+</div>
+<div class="paragraph">
+<p>For the detail of <code>commandunit</code> 's options the wrapper&#8217;s options, check <a href="handbookCommandLine.html">Command Line Manual</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_programming_manual">Programming Manual</h3>
+<div class="paragraph">
+<p>Like JUnit and other testing tools, <code>commandunit</code> has its own programming model.
+Also, it assumes a directory structure, which is designed to be compatible with Maven<a href="#maven">[2]</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can start using <code>commandunit</code> by cloning, trying and modifying an example project.
+But for more details, such as syntax of the tool, you can check <a href="handbookProgramming.html">Programming Manual</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_walking_through_examples">Walking Through Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Check a <a href="walkingThroughExamples.html">Walking through Examples</a> for a use case scenario of <code>commandunit</code> to learn how you can use it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_faq">FAQ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The list of frequently asked questions and their answers is available here: <a href="faq.html">FAQ</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
+<div class="ulist bibliography">
+<ul class="bibliography">
+<li>
+<p><a id="jq-front"></a>[1] jq-front project in github.org. <a href="https://github.com/dakusui/jq-front">jq-front</a>: 2019</p>
+</li>
+<li>
+<p><a id="maven"></a>[2] Apache Maven Project <a href="https://maven.apache.org/">Apache Maven Project</a>: 2002-2022</p>
+</li>
+<li>
+<p><a id="asciidocfx"></a>[3] Asciidoc Book Editor based on JavaFX 18 <a href="https://asciidocfx.com/">Asciidoc Book Editor based on JavaFX 18</a>: 2022</p>
+</li>
+<li>
+<p><a id="intellij"></a>[4] IntelliJ IDEA <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>: 2000-2022</p>
+</li>
+<li>
+<p><a id="asciidoc-intellij-plugin"></a>[5] Asciidoctor Intellij Plugin Project <a href="https://plugins.jetbrains.com/plugin/7391-asciidoc">Asciidoctor Intellij Plugin Project</a>: 2022</p>
+</li>
+<li>
+<p><a id="asciidoc2html"></a>[6] Generate HTML from AsciiDoc <a href="https://docs.asciidoctor.org/asciidoctor/latest/html-backend/">Generate HTML from AsciiDoc</a>: 2022</p>
+</li>
+<li>
+<p><a id="gherkin"></a>[7] Gherkin Reference <a href="https://cucumber.io/docs/gherkin/reference/">Gherkin</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 21:02:32 UTC
+Last updated 2023-11-08 21:16:26 UTC
 </div>
 </div>
 </body>

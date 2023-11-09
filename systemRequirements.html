@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Examples</title>
+<title>System Requirements</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,130 +438,120 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_examples">Examples</a></li>
+<li><a href="#_system_requirements">System Requirements</a>
+<ul class="sectlevel2">
+<li><a href="#_on_linux">On Linux</a></li>
+<li><a href="#_on_macos">On macOS</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_examples">Examples</h2>
+<h2 id="_system_requirements">System Requirements</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="title">Definition of <code>array_contains</code> function in <code>arrays.rc</code>.</div>
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function array_contains() {
-  local _word="${1}" &amp;&amp; shift
-  printf '%s\n' "${@}" | grep -q -E '^'"${_word}"'$'
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>(t.b.d.)
+bash</p>
 </div>
 <div class="listingblock">
-<div class="title">test-contains_true.yaml++</div>
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
-"$extends":
-  - base/normal.json
-when:
-  description:
-    - Run 'array_contains' with the first argument contained by the rest.
-  source:
-    - /path/to/arrays.rc
-  cmd: array_contains
-  args:
-    - hello
-    - hello
-    - world
-then:
-  exitCode:
-    - EQUAL
-    - 0
-  stdout:
-    absent:
-      - REGEX:.+
-  stderr:
-    absent:
-      - REGEX:.+</code></pre>
+<pre>$ bash --version
+GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.</pre>
 </div>
 </div>
-<details>
-<summary class="title"><code>base/normal.json</code></summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "type": "NORMAL",
-  "description": [
-  ],
-  "given": {
-    "description": [
-      "This test should always be executed."
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": ":",
-    "args": [
-    ]
-  },
-  "when": {
-    "description": [
-    ],
-    "stdin": [
-    ],
-    "shell": {
-      "name": "bash",
-      "options": [
-        "-eu",
-        "-E"
-      ]
-    },
-    "source": [
-    ],
-    "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
-    },
-    "cmd": "eval:string:$(error 'missing attribute!')",
-    "args": [
-    ]
-  },
-  "then": {
-    "description": [
-    ],
-    "exitCode": [
-      "EQUAL",
-      0
-    ],
-    "stdout": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    },
-    "stderr": {
-      "present": [
-      ],
-      "absent": [
-      ]
-    }
-  }
-}</code></pre>
+<div class="sect2">
+<h3 id="_on_linux">On Linux</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Dockerized version</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>git (tested with 2.34.1)</p>
+</li>
+<li>
+<p>Distribution: Ubuntu 22.04</p>
+</li>
+<li>
+<p>dockerd: ???</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">"native" version</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>git (tested with 2.34.1)</p>
+</li>
+<li>
+<p><code>jq-front</code> (<code>0.54</code>, Dockerized)</p>
+</li>
+<li>
+<p><code>jq</code> (<code>jq-1.5-1-a5b5cbe</code> or later)</p>
+</li>
+<li>
+<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_on_macos">On macOS</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Dockerized version</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>git (tested with 2.34.1)</p>
+</li>
+<li>
+<p><code>docker</code>: Docker version 23.0.5, build bc4487a (macOS)</p>
+</li>
+<li>
+<p><code>dockerd</code>: Docker Desktop 4.19.0 (106363)</p>
+</li>
+</ul>
 </div>
-</details>
+</dd>
+<dt class="hdlist1">"native" version</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>git (tested with 2.34.1)</p>
+</li>
+<li>
+<p><code>jq-front</code> (<code>0.54</code>, Dockerized)</p>
+</li>
+<li>
+<p><code>jq</code> (<code>jq-1.6</code>)</p>
+</li>
+<li>
+<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
 <div class="paragraph text-right">
 <p><a href="index.html">top</a></p>
+</div>
 </div>
 </div>
 </div>

@@ -496,7 +496,7 @@ Options: (* - for development use only)
  -h, --help            show this help
  -p, --parallel        execute the tests in parallel
  -f, --filter          filter tests with the specified regular expression(default:'.*')
-     --commandunit-dir directory to store config and data files (default: current directory + .commandunit)
+     --commandunit-dir directory to store config and data files (default: {test-srcdir}/.commandunit)
      --project-name    set project name of the test execution. used as the report's title(default:'unknown')
      --test-srcdir     specify directory under which tests are stored (default: current directory/src/test)
      --test-workdir    specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)
@@ -585,7 +585,7 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 </div>
 <div class="paragraph">
 <p><code>preprocess</code>, <code>execute</code>, and <code>report</code> correspond to the actions 2.1, 2.2, and 2.3 respectively in the diagram:<a href="#commandUnitPipeline">The Processing Pipeline of the <code>commandunit</code></a>,
-<code>none</code> does nothing and it is useful to use in combination with <code>--clean</code> option, which removes all the generated files in the project.</p>
+<code>none</code> does nothing, and it is useful to use in combination with <code>--clean</code> option, which removes all the generated files in the project.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -601,7 +601,7 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 20:38:43 UTC
+Last updated 2023-11-09 20:41:03 UTC
 </div>
 </div>
 </body>
