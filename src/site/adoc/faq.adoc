@@ -1,5 +1,29 @@
 == FAQ
 
+=== `commandunit` doesn't work
+
+I am on a macOS and using `commandunit`, but a permission problem is reported::
+Currently, minikube + dockerized combination seems sometimes not working on macOS (link:https://github.com/dakusui/commandunit/issues/26[Issue-26]).
+Please try native mode, if you see an error such as following:
+----
+INFO: Local repository path that has SSH Git URL ...
+mkdir: cannot create directory '/tmp/bud': No space left on device
+ERROR:(exit code:1, pipe status: 1):
+  at /app/dependencies/bud/lib/core.rc:54 (abort)
+----
+
+
+I am on a macOS and using `commandunit` in "native" mode but it doesn't work::
+In some conditions, `yaml2json` installed through `npm` doesn't work `macOS` at all.
+There are two workarounds.
+1. Install it through `brew`
+2. Install `yq` and create a wrapper script that invokes it with the name `yaml2json`.
+The wrapper script should look like following:
+----
+#!/usr/bin/env bash
+yq -o=json "${@}"
+----
+Place this file somewhere on the `PATH` environment variable.
 (t.b.d.)
 
 if macOS `yaml2json` doesn't work. -> Workaround

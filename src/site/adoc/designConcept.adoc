@@ -1,8 +1,8 @@
 :toc:
 
-== Design Concept of `commandunit`
+= Design Concept of `commandunit`
 
-=== YAML, not Gherkin
+== YAML, not Gherkin
 
 Gherkin is one notation widely used in "Cucumber"'s ecosystem.
 
@@ -52,7 +52,7 @@ If so, wouldn't YAML be good enough to define your test cases?
 isn't YAML good enough, if we have a way to avoid repeating the same thing over and over again?
 
 
-=== Given-When-Then structure
+== Given-When-Then structure
 
 The `commandunit` has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<<cucumber-designConcept>>.
 It has three sections.
@@ -139,7 +139,7 @@ Following is one example of a test definition for `commandunit` in plain JSON.
 }
 ----
 
-=== Powered by `jq-front`
+== Powered by `jq-front`
 
 `jq-front` <<jq-front-designConcept>> is a tool to enable your JSON files to extend other JSON files.
 Not only that it allows you to reference another node in the same file to compute a node's value.
@@ -193,7 +193,7 @@ It is a very flexible, yet still your files are JSON, as you see.
 This means that you don't need to find supports of the new format.
 You can just keep using your favorite tools (editor, browser, IDE, etc) because in general they support popular formats such as JSON, YAML, or the good old XML.
 
-=== YAML -> JSON Pipeline
+== YAML -> JSON Pipeline
 
 Let's go one step forward.
 We use YAML in order to ensure the test case definitions readable for human.
@@ -238,7 +238,7 @@ Then it can be converted into normal JSON file, shown as <<json-example-designCo
 
 
 [bibliography]
-=== References
+== References
 
 - [[[jq-front-designConcept, 1]]] jq-front: JSON with inheritance and templating https://dakusui.github.io/jq-front/[dakusui.github.io/jq-front]
 - [[[cucumber-designConcept, 2]]] Cucumber Testing and Collaboration tool https://cucumber.io/[cucumber.io]

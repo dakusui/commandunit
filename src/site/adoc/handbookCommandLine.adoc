@@ -1,4 +1,8 @@
-== `commandunit`: Command Line Interface Handbook
+:toc:
+
+= `commandunit`: Command Line Interface Handbook
+
+== Command Line Options
 
 Following is the description of command line options of `commandunit`.
 
@@ -70,7 +74,7 @@ Values environment variables are guaranteed to be the same as the ones, when you
 - <4>: Check <<Sub-commands>> section for more detail.
 - <5>: Forcibly `commandunit` preprocesses the test source files and intermediate files.
 
-=== Wrapper Options and Normal Options
+== Wrapper Options and Normal Options
 
 As described in the link:designDetail.html[Design Detail], `commandunit` comes with its "wrapper" script.
 The wrapper has its own options, and it interprets command line arguments as wrapper options, first.
@@ -80,7 +84,7 @@ The main part parses them as "normal" options using `getopt`.
 
 
 [[sectionNativeExecution]]
-=== "Native" execution
+== "Native" execution
 
 It is possible to use `commandunit` without Docker solutions.
 The mode is called "native" mode, although it is executed as a bash script, not a binary executable.
@@ -88,7 +92,7 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 
 To execute `commandunit` in native mode, you can just give `--native` wrapper option to its command line.
 
-=== Sub-commands
+== Sub-commands
 
 [[commandUnitPipeline]]
 include::resources/diagrams/pipeline.adoc[Commandunit's Pipeline]

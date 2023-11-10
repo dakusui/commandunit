@@ -1,8 +1,8 @@
 :toc:
 
-== Design Detail of `commandunit`
+= Design Detail of `commandunit`
 
-=== The wrapper script
+== The wrapper script
 
 The `commandunit` comes with a "wrapper" script that defines a bash function for you.
 The function automatically downloads the specified version of `commandunit` from its repo and execute it.
@@ -16,7 +16,7 @@ To specify tests to be executed by a regular expression you can ue `--filter=...
 
 Check link:handbookCommandLine.adoc[Command Line Interface Handbook] for more detail.
 
-=== Directory Layout
+== Directory Layout
 
 The default directory layout of `commandunit`-based project is designed to be compatible with Maven-based project<<maven-designDetail>>.
 
@@ -55,7 +55,7 @@ This can be configured through `--commandunit-dir` option.
 <8> A directory to which `commandunit` stores processed test scripts and intermediate files. (working directory, can be changed through `--test-workdir` option)
 
 
-=== `commandunit` 's Pipeline
+== `commandunit` 's Pipeline
 
 The following diagram illustrates data flows of the `commandunit`.
 
