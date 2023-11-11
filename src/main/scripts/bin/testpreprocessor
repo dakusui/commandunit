@@ -179,7 +179,7 @@ function __process_files() {
       local _err
       _err="$(bud_temp_file)"
       _cmd="$(__process_files_convert "${_src}" "${_dest}")"
-      _cmd="(${_cmd} 2> >(head --lines=10 > ${_err}) && tap_print_ok ${_id} '${_tap_message})')"
+      _cmd="(${_cmd} 2> >(head --lines=10 > ${_err}) && tap_print_ok ${_id} '${_tap_message}')"
       if [[ "${_is_parallel}" == true ]]; then
         eval "${_cmd}" || tap_bailout "Failed to process: <${_src}> by: <${_cmd}> giving error: <$(cat "${_err}")>" &
       else
