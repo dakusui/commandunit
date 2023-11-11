@@ -2,6 +2,8 @@
 
 = `commandunit`:  Programming Handbook
 
+This is a manual that provides useful information to write your own test cases using `commandunit` 's functionalities.
+
 == Syntax
 
 === `given`, `when`, and `then` structure

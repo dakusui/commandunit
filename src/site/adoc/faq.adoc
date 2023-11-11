@@ -1,6 +1,7 @@
-== FAQ
+:toc:
+= FAQ
 
-=== `commandunit` doesn't work
+== `commandunit` doesn't work
 
 I am on a macOS and using `commandunit`, but a permission problem is reported::
 Currently, minikube + dockerized combination seems sometimes not working on macOS (link:https://github.com/dakusui/commandunit/issues/26[Issue-26]).

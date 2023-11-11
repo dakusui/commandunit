@@ -146,6 +146,8 @@ function main() {
         ${_viewer_command} || break
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
+    elif [[ "${_each}" == "none" ]]; then
+      "${_bindir}/none" "${_project_name}"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi

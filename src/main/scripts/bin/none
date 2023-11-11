@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$(dirname "${BASH_SOURCE[0]}")")/lib/main.rc"
+
+function main() {
+  local _project_name="${1}"
+  info_begin "_project_name: '${_project_name}'"
+  info_end
+}
+
+main "${@}"
