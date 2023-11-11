@@ -1,7 +1,7 @@
 function render_doc_files() {
   local i
   while IFS= read -r -d '' i; do
-    local _src_file="/docsrc/${i##*/}"
+    local _src_file="/docsrc/${i##*/adoc/}"
     local _dest_file="${i%.adoc}"
     _dest_file="/doc/${_dest_file##*/}.html"
     message "Processing '${_src_file}'"

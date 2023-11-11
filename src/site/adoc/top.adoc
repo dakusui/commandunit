@@ -49,24 +49,24 @@ In generic programming languages have features, we can address it with their fea
 Those are not available in popular data notations.
 `commandunit` doesn't try to solve it by itself, but by using `jq-front`<<jq-front>>, it separates this concern from the test management and execution model.
 
-For more detail, check link:designConcept.adoc[Design Concept].
+For more detail, check link:designConcept.html[Design Concept].
 
 == Design Detail
 
 To implement the concepts shown in the previous section, `commandunit` has a pipeline that takes `jq-front` powered yaml as its input and produces JSON files that defines test cases.
 
-For more detail, check link:designDetail.adoc[Design Detail].
+For more detail, check link:designDetail.html[Design Detail].
 
 == System Requirements
 
-For the requirements of `commandunit` for your system (or software components and their version used in testing of `commandunit`), check link:systemRequirements.adoc[System Requirements].
+For the requirements of `commandunit` for your system (or software components and their version used in testing of `commandunit`), check link:systemRequirements.html[System Requirements].
 
 == User Manuals
 
 === Installation Manual
 
 You can install `commandunit` easily with its "wrapper" script.
-Just please check link:userManualInstallation.adoc[Installation and Quick Start Manual] for its installation.
+Just please check link:handbookInstallation.html[Installation and Quick Start Manual] for its installation.
 The documentation also discusses some tips (or ideas) to use it for non-bash users.
 
 === Command-line Manual
@@ -74,7 +74,7 @@ The documentation also discusses some tips (or ideas) to use it for non-bash use
 `commandunit` comes with a "wrapper" script, which abstracts an invocation step of it so that "native" mode and "dockerized" mode look the same.
 The wrapper has its own options.
 
-For the detail of `commandunit` 's options the wrapper's options, check link:userManualCommandLine.adoc[Command Line Manual].
+For the detail of `commandunit` 's options the wrapper's options, check link:handbookCommandLine.html[Command Line Manual].
 
 === Programming Manual
 
@@ -82,15 +82,15 @@ Like JUnit and other testing tools, `commandunit` has its own programming model.
 Also, it assumes a directory structure, which is designed to be compatible with Maven<<maven>>.
 
 You can start using `commandunit` by cloning, trying and modifying an example project.
-But for more details, such as syntax of the tool, you can check link:userManualProgramming.adoc[Programming Manual].
+But for more details, such as syntax of the tool, you can check link:handbookProgramming.html[Programming Manual].
 
 == Walking Through Examples
 
-Check a link:walkingThroughExamples.adoc[Walking through Examples] for a use case scenario of `commandunit` to learn how you can use it.
+Check a link:walkingThroughExamples.html[Walking through Examples] for a use case scenario of `commandunit` to learn how you can use it.
 
 == FAQ
 
-The list of frequently asked questions and their answers is available here: link:faq.adoc[FAQ].
+The list of frequently asked questions and their answers is available here: link:faq.html[FAQ].
 
 [bibliography]
 == References

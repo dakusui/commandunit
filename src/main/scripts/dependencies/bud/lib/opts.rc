@@ -33,7 +33,7 @@ function bud_trap() {
 }
 
 ####
-# This function is usually overridden by another implementation defined in "common.rc"
+# This function is usually overridden by another implementation defined in "core.rc" (which is sourced by "common.rc")
 function abort() {
   echo "${*}" >&2
   exit 1

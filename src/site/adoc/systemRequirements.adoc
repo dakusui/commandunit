@@ -1,41 +1,64 @@
-== System Requirements
+:toc:
 
-(t.b.d.)
-bash
+= System Requirements
 
-----
-$ bash --version
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
-Copyright (C) 2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+== Software Components
 
-This is free software; you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-----
+`commandunit` is tested on following platforms.
 
 === On Linux
-Dockerized version::
-- git (tested with 2.34.1)
+
 - Distribution: Ubuntu 22.04
-- dockerd: ???
+- `bash`: GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
-"native" version::
+==== Dockerized mode
+
 - git (tested with 2.34.1)
-- `jq-front` (`0.54`, Dockerized)
-- `jq` (`jq-1.5-1-a5b5cbe` or later)
-- `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
+- `dockerd`: ???
 
-=== On macOS
-Dockerized version::
+==== "native" mode
+
+- `git`: (tested with 2.34.1)
+- `jq-front`: `0.54`, Dockerized
+- `jq`: `jq-1.5-1-a5b5cbe` or later
+- `yaml2json`: `0.3.0`, installed through `npm install yamljs`
+
+=== On macOS (x86_64)
+
+- `bash`: GNU bash, version 5.1.12(1)-release (x86_64-apple-darwin20.6.0)
+
+==== Dockerized mode
+
+- `docker`: Docker version 23.0.5, build bc4487a (macOS)
+- `dockerd`: minikube version: v.1.31.2
+
+==== "native" mode
+
+- `git`:  git version 2.39.1
+- `jq-front`: `0.54`, Dockerized
+- `jq`: `jq-1.6`
+- `yaml2json`: yq (https://github.com/mikefarah/yq/) version v4.35.2 with a wrapper script[<<yaml2jsonWrapper-faq>>].
+
+[[yaml2jsonWrapper-faq, yam2json]]
+[source, bash]
+----
+$ cat $(which yaml2json)
+#!/usr/bin/env bash
+yq -o=json "${@}"
+----
+
+=== On macOS (Apple Silicon)
+
+Dockerized mode::
 - git (tested with 2.34.1)
 - `docker`: Docker version 23.0.5, build bc4487a (macOS)
 - `dockerd`: Docker Desktop 4.19.0 (106363)
 
-"native" version::
+"native" mode::
 - git (tested with 2.34.1)
 - `jq-front` (`0.54`, Dockerized)
 - `jq` (`jq-1.6`)
-- `yaml2json` (`0.3.0`, installed through `npm install yamljs`)
+- `yaml2json` (`0.3.0`, installed through `brew`, not through `npm`)
 
 
 [.text-right]

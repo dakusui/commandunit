@@ -1,18 +1,14 @@
-== Command Line tool Manual
+:toc:
 
-(t.b.d.)
+= `commandunit`: Command Line Interface Handbook
 
+== Command Line Options
 
-(t.b.d.)
-Wrapper options
-
-options
-
-"native" mode
-
--
+Following is the description of command line options of `commandunit`.
 
 [%nowrap, verse]
+[[commandLineOptions]]
+.Command Line Options
 ....
 $ commandunit --help
 Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]...
@@ -21,11 +17,11 @@ A wrapper function for 'commandunit' to invoke its docker image.
 Followings are switching options to control the wrapper's behaviour.
 Options not listed here or ones after the separator (--) are passed to the docker image directly.
 
-Wrapper options:
---native            Use the 'native' version of commandunit.  <1>
+Wrapper options: <1>
+--native            Use the 'native' version of commandunit.  <2>
 --version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: v1.24).
 --debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only.
-                    <2>
+                    <3>
 --show-image-name   Print the image name. Useful to figure out the version.
 --quit              Quit before running the image. With --show-image-name, useful to figure out the image version
 --help              Show this help and pass the --help option to the docker image.
@@ -35,7 +31,7 @@ Usage: commandunit [OPTION]... [SUBCOMMAND]...
 
 Runs tests.
 
-Sub-commands:
+Sub-commands: <4>
   preprocess:
     Preprocesses test definition files (yaml++, yaml, and json++) and convert them into executable JSON test files
   run:
@@ -44,18 +40,20 @@ Sub-commands:
   report:
     Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)
     under the same directory.
+  none:
+    Does nothing.
 
 Options: (* - for development use only)
 
  -h, --help            show this help
  -p, --parallel        execute the tests in parallel
  -f, --filter          filter tests with the specified regular expression(default:'.*')
-     --commandunit-dir directory to store config and data files (default: current directory + .commandunit)
+     --commandunit-dir directory to store config and data files (default: {test-srcdir}/.commandunit)
      --project-name    set project name of the test execution. used as the report's title(default:'unknown')
      --test-srcdir     specify directory under which tests are stored (default: current directory/src/test)
      --test-workdir    specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)
      --test-reportdir  write test reports under the specified directory* (default: current directory + /target/commandunit/report)
-     --ignore-mtime    ignore mtime and forcibly compile tests
+     --ignore-mtime    ignore mtime and forcibly compile tests <5>
      --clean           clean working directory
      --tapview         show test progress with 'tapview'
 
@@ -69,9 +67,50 @@ Examples:
 - github project: <https://github.com/dakusui/bud>
 - tapview: <https://gitlab.com/esr/tapview>
 ....
-- <1>: "native" mode means an execution mode of `commandunit`, where it is executed without using docker.
-- <2>: This option gives you a shell inside the docker image of `commandunit`.
+- <1>: Check <<Wrapper Options and Normal Options>> section for more detail.
+- <2>: "native" mode means an execution mode of `commandunit`, where it is executed without using docker. Check <<sectionNativeExecution>> for more Detail.
+- <3>: This option gives you a shell inside the docker image of `commandunit`.
 Values environment variables are guaranteed to be the same as the ones, when you execute it without this position.
+- <4>: Check <<Sub-commands>> section for more detail.
+- <5>: Forcibly `commandunit` preprocesses the test source files and intermediate files.
+
+== Wrapper Options and Normal Options
+
+As described in the link:designDetail.html[Design Detail], `commandunit` comes with its "wrapper" script.
+The wrapper has its own options, and it interprets command line arguments as wrapper options, first.
+If `--` is present and any non-valid wrapper option is found before it, an error will be reported and `commandunit` will quit with non-0 exit code.
+The arguments that cannot be interpreted as wrapper options will be passed to the `commandunit` 's main part.
+The main part parses them as "normal" options using `getopt`.
+
+
+[[sectionNativeExecution]]
+== "Native" execution
+
+It is possible to use `commandunit` without Docker solutions.
+The mode is called "native" mode, although it is executed as a bash script, not a binary executable.
+
+
+To execute `commandunit` in native mode, you can just give `--native` wrapper option to its command line.
+
+== Sub-commands
+
+[[commandUnitPipeline]]
+include::resources/diagrams/pipeline.adoc[Commandunit's Pipeline]
+
+As described in the <<commandLineOptions>>, `commandunit` has four subcommands, which are:
+
+- `preprocess`
+- `execute`
+- `report`
+- `none`
+
+`preprocess`, `execute`, and `report` correspond to the actions 2.1, 2.2, and 2.3 respectively in the diagram:<<commandUnitPipeline>>,
+`none` does nothing, and it is useful to use in combination with `--clean` option, which removes all the generated files in the project.
+
+[source, bash]
+----
+$ commandunit --clean none
+----
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"

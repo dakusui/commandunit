@@ -4,7 +4,7 @@
   ],
   "given": {
     "description": [
-      "This test should always be executed."
+      "This step should always be executed."
     ],
     "stdin": [
     ],
@@ -18,7 +18,8 @@
     "source": [
     ],
     "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_BUILTIN_ROOT}",
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
     },
     "cmd": ":",
     "args": [
@@ -39,7 +40,8 @@
     "source": [
     ],
     "environmentVariables": {
-      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
+      "COMMANDUNIT_DEPENDENCIES_ROOT": "eval:string:${COMMANDUNIT_BUILTIN_ROOT}",
+      "COMMANDUNIT_BUILTIN_ROOT": "eval:string:${COMMANDUNIT_DEPENDENCIES_ROOT}"
     },
     "cmd": "eval:string:$(error 'missing attribute!')",
     "args": [

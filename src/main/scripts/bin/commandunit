@@ -26,7 +26,7 @@ COMMANDUNIT_SPECIFICATION="$(
     ["h","help",false,false,"show this help"],
     ["p","parallel",false,false,"execute the tests in parallel"],
     ["f","filter",true,[".*"],"filter tests with the specified regular expression"],
-    ["","commandunit-dir",true,[],"directory to store config and data files (default: current directory + .commandunit)"],
+    ["","commandunit-dir",true,[],"directory to store config and data files (default: {test-srcdir}/.commandunit)"],
     ["","project-name",true,["unknown"],"set project name of the test execution. used as the report's title"],
     ["","test-srcdir",true,[],"specify directory under which tests are stored (default: current directory/src/test)"],
     ["","test-workdir",true,[],"specify directory under which commandunit writes internal data* (default: current directory + /target/commandunit/work)"],
@@ -107,7 +107,7 @@ function main() {
   fi
   local _unknown_subcommands=()
   for _each in "${_subcommands[@]}"; do
-    if ! array_contains "${_each}" "preprocess" "run" "report"; then
+    if ! array_contains "${_each}" "preprocess" "run" "report" "none"; then
       _unknown_subcommands+=("${_each}")
     fi
   done
@@ -146,6 +146,8 @@ function main() {
         ${_viewer_command} || break
     elif [[ "${_each}" == "report" ]]; then
       "${_bindir}/reportrenderer" "${_project_name}" "${_test_reportdir}/testreport.json" "${_test_reportdir}/testreport.adoc"
+    elif [[ "${_each}" == "none" ]]; then
+      "${_bindir}/none" "${_project_name}"
     else
       abort "Runtime error for subcommand: '${_each}'"
     fi

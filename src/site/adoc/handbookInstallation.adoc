@@ -1,4 +1,4 @@
-== Installation and Quick Start manual
+== `commandunit`: Installation Handbook
 
 The wrapper script.
 - Docker version
@@ -7,6 +7,19 @@ The wrapper script.
 For non-bash users.
 One-liner.
 (t.b.d.)
+
+=== Non-bash users
+
+If you are not using a modern enough `bash` or you like non-`bash` shell, you need to write a small script that executes the function defined by the `commandunit.rc`.
+
+[source, bash]
+.`commandunit.sh` (An example to wrap `commandunit.rc`)
+----
+#!/usr/bin/env bash
+
+source "$(dirname ${0})/commandunit.rc"
+commandunit "${@}"
+----
 
 
 === Archived
