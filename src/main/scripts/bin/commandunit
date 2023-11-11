@@ -107,7 +107,7 @@ function main() {
   fi
   local _unknown_subcommands=()
   for _each in "${_subcommands[@]}"; do
-    if ! array_contains "${_each}" "preprocess" "run" "report"; then
+    if ! array_contains "${_each}" "preprocess" "run" "report" "none"; then
       _unknown_subcommands+=("${_each}")
     fi
   done
