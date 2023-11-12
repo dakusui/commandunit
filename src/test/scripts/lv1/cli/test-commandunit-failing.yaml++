@@ -4,7 +4,7 @@
 when:
   description:
     - Run a failing test and make sure it is reported correctly.
-  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${COMMANDUNIT_PWD}/out/main/scripts/bin/commandunit"
+  cmd: "${COMMANDUNIT_INDOCKER:+${COMMANDUNIT_HOSTFSROOT_MOUNTPOINT}}${COMMANDUNIT_PWD}/out/main/scripts/bin/commandunit-main"
   args:
     - QUOTE2:--test-srcdir=${COMMANDUNIT_PWD}/out/test/scripts/lv2/failing
 then:

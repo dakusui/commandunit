@@ -33,7 +33,7 @@ function run_command_unit_with_released_docker_image_from_entrypoint() {
 }
 
 function __run_command_unit_with_source() {
-  local _executable="${EXEC_BASEDIR}/bin/commandunit"
+  local _executable="${EXEC_BASEDIR}/bin/commandunit-main"
   message "Running commandunit(source): '${_executable}'"
   export COMMANDUNIT_PWD="${PROJECT_BASEDIR}"
   "${_executable}" --test-workdir="out/commandunit-source/work" --test-reportdir="out/commandunit-source/report" "${@}"
