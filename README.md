@@ -58,10 +58,7 @@ Run tests found under DIR in parallel mode.
 
 ## Installation
 
-Although it is possible to install `commandunit` scripts in your directory
-struture, it is highly adviced to use Docker to use `commandrunner` to avoid
-compatibility issues. Have the following bash function definition in
-your `~/.bashrc`.
+Place the following script in one of your directories on `PATH` environment variable entry with `755` permission.
 
 ```bash
 #!/usr/bin/env bash
@@ -70,7 +67,7 @@ function __commandunit_exec_commandunit() {
   export PROJECT_BASE_DIR="${PWD}"
   export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
   export COMMANDUNIT_SOURCE_DIR="${PROJECT_BASE_DIR}/src/dependencies/commandunit"
-export COMMANDUNIT_DEFAULT_VERSION="v1.25"
+export COMMANDUNIT_DEFAULT_VERSION="v1.26"
   export BUD_DEBUG=enabled
   function __commandunit_user_option() {
     case "$(uname -sr)" in
@@ -138,7 +135,7 @@ export COMMANDUNIT_DEFAULT_VERSION="v1.25"
   function __commandunit_exec_commandunit_native() {
     local _version_name="${1}"
     shift
-    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit" "${@}"
+    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit-main" "${@}"
   }
 
   local _project_basedir="${PROJECT_BASE_DIR}"
@@ -246,17 +243,6 @@ function main() {
 }
 
 main "${@}"
-```
-
-Or run the following one-liner.
-
-```bash
-app="commandunit"
-rc="$HOME/.${app}rc" && \
-target="$HOME/.bashrc" && \
-tag="#-${app^^}" && \
-cat <(curl "https://raw.githubusercontent.com/dakusui/commandunit/main/src/site/adoc/resources/examples/commandunit") > "${rc}" && \
-sh -c 'grep "$4" "$1" >& /dev/null || printf "source $3$2$3 $4\n" >> "$1"' - "${target}" "${rc}" '"' "${tag}"
 ```
 
 If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
