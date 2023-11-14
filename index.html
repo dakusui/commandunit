@@ -85,10 +85,10 @@ code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;
 ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
 ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.square{list-style-type:square}
-ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -209,10 +209,13 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -391,7 +394,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -482,6 +485,7 @@ body {font-family: Arial;}
 <button class="tablinks" onclick="openTab(event, 'top')" id="defaultOpen">top</button>
 <button class="tablinks" onclick="openTab(event, 'designConcept')">designConcept</button>
 <button class="tablinks" onclick="openTab(event, 'designDetail')">designDetail</button>
+<button class="tablinks" onclick="openTab(event, 'developmentGuide')">developmentGuide</button>
 <button class="tablinks" onclick="openTab(event, 'faq')">faq</button>
 <button class="tablinks" onclick="openTab(event, 'handbookCommandLine')">handbookCommandLine</button>
 <button class="tablinks" onclick="openTab(event, 'handbookInstallation')">handbookInstallation</button>
@@ -492,10 +496,8 @@ body {font-family: Arial;}
 <div id="designConcept" class="tabcontent">
 <div id="designConcept_content">
 <div class="sect1">
-<h2 id="_design_concept_of_commandunit">Design Concept of <code>commandunit</code></h2>
+<h2 id="_yaml_not_gherkin">YAML, not Gherkin</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_yaml_not_gherkin">YAML, not Gherkin</h3>
 <div class="paragraph">
 <p>Gherkin is one notation widely used in "Cucumber"'s ecosystem.</p>
 </div>
@@ -549,8 +551,10 @@ By using Gherkin, you will need a set of plugins to support Gherkin for every to
 isn’t YAML good enough, if we have a way to avoid repeating the same thing over and over again?</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_given_when_then_structure">Given-When-Then structure</h3>
+</div>
+<div class="sect1">
+<h2 id="_given_when_then_structure">Given-When-Then structure</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <code>commandunit</code> has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<a href="#cucumber-designConcept">[2]</a>.
 It has three sections.</p>
@@ -650,8 +654,10 @@ This corresponds to "verify" phase in "four phase testing" model</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_powered_by_jq_front">Powered by <code>jq-front</code></h3>
+</div>
+<div class="sect1">
+<h2 id="_powered_by_jq_front">Powered by <code>jq-front</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><code>jq-front</code> <a href="#jq-front-designConcept">[1]</a> is a tool to enable your JSON files to extend other JSON files.
 Not only that it allows you to reference another node in the same file to compute a node’s value.</p>
@@ -708,8 +714,10 @@ This means that you don’t need to find supports of the new format.
 You can just keep using your favorite tools (editor, browser, IDE, etc) because in general they support popular formats such as JSON, YAML, or the good old XML.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_yaml_json_pipeline">YAML → JSON Pipeline</h3>
+</div>
+<div class="sect1">
+<h2 id="_yaml_json_pipeline">YAML → JSON Pipeline</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Let’s go one step forward.
 We use YAML in order to ensure the test case definitions readable for human.
@@ -753,8 +761,10 @@ then:
 Then it can be converted into normal JSON file, shown as <a href="#json-example-designConcept">JSON example</a></p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_references">References</h3>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
 <div class="ulist bibliography">
 <ul class="bibliography">
 <li>
@@ -771,7 +781,6 @@ Then it can be converted into normal JSON file, shown as <a href="#json-example-
 </div>
 </div>
 </div>
-</div>
 <div class="paragraph text-right"><p>
 <a href="designConcept.html" target="_blank">open this page in a new window</a>
 </p></div>
@@ -779,10 +788,8 @@ Then it can be converted into normal JSON file, shown as <a href="#json-example-
 <div id="designDetail" class="tabcontent">
 <div id="designDetail_content">
 <div class="sect1">
-<h2 id="_design_detail_of_commandunit">Design Detail of <code>commandunit</code></h2>
+<h2 id="_the_wrapper_script">The wrapper script</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_the_wrapper_script">The wrapper script</h3>
 <div class="paragraph">
 <p>The <code>commandunit</code> comes with a "wrapper" script that defines a bash function for you.
 The function automatically downloads the specified version of <code>commandunit</code> from its repo and execute it.
@@ -800,8 +807,10 @@ To specify tests to be executed by a regular expression you can ue <code>--filte
 <p>Check <a href="handbookCommandLine.adoc">Command Line Interface Handbook</a> for more detail.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_directory_layout">Directory Layout</h3>
+</div>
+<div class="sect1">
+<h2 id="_directory_layout">Directory Layout</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The default directory layout of <code>commandunit</code>-based project is designed to be compatible with Maven-based project<a href="#maven-designDetail">[1]</a>.</p>
 </div>
@@ -860,14 +869,16 @@ This can be configured through <code>--commandunit-dir</code> option.</p>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_commandunit_s_pipeline"><code>commandunit</code> 's Pipeline</h3>
+</div>
+<div class="sect1">
+<h2 id="_commandunit_s_pipeline"><code>commandunit</code> 's Pipeline</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The following diagram illustrates data flows of the <code>commandunit</code>.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="diag-ditaa-md5-9e8034756cbd5a16cd149a54e3857bbc.png" alt="Diagram" width="730" height="588"/>
+<img src="diag-9e8034756cbd5a16cd149a54e3857bbc.png" alt="Diagram" width="730" height="588"/>
 </div>
 <div class="title">Figure 1. The Processing Pipeline of the <code>commandunit</code></div>
 </div>
@@ -910,7 +921,6 @@ Executor stores <code>testreport.json</code> here and report renderer reads it a
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
 <h2 id="_references">References</h2>
 <div class="sectionbody">
@@ -931,13 +941,545 @@ Executor stores <code>testreport.json</code> here and report renderer reads it a
 <a href="designDetail.html" target="_blank">open this page in a new window</a>
 </p></div>
 </div>
+<div id="developmentGuide" class="tabcontent">
+<div id="developmentGuide_content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>commandunit</code> is developed on Linux Platform (Ubuntu22.04)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>bash</p>
+</li>
+<li>
+<p>bashcov</p>
+</li>
+<li>
+<p>docker + dockerd</p>
+</li>
+<li>
+<p>Ubuntu 22.04</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_sh"><code>build.sh</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Building, testing, generating doc, and releasing can be done with a script <code>build.sh</code>.
+It takes an array of subcommands.
+Subcommands can be classified into two groups, which are "grouped subcommands" and "basic subcommands".
+A "grouped subcommand" is interpreted as a sequence of subcommands and executed by <code>build.sh</code> one by one.</p>
+</div>
+<div class="paragraph">
+<p>If you don’t specify any subcommand:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It will be interpreted that <code><a href="#_build_2">BUILD</a></code> grouped subcommand is specified.</p>
+</div>
+<div class="sect2">
+<h3 id="_basic_subcommands">Basic Subcommands</h3>
+<div class="sect3">
+<h4 id="_parameters">Parameters</h4>
+<div class="paragraph">
+<p>A basic subcommand can take parameters.
+There are three targets: <code>source</code>, <code>snapshot</code>, and <code>release</code>.
+<code>source</code> means that the subcommand handles source files.
+For instance, if the target is <code>source</code>, the <code>test</code> subcommand uses source files for test.
+If it is <code>snapshot</code>, a snapshot docker image will be used.
+If <code>release</code>, a docker image to be released will be used.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_build"><code>build</code></h4>
+<div class="paragraph">
+<p>Builds a docker image from a source.</p>
+</div>
+<div class="paragraph">
+<p>Only <code>snapshot</code> and <code>release</code> can be specified for the first parameter.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_clean"><code>clean</code></h4>
+<div class="paragraph">
+<p>Removes all the working files generated by this build script.
+Note that files created by <code>generate-src</code> will not be removed since they are a part of the source tree, not working files.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_dummy"><code>dummy</code></h4>
+<div class="paragraph">
+<p>This subcommand does nothing.
+Useful for testing a change made in <code>build.sh</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fail"><code>fail</code></h4>
+<div class="paragraph">
+<p>This subcommand fails always.
+Useful for testing a change made in <code>build.sh</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_coverage"><code>coverage</code></h4>
+<div class="paragraph">
+<p>This command executes test and generates a coverage report.
+Generated coverage report will be found under <code>out/testreport-coverage</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_doc"><code>doc</code></h4>
+<div class="paragraph">
+<p>Generates documentation under working directory from asciidoc (.adoc) files under <code>OUTDIR/site/adoc</code> directory, whose contents are copied from <code>src/site/adoc</code> directory.
+The generated documentation (<code>.html</code> files) will be found under <code>OUTDIR/doc</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generate_src"><code>generate-src</code></h4>
+<div class="paragraph">
+<p>A subcommand to generate "source" files based on project information such as the current target development version, repository URL, etc.
+Typically executed at the last of <code>RELEASE</code> subcommand.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_prepare"><code>prepare</code></h4>
+<div class="paragraph">
+<p>Copies the source tree (<code>SRCDIR</code>) to the working directory (<code>OUTDIR</code>).</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_doc"><code>publish-doc</code></h4>
+<div class="paragraph">
+<p>Pushes the generated documents to a branch of the git repository, the branch (<code>.repo.documentation.docbranch</code> attribute) and repository URL (<code>.repo.url</code> attribute) can be specified in <code>build_info.json</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn’t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_push"><code>push</code></h4>
+<div class="paragraph">
+<p>Pushes a docker image to the docker repository.</p>
+</div>
+<div class="paragraph">
+<p>The first parameter specifies <code>snapshot</code> or <code>released</code> image to be pushed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test"><code>test</code></h4>
+<div class="paragraph">
+<p>Executes unit test suites stored under <code>out/test/scripts</code>.</p>
+</div>
+<div class="paragraph">
+<p>The first parameter specifies the type of the <code>commandunit</code> executable used for the test execution.
+<code>source</code> means the scripts before dockerized,
+<code>snapshot</code> is a docker image for snapshot, and <code>release</code> is a docker image to be released.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release_precheck"><code>release-precheck</code></h4>
+<div class="paragraph">
+<p>Performs a "pre-check" for the entire release procedure.
+It checks if there is no uncommitted changes, un-pushed commits, and you are on the <code>main</code> branch.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release_postmortem"><code>release-postmortem</code></h4>
+<div class="paragraph">
+<p>Some files in the source tree of <code>commandunit</code> should be generated in an automated way, otherwise they will become redundant.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grouped_subcommands">Grouped Subcommands</h3>
+<div class="paragraph">
+<p>Grouped subcommands do not take any parameters.</p>
+</div>
+<div class="sect3">
+<h4 id="_build_2">BUILD</h4>
+<div class="paragraph">
+<p>A basic "build" command.
+It generates documentation and execute tests.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh BUILD</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, <code>doc</code>, and <code>test</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_doc_2">DOC</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh DOC</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A subcommand to build documentation under working directory.
+Generated HTML files will be found under <code>out/doc</code> directory.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>doc</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_2">TEST</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh TEST</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Executes the test suite.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>test</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_coverage_2">COVERAGE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh COVERAGE</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>coverage</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_package">PACKAGE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh PACKAGE</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean prepare</code>, <code>test:::true</code>, <code>build:snapshot</code>, and <code>test:snapshot::true</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deploy">DEPLOY</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh DEPLOY</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>PACKAGE</code> and <code>push:snapshot</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release">RELEASE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh RELEASE</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A subcommand for releasing.
+Note that a check will be done at the beginning of this subcommand.
+If something not pushed on your local, this subcommand fails (<code>release-precheck</code>).
+Also, note that documentation is not published by this subcommand, and you need to do it separately using <code>PUBLISH_DOC</code> subcommand.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>release-precheck</code>, <code>prepare</code>, <code>test:::true</code>, <code>build:release</code>, <code>test:release::true</code>, <code>push:release</code>, and <code>release-postmortem</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_doc_2">PUBLISH_DOC</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh PUBLISH_DOC</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_directory_structure">Directory Structure</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>PROJECT_BASEDIR/                                      <b class="conum">(1)</b>
+  buildtools/          A directory for build tools.
+  out/                 A directory for working files. <b class="conum">(2)</b>
+    doc/                                              <b class="conum">(3)</b>
+    main/
+      scripts/                                        <b class="conum">(4)</b>
+    site/
+      adoc/                                           <b class="conum">(5)</b>
+  src/                 A directory for source tree    <b class="conum">(6)</b>
+    docker/
+    main/
+    site/
+    test/
+  build.sh             A build script for this project.
+  build_info.json      A project definition file.</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&lt;1&gt;: project base directory.</p>
+</li>
+<li>
+<p>&lt;2&gt;: Specified by environment variable <code>OUTDIR</code>.</p>
+</li>
+<li>
+<p>&lt;3&gt;: <code>DOCDIR</code>.</p>
+</li>
+<li>
+<p>&lt;4&gt;: <code>EXEC_BASEDIR</code>.</p>
+</li>
+<li>
+<p>&lt;5&gt;: <code>DOC_SRCDIR</code>.</p>
+</li>
+<li>
+<p>&lt;6&gt;: Specified by environment variable <code>SRCDIR</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_info_json"><code>build_info.json</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title"><code>build_info.json</code> example</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "projectName": "commandunit",
+  "homepage": "https://github.com/dakusui/commandunit",
+  "docker": {
+    "user": "dakusui",
+    "hostFsRootMountPoint": "/var/lib/commandunit"
+  },
+  "version": {
+    "latestReleased": {
+      "major": 1,
+      "minor": 25
+    },
+    "target": {
+      "major": 1,
+      "minor": 26
+    }
+  },
+  "repo": {
+    "url": "https://github.com/dakusui/commandunit.git",
+    "documentation": {
+      "docbranch": "docs"
+    },
+    "release": {
+      "branch": "main"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_time_environment_variables">Build-time Environment Variables</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>LATEST_RELEASED_VERSION</code></dt>
+<dd>
+<p>The most recent released version of this product.</p>
+</dd>
+<dt class="hdlist1"><code>TARGET_VERSION</code></dt>
+<dd>
+<p>The version currently under development.</p>
+</dd>
+<dt class="hdlist1"><code>PROJECT_NAME</code></dt>
+<dd>
+<p>The name of this project.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>PROJECT_BASEDIR</code></dt>
+<dd>
+<p>The path to the root directory of this project.</p>
+</dd>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>HOMEPAGE</code></dt>
+<dd>
+<p>The URL of the project’s homepage.</p>
+</dd>
+<dt class="hdlist1"><code>SRCDIR</code></dt>
+<dd>
+<p>The path to the source directory (i.e., <code>${PROJECT_BASEDIR}/src</code>)
+<code>OUTDIR</code>: The path to the working directory (i.e., <code>${PROJECT_BASEDIR}/out</code>)</p>
+</dd>
+<dt class="hdlist1"><code>EXEC_BASEDIR</code></dt>
+<dd>
+<p>The directory that holds executables of this product during the build-time. (i.e., <code>${PROJECT_BASEDIR}/out/main/scripts</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCDIR</code></dt>
+<dd>
+<p>The directory to store generated documentations. (i.e., <code>${PROJECT_BASEDIR}/out/doc</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCSRCDIR</code></dt>
+<dd>
+<p>The directory to store documentation source files during a build.  (i.e., <code>${PROJECT_BASEDIR}/out/doc</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCKER_REPO_NAME</code></dt>
+<dd>
+<p>A name of docker repository name. (i.e., <code>{.docker.user}/{.project.name}</code>).</p>
+</dd>
+<dt class="hdlist1"><code>BUILD_HOSTFSROOT_MOUNTPOINT</code></dt>
+<dd>
+<p>A path under which the root directory of the host side file system "seems" mounted.
+By prefixing this path to a host side path, you can calculate the corresponding path of it inside the docker container.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_problems">Known Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>A build on macOS halts during <code>test</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph text-right"><p>
+<a href="developmentGuide.html" target="_blank">open this page in a new window</a>
+</p></div>
+</div>
 <div id="faq" class="tabcontent">
 <div id="faq_content">
 <div class="sect1">
-<h2 id="_faq">FAQ</h2>
+<h2 id="_commandunit_doesnt_work"><code>commandunit</code> doesn’t work</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">I am on a macOS and using <code>commandunit</code>, but a permission problem is reported</dt>
+<dd>
+<p>Currently, minikube + dockerized combination seems sometimes not working on macOS (<a href="https://github.com/dakusui/commandunit/issues/26">Issue-26</a>).
+Please try native mode, if you see an error such as following:</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>INFO: Local repository path that has SSH Git URL ...
+mkdir: cannot create directory '/tmp/bud': No space left on device
+ERROR:(exit code:1, pipe status: 1):
+  at /app/dependencies/bud/lib/core.rc:54 (abort)</pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">I am on a macOS and using <code>commandunit</code> in "native" mode but it doesn’t work</dt>
+<dd>
+<p>In some conditions, <code>yaml2json</code> installed through <code>npm</code> doesn’t work <code>macOS</code> at all.
+There are two workarounds.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install it through <code>brew</code></p>
+</li>
+<li>
+<p>Install <code>yq</code> and create a wrapper script that invokes it with the name <code>yaml2json</code>.
+The wrapper script should look like following:</p>
+</li>
+</ol>
+</div>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#!/usr/bin/env bash
+yq -o=json "${@}"</pre>
+</div>
+</div>
 <div class="paragraph">
-<p>(t.b.d.)</p>
+<p>Place this file somewhere on the <code>PATH</code> environment variable.
+(t.b.d.)</p>
 </div>
 <div class="paragraph">
 <p>if macOS <code>yaml2json</code> doesn’t work. → Workaround</p>
@@ -974,7 +1516,7 @@ Executor stores <code>testreport.json</code> here and report renderer reads it a
 <div id="handbookCommandLine" class="tabcontent">
 <div id="handbookCommandLine_content">
 <div class="sect1">
-<h2 id="_commandunit_command_line_interface_handbook"><code>commandunit</code>: Command Line Interface Handbook</h2>
+<h2 id="_command_line_options">Command Line Options</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Following is the description of command line options of <code>commandunit</code>.</p>
@@ -1060,8 +1602,11 @@ Values environment variables are guaranteed to be the same as the ones, when you
 </li>
 </ul>
 </div>
-<div class="sect2">
-<h3 id="_wrapper_options_and_normal_options">Wrapper Options and Normal Options</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_wrapper_options_and_normal_options">Wrapper Options and Normal Options</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>As described in the <a href="designDetail.html">Design Detail</a>, <code>commandunit</code> comes with its "wrapper" script.
 The wrapper has its own options, and it interprets command line arguments as wrapper options, first.
@@ -1070,8 +1615,10 @@ The arguments that cannot be interpreted as wrapper options will be passed to th
 The main part parses them as "normal" options using <code>getopt</code>.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="sectionNativeExecution">"Native" execution</h3>
+</div>
+<div class="sect1">
+<h2 id="sectionNativeExecution">"Native" execution</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>It is possible to use <code>commandunit</code> without Docker solutions.
 The mode is called "native" mode, although it is executed as a bash script, not a binary executable.</p>
@@ -1080,11 +1627,13 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 <p>To execute <code>commandunit</code> in native mode, you can just give <code>--native</code> wrapper option to its command line.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_sub_commands">Sub-commands</h3>
+</div>
+<div class="sect1">
+<h2 id="_sub_commands">Sub-commands</h2>
+<div class="sectionbody">
 <div id="commandUnitPipeline" class="imageblock">
 <div class="content">
-<img src="diag-ditaa-md5-c9f4208029262f7814157794bc63f46e.png" alt="Diagram" width="730" height="588"/>
+<img src="diag-c9f4208029262f7814157794bc63f46e.png" alt="Diagram" width="730" height="588"/>
 </div>
 <div class="title">Figure 1. The Processing Pipeline of the <code>commandunit</code></div>
 </div>
@@ -1122,7 +1671,6 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 </div>
 </div>
 </div>
-</div>
 <div class="paragraph text-right"><p>
 <a href="handbookCommandLine.html" target="_blank">open this page in a new window</a>
 </p></div>
@@ -1133,80 +1681,139 @@ The mode is called "native" mode, although it is executed as a bash script, not 
 <h2 id="_commandunit_installation_handbook"><code>commandunit</code>: Installation Handbook</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The wrapper script.
-- Docker version
-- Native version</p>
-</div>
-<div class="paragraph">
-<p>For non-bash users.
-One-liner.
-(t.b.d.)</p>
-</div>
-<div class="sect2">
-<h3 id="_non_bash_users">Non-bash users</h3>
-<div class="paragraph">
-<p>If you are not using a modern enough <code>bash</code> or you like non-<code>bash</code> shell, you need to write a small script that executes the function defined by the <code>commandunit.rc</code>.</p>
+<p>Place the following script in one of directories on your <code>PATH</code> environment variable and give <code>755</code> permission (<code>chmod 755</code>).</p>
 </div>
 <div class="listingblock">
-<div class="title"><code>commandunit.sh</code> (An example to wrap <code>commandunit.rc</code>)</div>
+<div class="title">commandunit</div>
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">#!/usr/bin/env bash
 
-source "$(dirname ${0})/commandunit.rc"
-commandunit "${@}"</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_archived">Archived</h3>
-<div class="paragraph">
-<p>Although you can install <code>commandunit</code> scripts in your directory
-structure, it is highly advised to use Docker to use <code>commandrunner</code> to avoid
-compatibility issues.
-Have the following bash function definition in
-your <code>~/.bashrc</code>.</p>
-</div>
-<details>
-<summary class="title">Details</summary>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">function commandunit() {
-  local _project_basedir="${PWD}"
+function __commandunit_exec_commandunit() {
+  export PROJECT_BASE_DIR="${PWD}"
+  export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
+  export COMMANDUNIT_SOURCE_DIR="${PROJECT_BASE_DIR}/src/dependencies/commandunit"
+export COMMANDUNIT_DEFAULT_VERSION="v1.25"
+  export BUD_DEBUG=enabled
+  function __commandunit_user_option() {
+    case "$(uname -sr)" in
+
+    Darwin*)
+      echo -n "-u" "1000:1000"
+      ;;
+
+    Linux*Microsoft*)
+      echo -n "-u" "$(id -u):$(id -g)"
+      ;;
+
+    Linux*)
+      echo -n "-u" "$(id -u):$(id -g)"
+      ;;
+
+    CYGWIN* | MINGW* | MSYS*)
+      echo -n "-u" "$(id -u):$(id -g)"
+      ;;
+
+    # Add here more strings to compare
+    # See correspondence table at the bottom of this answer
+
+    *)
+      echo -n "-u" "$(id -u):$(id -g)"
+      ;;
+    esac
+  }
+  function __commandunit_exec_commandunit_docker() {
+    local _image_name="${1}"
+    shift
+    # shellcheck disable=SC2086
+    # shellcheck disable=SC2046
+    docker run \
+      $(__commandunit_user_option) \
+      --env COMMANDUNIT_PWD="${_project_basedir}" \
+      --env COMMANDUNIT_LOGLEVEL="${_loglevel}" \
+      --env TMPDIR="/tmp" \
+      -v "${_project_basedir}:${_hostfsroot_mountpoint}${_project_basedir}" \
+      ${_entrypoint} \
+      -i "${_image_name}" \
+      "${@}"
+  }
+  function __commandunit_clean_cloned_commandunit() {
+    local _version_name="${1}" _source_dir="${2:-${COMMANDUNIT_SOURCE_DIR}}"
+    #      +-- Safeguard for a bug, where the variable becomes empty.
+    #     |    Because this function removes everything under the dir.
+    #     V
+    if [[ "${_source_dir}/${_version_name}" == *"/src/dependencies/"* ]]; then
+      if [[ -d "${_source_dir}/${_version_name}" ]]; then
+        rm -fr "${_source_dir"?"}/${_version_name:?}"
+      fi
+    fi
+  }
+  function __commandunit_clone_commandunit() {
+    local _git_tag_option="${1}" _version_name="${2}"
+    local _out
+    echo "version_name:${_source_dir}-/-${_version_name}" &gt;&amp;2
+    # shellcheck disable=SC2086
+    _out="$(git clone --depth 1 ${_git_tag_option} https://github.com/dakusui/commandunit.git "${COMMANDUNIT_SOURCE_DIR}/${_version_name}" 2&gt;&amp;1)" || {
+      echo "Failed to clone&lt;: ${_out}&gt;" &gt;&amp;2
+      return 1
+    }
+  }
+  function __commandunit_exec_commandunit_native() {
+    local _version_name="${1}"
+    shift
+    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit" "${@}"
+  }
+
+  local _project_basedir="${PROJECT_BASE_DIR}"
   local _hostfsroot_mountpoint="/var/lib/commandunit"
   local _docker_repo_name="dakusui/commandunit"
-  local _image_version="v1.24"
-  local _suffix=""
   local _entrypoint=""
+  local _native="no"
   local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
-  local _me _image_name _args _show_image_name=false _i _s _quit=false _help=false
-  _me="${USER}"
+  local _image_name _image_version="${COMMANDUNIT_DEFAULT_VERSION}" _branch_name="main" _version_name=${COMMANDUNIT_DEFAULT_VERSION} _args _show_image_name=false _i _s _quit=false _help=false
   _args=()
   _s=to_func
   for _i in "${@}"; do
     if [[ "${_s}" == to_func ]]; then
-        if [[ $_i == "--snapshot" ]]; then
-          _image_version="v1.25"
-          _suffix="-snapshot"
-        elif [[ $_i == "--debug" ]]; then
-          _entrypoint="--entrypoint=/bin/bash"
-        elif [[ $_i == "--show-image-name" ]]; then
-          _show_image_name=true
-        elif [[ $_i == "--quit" ]]; then
-          _quit=true
-        elif [[ $_i == "--help" ]]; then
-          _help=true
-          _args+=("${_i}")
-        elif [[ $_i == "--" ]]; then
-          _s=to_container
+      if [[ $_i == "--version="* ]]; then
+        local _v="${_i#*=}"
+        if [[ "${_v}" == "snapshot" ]]; then
+          # _image_version="${COMMANDUNIT_VERSION%.*}.$((${COMMANDUNIT_VERSION##*.} + 1))"
+          local _default_version="${COMMANDUNIT_DEFAULT_VERSION}" # v1.24
+          _image_version="${_default_version%.*}.$((${_default_version##*.} + 1))"
         else
-          _args+=("${_i}")
+          _branch_name="${_v}"
+          _image_version="${_v}"
         fi
+        _version_name="${_v}"
+        # --version=      snapshot               v1.99          (none)
+        # _version_name   snapshot               v1.99           v1.24
+        # _image_version  v1.25                  v1.99           v1.24          (private)
+        # _image_name     dakusui:v1.25-snapshot dakusui:v1.99   dakusui:v1.24
+        # _branch_name    main                   v1.99           v1.24
+      elif [[ $_i == "--native" ]]; then
+        _native="yes"
+      elif [[ $_i == "--debug-shell" ]]; then
+        _entrypoint="--entrypoint=/bin/bash"
+      elif [[ $_i == "--show-image-name" ]]; then
+        _show_image_name=true
+      elif [[ $_i == "--quit" ]]; then
+        _quit=true
+      elif [[ $_i == "--help" ]]; then
+        _help=true
+        _args+=("${_i}")
+      elif [[ $_i == "--" ]]; then
+        _s=to_container
+      else
+        _args+=("${_i}")
+      fi
     else
       _args+=("${_i}")
     fi
   done
-  _image_name="${_docker_repo_name}:${_image_version}${_suffix}"
+  _image_name="${_docker_repo_name}:${_image_version}"
+  if [[ "${_version_name}" == "snapshot" ]]; then
+    _image_name="${_image_name}-${_v}"
+  fi
   if ${_show_image_name}; then
     echo "${_image_name}"
   fi
@@ -1215,66 +1822,59 @@ your <code>~/.bashrc</code>.</p>
     echo ""
     echo "A wrapper function for 'commandunit' to invoke its docker image.".
     echo "Followings are switching options to control the wrapper's behaviour."
-    echo "Options not listed here or ones after the separator (--) are passed to the docker image directly."
+    echo "Options not listed here or ones after the separator (--) are passed to the commandunit implementation directly."
     echo ""
     echo "Wrapper options:"
-    echo "--snapshot        Use the snapshot image instead of the latest released one. Development purpose only."
-    echo "--debug           Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only."
-    echo "--show-image-name Print the image name. Useful to figure out the version."
-    echo "--quit            Quit before running the image. With --show-image-name, useful to figure out the image version"
-    echo "--help            Show this help and pass the --help option to the docker image."
-    echo "--                A separator to let this wrapper know the options after it should be passed directly to the image"
+    echo "--native            Use the 'native' version of commandunit."
+    echo "--version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: ${COMMANDUNIT_DEFAULT_VERSION})."
+    echo "--debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only."
+    echo "--show-image-name   Print the image name. Useful to figure out the version."
+    echo "--quit              Quit before running the image. With --show-image-name, useful to figure out the image version"
+    echo "--help              Show this help and pass the --help option to the docker image."
+    echo "--                  A separator to let this wrapper know the options after it should be passed directly to the image"
     echo ""
   fi
   ${_quit} &amp;&amp; return 0
-  # shellcheck disable=SC2086
-  docker run \
-    --user="$(id -u "${_me}"):$(id -g "${_me}")" \
-    --env COMMANDUNIT_PWD="${_project_basedir}" \
-    --env COMMANDUNIT_LOGLEVEL="${_loglevel}" \
-    -v "${_project_basedir}:${_hostfsroot_mountpoint}${_project_basedir}" \
-    ${_entrypoint} \
-    -i "${_image_name}" \
-    "${_args[@]}"
+  if [[ "${_native}" == "no" ]]; then
+    __commandunit_exec_commandunit_docker "${_image_name}" "${_args[@]}"
+  else
+    which jq-front &gt; /dev/null || {
+      function jq-front() {
+        docker run --rm -i \
+          -v "${HOME}:/var/lib/jf/${HOME}" \
+          -e JF_PATH_BASE="/var/lib/jf" \
+          -e JF_PATH="${JF_PATH}" \
+          -e JF_DEBUG=${JF_DEBUG:-disabled} \
+          -e JF_CWD="$(pwd)" \
+          -e COMMANDUNIT_DEPENDENCIES_ROOT="${COMMANDUNIT_DEPENDENCIES_ROOT:?Required environment variable is not set.}" \
+          -e COMMANDUNIT_BUILTIN_ROOT="${COMMANDUNIT_DEPENDENCIES_ROOT:?Required environment variable is not set.}" \
+          dakusui/jq-front:"${JF_DOCKER_TAG:-v0.53}" "${@}"
+      } &amp;&amp;
+      export -f jq-front
+    }
+    if [[ "${_version_name}" ==  "snapshot" ]]; then
+      # Remove already loaded one, then... do clone
+      __commandunit_clean_cloned_commandunit "${_version_name}"
+    fi
+    if [[ ! -e "${COMMANDUNIT_SOURCE_DIR}/${_version_name}" ]]; then
+      __commandunit_clone_commandunit "--branch ${_branch_name}" "${_version_name}"
+    fi
+    __commandunit_exec_commandunit_native "${_version_name}" "${_args[@]}"
+  fi
 }
-export -f commandunit</code></pre>
-</div>
-</div>
-</div>
-</details>
-<div class="paragraph">
-<p>Or  just run the following one-liner to do it.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">app="commandunit"
-rc="$HOME/.${app}rc" &amp;&amp; \
-target="$HOME/.bashrc" &amp;&amp; \
-tag="#-${app^^}" &amp;&amp; \
-cat &lt;(curl "https://raw.githubusercontent.com/dakusui/commandunit/main/src/site/adoc/resources/examples/function_definition.rc") &gt; "${rc}" &amp;&amp; \
-sh -c 'grep "$4" "$1" &gt;&amp; /dev/null || printf "source $3$2$3 $4\n" &gt;&gt; "$1"' - "${target}" "${rc}" '"' "${tag}"</code></pre>
+
+function main() {
+  __commandunit_exec_commandunit "${@}"
+}
+
+main "${@}"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>What the one-liner does is the following.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>grab the script from our github repo save it as <code>$HOME/.commandunitrc</code>.</p>
-</li>
-<li>
-<p>If a string that contains <code>#-COMMANDUNIT</code> in your <code>$HOME/.bashrc</code>, add a line
-<code>source "$HOME/.commandunitrc"</code></p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>If you are on <code>macOS</code>, make sure <code>~/.bashrc</code> is read by <code>~/.bash_profile</code>.</p>
+<p>Or download it from <a href="resources/examples/commandunit">here</a>.</p>
 </div>
 <div class="paragraph text-right">
 <p><a href="index.html">top</a></p>
-</div>
 </div>
 </div>
 </div>
@@ -1285,6 +1885,13 @@ sh -c 'grep "$4" "$1" &gt;&amp; /dev/null || printf "source $3$2$3 $4\n" &gt;&gt
 </div>
 <div id="handbookProgramming" class="tabcontent">
 <div id="handbookProgramming_content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a manual that provides useful information to write your own test cases using <code>commandunit</code> 's functionalities.</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_syntax">Syntax</h2>
 <div class="sectionbody">
@@ -1323,7 +1930,7 @@ If no preparation is necessary for your test, you do not need to define anything
 However, the syntax inside the <code>given</code> and <code>when</code> clauses is user customizable, although it doesn’t need to be modified under usual usages.
 If you specify a value of <code>type</code> attribute <code>NORMAL</code>, it searches for handler functions from <code>json_NORMAL.rc</code> and <code>scripttest.rc</code> files.
 These <code>.rc</code> files are placed under test drivers directories.
-Test driver directories are under the <code>{commandunit-dir}/.commandunit/testdrivers</code> and <code>{commandunit-home}/src/main/scripts/lib/testdrivers</code>.
+Test driver directories are under the <code>+{commandunit-dir}+/.commandunit/testdrivers</code> and <code>+{commandunit-home}+/src/main/scripts/lib/testdrivers</code>.
 <code>commandunit</code> searches for the files from them in this order.</p>
 </div>
 <div class="paragraph">
@@ -1680,11 +2287,11 @@ The actual value can be different depending on whether you are using <code>comma
 <dt class="hdlist1">COMMANDUNIT_BUILTIN_ROOT</dt>
 <dd>
 <p>The directory under which built-ins are stored.
-It points a directory under <code>{commandunit-home}/src/main/scripts/lib</code></p>
+It points a directory under <code>+{commandunit-home}+/src/main/scripts/lib</code></p>
 </dd>
 </dl>
 </div>
-<div class="paragraph text-right text-right">
+<div class="paragraph text-right">
 <p><a href="index.html">top</a></p>
 </div>
 </div>
@@ -1698,70 +2305,110 @@ It points a directory under <code>{commandunit-home}/src/main/scripts/lib</code>
 <div id="systemRequirements" class="tabcontent">
 <div id="systemRequirements_content">
 <div class="sect1">
-<h2 id="_system_requirements">System Requirements</h2>
+<h2 id="_software_components">Software Components</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(t.b.d.)
-bash</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>$ bash --version
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
-Copyright (C) 2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-
-This is free software; you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.</pre>
-</div>
+<p><code>commandunit</code> is tested on following platforms.</p>
 </div>
 <div class="sect2">
 <h3 id="_on_linux">On Linux</h3>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Dockerized version</dt>
-<dd>
 <div class="ulist">
 <ul>
-<li>
-<p>git (tested with 2.34.1)</p>
-</li>
 <li>
 <p>Distribution: Ubuntu 22.04</p>
 </li>
 <li>
-<p>dockerd: ???</p>
+<p><code>bash</code>: GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)</p>
 </li>
 </ul>
 </div>
-</dd>
-<dt class="hdlist1">"native" version</dt>
-<dd>
+<div class="sect3">
+<h4 id="_dockerized_mode">Dockerized mode</h4>
 <div class="ulist">
 <ul>
 <li>
 <p>git (tested with 2.34.1)</p>
 </li>
 <li>
-<p><code>jq-front</code> (<code>0.54</code>, Dockerized)</p>
-</li>
-<li>
-<p><code>jq</code> (<code>jq-1.5-1-a5b5cbe</code> or later)</p>
-</li>
-<li>
-<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+<p><code>dockerd</code>: ???</p>
 </li>
 </ul>
 </div>
-</dd>
-</dl>
+</div>
+<div class="sect3">
+<h4 id="_native_mode">"native" mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>git</code>: (tested with 2.34.1)</p>
+</li>
+<li>
+<p><code>jq-front</code>: <code>0.54</code>, Dockerized</p>
+</li>
+<li>
+<p><code>jq</code>: <code>jq-1.5-1-a5b5cbe</code> or later</p>
+</li>
+<li>
+<p><code>yaml2json</code>: <code>0.3.0</code>, installed through <code>npm install yamljs</code></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_on_macos">On macOS</h3>
+<h3 id="_on_macos_x86_64">On macOS (x86_64)</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bash</code>: GNU bash, version 5.1.12(1)-release (x86_64-apple-darwin20.6.0)</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_dockerized_mode_2">Dockerized mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>docker</code>: Docker version 23.0.5, build bc4487a (macOS)</p>
+</li>
+<li>
+<p><code>dockerd</code>: minikube version: v.1.31.2</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_native_mode_2">"native" mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>git</code>:  git version 2.39.1</p>
+</li>
+<li>
+<p><code>jq-front</code>: <code>0.54</code>, Dockerized</p>
+</li>
+<li>
+<p><code>jq</code>: <code>jq-1.6</code></p>
+</li>
+<li>
+<p><code>yaml2json</code>: yq (<a href="https://github.com/mikefarah/yq/" class="bare">https://github.com/mikefarah/yq/</a>) version v4.35.2 with a wrapper script[<a href="#yaml2jsonWrapper-faq">yam2json</a>].</p>
+</li>
+</ul>
+</div>
+<div id="yaml2jsonWrapper-faq" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ cat $(which yaml2json)
+#!/usr/bin/env bash
+yq -o=json "${@}"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_on_macos_apple_silicon">On macOS (Apple Silicon)</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Dockerized version</dt>
+<dt class="hdlist1">Dockerized mode</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -1777,7 +2424,7 @@ There is NO WARRANTY, to the extent permitted by law.</pre>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">"native" version</dt>
+<dt class="hdlist1">"native" mode</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -1791,7 +2438,7 @@ There is NO WARRANTY, to the extent permitted by law.</pre>
 <p><code>jq</code> (<code>jq-1.6</code>)</p>
 </li>
 <li>
-<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>brew</code>, not through <code>npm</code>)</p>
 </li>
 </ul>
 </div>

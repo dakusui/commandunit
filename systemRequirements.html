@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.20">
+<meta name="generator" content="Asciidoctor 2.0.17">
 <title>System Requirements</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -84,10 +84,10 @@ code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;
 ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
 ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.square{list-style-type:square}
-ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -208,10 +208,13 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -390,7 +393,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -435,13 +438,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1>System Requirements</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_system_requirements">System Requirements</a>
+<li><a href="#_software_components">Software Components</a>
 <ul class="sectlevel2">
 <li><a href="#_on_linux">On Linux</a></li>
-<li><a href="#_on_macos">On macOS</a></li>
+<li><a href="#_on_macos_x86_64">On macOS (x86_64)</a></li>
+<li><a href="#_on_macos_apple_silicon">On macOS (Apple Silicon)</a></li>
 </ul>
 </li>
 </ul>
@@ -449,70 +454,110 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_system_requirements">System Requirements</h2>
+<h2 id="_software_components">Software Components</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(t.b.d.)
-bash</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>$ bash --version
-GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
-Copyright (C) 2020 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
-
-This is free software; you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.</pre>
-</div>
+<p><code>commandunit</code> is tested on following platforms.</p>
 </div>
 <div class="sect2">
 <h3 id="_on_linux">On Linux</h3>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Dockerized version</dt>
-<dd>
 <div class="ulist">
 <ul>
-<li>
-<p>git (tested with 2.34.1)</p>
-</li>
 <li>
 <p>Distribution: Ubuntu 22.04</p>
 </li>
 <li>
-<p>dockerd: ???</p>
+<p><code>bash</code>: GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)</p>
 </li>
 </ul>
 </div>
-</dd>
-<dt class="hdlist1">"native" version</dt>
-<dd>
+<div class="sect3">
+<h4 id="_dockerized_mode">Dockerized mode</h4>
 <div class="ulist">
 <ul>
 <li>
 <p>git (tested with 2.34.1)</p>
 </li>
 <li>
-<p><code>jq-front</code> (<code>0.54</code>, Dockerized)</p>
-</li>
-<li>
-<p><code>jq</code> (<code>jq-1.5-1-a5b5cbe</code> or later)</p>
-</li>
-<li>
-<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+<p><code>dockerd</code>: ???</p>
 </li>
 </ul>
 </div>
-</dd>
-</dl>
+</div>
+<div class="sect3">
+<h4 id="_native_mode">"native" mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>git</code>: (tested with 2.34.1)</p>
+</li>
+<li>
+<p><code>jq-front</code>: <code>0.54</code>, Dockerized</p>
+</li>
+<li>
+<p><code>jq</code>: <code>jq-1.5-1-a5b5cbe</code> or later</p>
+</li>
+<li>
+<p><code>yaml2json</code>: <code>0.3.0</code>, installed through <code>npm install yamljs</code></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_on_macos">On macOS</h3>
+<h3 id="_on_macos_x86_64">On macOS (x86_64)</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bash</code>: GNU bash, version 5.1.12(1)-release (x86_64-apple-darwin20.6.0)</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_dockerized_mode_2">Dockerized mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>docker</code>: Docker version 23.0.5, build bc4487a (macOS)</p>
+</li>
+<li>
+<p><code>dockerd</code>: minikube version: v.1.31.2</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_native_mode_2">"native" mode</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>git</code>:  git version 2.39.1</p>
+</li>
+<li>
+<p><code>jq-front</code>: <code>0.54</code>, Dockerized</p>
+</li>
+<li>
+<p><code>jq</code>: <code>jq-1.6</code></p>
+</li>
+<li>
+<p><code>yaml2json</code>: yq (<a href="https://github.com/mikefarah/yq/" class="bare">https://github.com/mikefarah/yq/</a>) version v4.35.2 with a wrapper script[<a href="#yaml2jsonWrapper-faq">yam2json</a>].</p>
+</li>
+</ul>
+</div>
+<div id="yaml2jsonWrapper-faq" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ cat $(which yaml2json)
+#!/usr/bin/env bash
+yq -o=json "${@}"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_on_macos_apple_silicon">On macOS (Apple Silicon)</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Dockerized version</dt>
+<dt class="hdlist1">Dockerized mode</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -528,7 +573,7 @@ There is NO WARRANTY, to the extent permitted by law.</pre>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">"native" version</dt>
+<dt class="hdlist1">"native" mode</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -542,7 +587,7 @@ There is NO WARRANTY, to the extent permitted by law.</pre>
 <p><code>jq</code> (<code>jq-1.6</code>)</p>
 </li>
 <li>
-<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>npm install yamljs</code>)</p>
+<p><code>yaml2json</code> (<code>0.3.0</code>, installed through <code>brew</code>, not through <code>npm</code>)</p>
 </li>
 </ul>
 </div>
@@ -558,7 +603,7 @@ There is NO WARRANTY, to the extent permitted by law.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 21:02:32 UTC
+Last updated 2023-11-14 00:28:35 UTC
 </div>
 </div>
 </body>

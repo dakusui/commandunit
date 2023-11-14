@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.20">
+<meta name="generator" content="Asciidoctor 2.0.17">
 <title>Design Concept of commandunit</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -84,10 +84,10 @@ code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;
 ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
 ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.square{list-style-type:square}
-ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -208,10 +208,13 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
 .exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
 .sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
 .sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
-.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
-.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
 .literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
 @media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
 @media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
@@ -390,7 +393,7 @@ b.conum *{color:inherit!important}
 dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
 h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
 p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -435,27 +438,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1>Design Concept of <code>commandunit</code></h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_design_concept_of_commandunit">Design Concept of <code>commandunit</code></a>
-<ul class="sectlevel2">
 <li><a href="#_yaml_not_gherkin">YAML, not Gherkin</a></li>
 <li><a href="#_given_when_then_structure">Given-When-Then structure</a></li>
 <li><a href="#_powered_by_jq_front">Powered by <code>jq-front</code></a></li>
 <li><a href="#_yaml_json_pipeline">YAML &#8594; JSON Pipeline</a></li>
 <li><a href="#_references">References</a></li>
 </ul>
-</li>
-</ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_design_concept_of_commandunit">Design Concept of <code>commandunit</code></h2>
+<h2 id="_yaml_not_gherkin">YAML, not Gherkin</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_yaml_not_gherkin">YAML, not Gherkin</h3>
 <div class="paragraph">
 <p>Gherkin is one notation widely used in "Cucumber"'s ecosystem.</p>
 </div>
@@ -509,8 +507,10 @@ By using Gherkin, you will need a set of plugins to support Gherkin for every to
 isn&#8217;t YAML good enough, if we have a way to avoid repeating the same thing over and over again?</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_given_when_then_structure">Given-When-Then structure</h3>
+</div>
+<div class="sect1">
+<h2 id="_given_when_then_structure">Given-When-Then structure</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <code>commandunit</code> has a similar syntax to other BDD (Beahvior Driven Development) testing tools such as "Cucumber"<a href="#cucumber-designConcept">[2]</a>.
 It has three sections.</p>
@@ -610,8 +610,10 @@ This corresponds to "verify" phase in "four phase testing" model</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_powered_by_jq_front">Powered by <code>jq-front</code></h3>
+</div>
+<div class="sect1">
+<h2 id="_powered_by_jq_front">Powered by <code>jq-front</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><code>jq-front</code> <a href="#jq-front-designConcept">[1]</a> is a tool to enable your JSON files to extend other JSON files.
 Not only that it allows you to reference another node in the same file to compute a node&#8217;s value.</p>
@@ -668,8 +670,10 @@ This means that you don&#8217;t need to find supports of the new format.
 You can just keep using your favorite tools (editor, browser, IDE, etc) because in general they support popular formats such as JSON, YAML, or the good old XML.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_yaml_json_pipeline">YAML &#8594; JSON Pipeline</h3>
+</div>
+<div class="sect1">
+<h2 id="_yaml_json_pipeline">YAML &#8594; JSON Pipeline</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s go one step forward.
 We use YAML in order to ensure the test case definitions readable for human.
@@ -713,8 +717,10 @@ then:
 Then it can be converted into normal JSON file, shown as <a href="#json-example-designConcept">JSON example</a></p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_references">References</h3>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
 <div class="ulist bibliography">
 <ul class="bibliography">
 <li>
@@ -731,10 +737,9 @@ Then it can be converted into normal JSON file, shown as <a href="#json-example-
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 21:02:32 UTC
+Last updated 2023-11-14 00:28:35 UTC
 </div>
 </div>
 </body>

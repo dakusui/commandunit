@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.17">
-<title>commandunit: Installation Handbook</title>
+<title>Development Guide</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,219 +438,510 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
+<h1>Development Guide</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_commandunit_installation_handbook"><code>commandunit</code>: Installation Handbook</a></li>
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_build_sh"><code>build.sh</code></a>
+<ul class="sectlevel2">
+<li><a href="#_basic_subcommands">Basic Subcommands</a></li>
+<li><a href="#_grouped_subcommands">Grouped Subcommands</a></li>
+</ul>
+</li>
+<li><a href="#_directory_structure">Directory Structure</a></li>
+<li><a href="#_build_info_json"><code>build_info.json</code></a></li>
+<li><a href="#_build_time_environment_variables">Build-time Environment Variables</a></li>
+<li><a href="#_known_problems">Known Problems</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_commandunit_installation_handbook"><code>commandunit</code>: Installation Handbook</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Place the following script in one of directories on your <code>PATH</code> environment variable and give <code>755</code> permission (<code>chmod 755</code>).</p>
+<p><code>commandunit</code> is developed on Linux Platform (Ubuntu22.04)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>bash</p>
+</li>
+<li>
+<p>bashcov</p>
+</li>
+<li>
+<p>docker + dockerd</p>
+</li>
+<li>
+<p>Ubuntu 22.04</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_sh"><code>build.sh</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Building, testing, generating doc, and releasing can be done with a script <code>build.sh</code>.
+It takes an array of subcommands.
+Subcommands can be classified into two groups, which are "grouped subcommands" and "basic subcommands".
+A "grouped subcommand" is interpreted as a sequence of subcommands and executed by <code>build.sh</code> one by one.</p>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t specify any subcommand:</p>
 </div>
 <div class="listingblock">
-<div class="title">commandunit</div>
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">#!/usr/bin/env bash
-
-function __commandunit_exec_commandunit() {
-  export PROJECT_BASE_DIR="${PWD}"
-  export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
-  export COMMANDUNIT_SOURCE_DIR="${PROJECT_BASE_DIR}/src/dependencies/commandunit"
-export COMMANDUNIT_DEFAULT_VERSION="v1.25"
-  export BUD_DEBUG=enabled
-  function __commandunit_user_option() {
-    case "$(uname -sr)" in
-
-    Darwin*)
-      echo -n "-u" "1000:1000"
-      ;;
-
-    Linux*Microsoft*)
-      echo -n "-u" "$(id -u):$(id -g)"
-      ;;
-
-    Linux*)
-      echo -n "-u" "$(id -u):$(id -g)"
-      ;;
-
-    CYGWIN* | MINGW* | MSYS*)
-      echo -n "-u" "$(id -u):$(id -g)"
-      ;;
-
-    # Add here more strings to compare
-    # See correspondence table at the bottom of this answer
-
-    *)
-      echo -n "-u" "$(id -u):$(id -g)"
-      ;;
-    esac
-  }
-  function __commandunit_exec_commandunit_docker() {
-    local _image_name="${1}"
-    shift
-    # shellcheck disable=SC2086
-    # shellcheck disable=SC2046
-    docker run \
-      $(__commandunit_user_option) \
-      --env COMMANDUNIT_PWD="${_project_basedir}" \
-      --env COMMANDUNIT_LOGLEVEL="${_loglevel}" \
-      --env TMPDIR="/tmp" \
-      -v "${_project_basedir}:${_hostfsroot_mountpoint}${_project_basedir}" \
-      ${_entrypoint} \
-      -i "${_image_name}" \
-      "${@}"
-  }
-  function __commandunit_clean_cloned_commandunit() {
-    local _version_name="${1}" _source_dir="${2:-${COMMANDUNIT_SOURCE_DIR}}"
-    #      +-- Safeguard for a bug, where the variable becomes empty.
-    #     |    Because this function removes everything under the dir.
-    #     V
-    if [[ "${_source_dir}/${_version_name}" == *"/src/dependencies/"* ]]; then
-      if [[ -d "${_source_dir}/${_version_name}" ]]; then
-        rm -fr "${_source_dir"?"}/${_version_name:?}"
-      fi
-    fi
-  }
-  function __commandunit_clone_commandunit() {
-    local _git_tag_option="${1}" _version_name="${2}"
-    local _out
-    echo "version_name:${_source_dir}-/-${_version_name}" &gt;&amp;2
-    # shellcheck disable=SC2086
-    _out="$(git clone --depth 1 ${_git_tag_option} https://github.com/dakusui/commandunit.git "${COMMANDUNIT_SOURCE_DIR}/${_version_name}" 2&gt;&amp;1)" || {
-      echo "Failed to clone&lt;: ${_out}&gt;" &gt;&amp;2
-      return 1
-    }
-  }
-  function __commandunit_exec_commandunit_native() {
-    local _version_name="${1}"
-    shift
-    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit" "${@}"
-  }
-
-  local _project_basedir="${PROJECT_BASE_DIR}"
-  local _hostfsroot_mountpoint="/var/lib/commandunit"
-  local _docker_repo_name="dakusui/commandunit"
-  local _entrypoint=""
-  local _native="no"
-  local _loglevel="${COMMANDUNIT_LOGLEVEL:-ERROR}"
-  local _image_name _image_version="${COMMANDUNIT_DEFAULT_VERSION}" _branch_name="main" _version_name=${COMMANDUNIT_DEFAULT_VERSION} _args _show_image_name=false _i _s _quit=false _help=false
-  _args=()
-  _s=to_func
-  for _i in "${@}"; do
-    if [[ "${_s}" == to_func ]]; then
-      if [[ $_i == "--version="* ]]; then
-        local _v="${_i#*=}"
-        if [[ "${_v}" == "snapshot" ]]; then
-          # _image_version="${COMMANDUNIT_VERSION%.*}.$((${COMMANDUNIT_VERSION##*.} + 1))"
-          local _default_version="${COMMANDUNIT_DEFAULT_VERSION}" # v1.24
-          _image_version="${_default_version%.*}.$((${_default_version##*.} + 1))"
-        else
-          _branch_name="${_v}"
-          _image_version="${_v}"
-        fi
-        _version_name="${_v}"
-        # --version=      snapshot               v1.99          (none)
-        # _version_name   snapshot               v1.99           v1.24
-        # _image_version  v1.25                  v1.99           v1.24          (private)
-        # _image_name     dakusui:v1.25-snapshot dakusui:v1.99   dakusui:v1.24
-        # _branch_name    main                   v1.99           v1.24
-      elif [[ $_i == "--native" ]]; then
-        _native="yes"
-      elif [[ $_i == "--debug-shell" ]]; then
-        _entrypoint="--entrypoint=/bin/bash"
-      elif [[ $_i == "--show-image-name" ]]; then
-        _show_image_name=true
-      elif [[ $_i == "--quit" ]]; then
-        _quit=true
-      elif [[ $_i == "--help" ]]; then
-        _help=true
-        _args+=("${_i}")
-      elif [[ $_i == "--" ]]; then
-        _s=to_container
-      else
-        _args+=("${_i}")
-      fi
-    else
-      _args+=("${_i}")
-    fi
-  done
-  _image_name="${_docker_repo_name}:${_image_version}"
-  if [[ "${_version_name}" == "snapshot" ]]; then
-    _image_name="${_image_name}-${_v}"
-  fi
-  if ${_show_image_name}; then
-    echo "${_image_name}"
-  fi
-  if ${_help}; then
-    echo "Usage: commandunit [WRAPPER OPTION]... [--] [OPTION]... [SUBCOMMAND]..."
-    echo ""
-    echo "A wrapper function for 'commandunit' to invoke its docker image.".
-    echo "Followings are switching options to control the wrapper's behaviour."
-    echo "Options not listed here or ones after the separator (--) are passed to the commandunit implementation directly."
-    echo ""
-    echo "Wrapper options:"
-    echo "--native            Use the 'native' version of commandunit."
-    echo "--version={VERSION} Use the specified version of commandunit. If 'snapshot' is given, a version under development is used (default: ${COMMANDUNIT_DEFAULT_VERSION})."
-    echo "--debug-shell       Get the shell of the docker image. Type Ctrl-D to quit it. Development purpose only."
-    echo "--show-image-name   Print the image name. Useful to figure out the version."
-    echo "--quit              Quit before running the image. With --show-image-name, useful to figure out the image version"
-    echo "--help              Show this help and pass the --help option to the docker image."
-    echo "--                  A separator to let this wrapper know the options after it should be passed directly to the image"
-    echo ""
-  fi
-  ${_quit} &amp;&amp; return 0
-  if [[ "${_native}" == "no" ]]; then
-    __commandunit_exec_commandunit_docker "${_image_name}" "${_args[@]}"
-  else
-    which jq-front &gt; /dev/null || {
-      function jq-front() {
-        docker run --rm -i \
-          -v "${HOME}:/var/lib/jf/${HOME}" \
-          -e JF_PATH_BASE="/var/lib/jf" \
-          -e JF_PATH="${JF_PATH}" \
-          -e JF_DEBUG=${JF_DEBUG:-disabled} \
-          -e JF_CWD="$(pwd)" \
-          -e COMMANDUNIT_DEPENDENCIES_ROOT="${COMMANDUNIT_DEPENDENCIES_ROOT:?Required environment variable is not set.}" \
-          -e COMMANDUNIT_BUILTIN_ROOT="${COMMANDUNIT_DEPENDENCIES_ROOT:?Required environment variable is not set.}" \
-          dakusui/jq-front:"${JF_DOCKER_TAG:-v0.53}" "${@}"
-      } &amp;&amp;
-      export -f jq-front
-    }
-    if [[ "${_version_name}" ==  "snapshot" ]]; then
-      # Remove already loaded one, then... do clone
-      __commandunit_clean_cloned_commandunit "${_version_name}"
-    fi
-    if [[ ! -e "${COMMANDUNIT_SOURCE_DIR}/${_version_name}" ]]; then
-      __commandunit_clone_commandunit "--branch ${_branch_name}" "${_version_name}"
-    fi
-    __commandunit_exec_commandunit_native "${_version_name}" "${_args[@]}"
-  fi
-}
-
-function main() {
-  __commandunit_exec_commandunit "${@}"
-}
-
-main "${@}"</code></pre>
+<pre class="highlight"><code>$ ./build.sh</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Or download it from <a href="resources/examples/commandunit">here</a>.</p>
+<p>It will be interpreted that <code><a href="#_build_2">BUILD</a></code> grouped subcommand is specified.</p>
 </div>
-<div class="paragraph text-right">
-<p><a href="index.html">top</a></p>
+<div class="sect2">
+<h3 id="_basic_subcommands">Basic Subcommands</h3>
+<div class="sect3">
+<h4 id="_parameters">Parameters</h4>
+<div class="paragraph">
+<p>A basic subcommand can take parameters.
+There are three targets: <code>source</code>, <code>snapshot</code>, and <code>release</code>.
+<code>source</code> means that the subcommand handles source files.
+For instance, if the target is <code>source</code>, the <code>test</code> subcommand uses source files for test.
+If it is <code>snapshot</code>, a snapshot docker image will be used.
+If <code>release</code>, a docker image to be released will be used.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_build"><code>build</code></h4>
+<div class="paragraph">
+<p>Builds a docker image from a source.</p>
+</div>
+<div class="paragraph">
+<p>Only <code>snapshot</code> and <code>release</code> can be specified for the first parameter.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_clean"><code>clean</code></h4>
+<div class="paragraph">
+<p>Removes all the working files generated by this build script.
+Note that files created by <code>generate-src</code> will not be removed since they are a part of the source tree, not working files.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_dummy"><code>dummy</code></h4>
+<div class="paragraph">
+<p>This subcommand does nothing.
+Useful for testing a change made in <code>build.sh</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fail"><code>fail</code></h4>
+<div class="paragraph">
+<p>This subcommand fails always.
+Useful for testing a change made in <code>build.sh</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_coverage"><code>coverage</code></h4>
+<div class="paragraph">
+<p>This command executes test and generates a coverage report.
+Generated coverage report will be found under <code>out/testreport-coverage</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_doc"><code>doc</code></h4>
+<div class="paragraph">
+<p>Generates documentation under working directory from asciidoc (.adoc) files under <code>OUTDIR/site/adoc</code> directory, whose contents are copied from <code>src/site/adoc</code> directory.
+The generated documentation (<code>.html</code> files) will be found under <code>OUTDIR/doc</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generate_src"><code>generate-src</code></h4>
+<div class="paragraph">
+<p>A subcommand to generate "source" files based on project information such as the current target development version, repository URL, etc.
+Typically executed at the last of <code>RELEASE</code> subcommand.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_prepare"><code>prepare</code></h4>
+<div class="paragraph">
+<p>Copies the source tree (<code>SRCDIR</code>) to the working directory (<code>OUTDIR</code>).</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_doc"><code>publish-doc</code></h4>
+<div class="paragraph">
+<p>Pushes the generated documents to a branch of the git repository, the branch (<code>.repo.documentation.docbranch</code> attribute) and repository URL (<code>.repo.url</code> attribute) can be specified in <code>build_info.json</code>.</p>
+</div>
+<div class="paragraph">
+<p>This subcommand doesn&#8217;t take any parameters.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_push"><code>push</code></h4>
+<div class="paragraph">
+<p>Pushes a docker image to the docker repository.</p>
+</div>
+<div class="paragraph">
+<p>The first parameter specifies <code>snapshot</code> or <code>released</code> image to be pushed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test"><code>test</code></h4>
+<div class="paragraph">
+<p>Executes unit test suites stored under <code>out/test/scripts</code>.</p>
+</div>
+<div class="paragraph">
+<p>The first parameter specifies the type of the <code>commandunit</code> executable used for the test execution.
+<code>source</code> means the scripts before dockerized,
+<code>snapshot</code> is a docker image for snapshot, and <code>release</code> is a docker image to be released.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release_precheck"><code>release-precheck</code></h4>
+<div class="paragraph">
+<p>Performs a "pre-check" for the entire release procedure.
+It checks if there is no uncommitted changes, un-pushed commits, and you are on the <code>main</code> branch.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release_postmortem"><code>release-postmortem</code></h4>
+<div class="paragraph">
+<p>Some files in the source tree of <code>commandunit</code> should be generated in an automated way, otherwise they will become redundant.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grouped_subcommands">Grouped Subcommands</h3>
+<div class="paragraph">
+<p>Grouped subcommands do not take any parameters.</p>
+</div>
+<div class="sect3">
+<h4 id="_build_2">BUILD</h4>
+<div class="paragraph">
+<p>A basic "build" command.
+It generates documentation and execute tests.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh BUILD</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, <code>doc</code>, and <code>test</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_doc_2">DOC</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh DOC</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A subcommand to build documentation under working directory.
+Generated HTML files will be found under <code>out/doc</code> directory.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>doc</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_2">TEST</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh TEST</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Executes the test suite.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>test</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_coverage_2">COVERAGE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh COVERAGE</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>prepare</code>, and <code>coverage</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_package">PACKAGE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh PACKAGE</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean prepare</code>, <code>test:::true</code>, <code>build:snapshot</code>, and <code>test:snapshot::true</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deploy">DEPLOY</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh DEPLOY</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>PACKAGE</code> and <code>push:snapshot</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_release">RELEASE</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh RELEASE</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A subcommand for releasing.
+Note that a check will be done at the beginning of this subcommand.
+If something not pushed on your local, this subcommand fails (<code>release-precheck</code>).
+Also, note that documentation is not published by this subcommand, and you need to do it separately using <code>PUBLISH_DOC</code> subcommand.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Included Subcommands</dt>
+<dd>
+<p><code>clean</code>, <code>release-precheck</code>, <code>prepare</code>, <code>test:::true</code>, <code>build:release</code>, <code>test:release::true</code>, <code>push:release</code>, and <code>release-postmortem</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_doc_2">PUBLISH_DOC</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./build.sh PUBLISH_DOC</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_directory_structure">Directory Structure</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>PROJECT_BASEDIR/                                      <b class="conum">(1)</b>
+  buildtools/          A directory for build tools.
+  out/                 A directory for working files. <b class="conum">(2)</b>
+    doc/                                              <b class="conum">(3)</b>
+    main/
+      scripts/                                        <b class="conum">(4)</b>
+    site/
+      adoc/                                           <b class="conum">(5)</b>
+  src/                 A directory for source tree    <b class="conum">(6)</b>
+    docker/
+    main/
+    site/
+    test/
+  build.sh             A build script for this project.
+  build_info.json      A project definition file.</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&lt;1&gt;: project base directory.</p>
+</li>
+<li>
+<p>&lt;2&gt;: Specified by environment variable <code>OUTDIR</code>.</p>
+</li>
+<li>
+<p>&lt;3&gt;: <code>DOCDIR</code>.</p>
+</li>
+<li>
+<p>&lt;4&gt;: <code>EXEC_BASEDIR</code>.</p>
+</li>
+<li>
+<p>&lt;5&gt;: <code>DOC_SRCDIR</code>.</p>
+</li>
+<li>
+<p>&lt;6&gt;: Specified by environment variable <code>SRCDIR</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_info_json"><code>build_info.json</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title"><code>build_info.json</code> example</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "projectName": "commandunit",
+  "homepage": "https://github.com/dakusui/commandunit",
+  "docker": {
+    "user": "dakusui",
+    "hostFsRootMountPoint": "/var/lib/commandunit"
+  },
+  "version": {
+    "latestReleased": {
+      "major": 1,
+      "minor": 25
+    },
+    "target": {
+      "major": 1,
+      "minor": 26
+    }
+  },
+  "repo": {
+    "url": "https://github.com/dakusui/commandunit.git",
+    "documentation": {
+      "docbranch": "docs"
+    },
+    "release": {
+      "branch": "main"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_time_environment_variables">Build-time Environment Variables</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>LATEST_RELEASED_VERSION</code></dt>
+<dd>
+<p>The most recent released version of this product.</p>
+</dd>
+<dt class="hdlist1"><code>TARGET_VERSION</code></dt>
+<dd>
+<p>The version currently under development.</p>
+</dd>
+<dt class="hdlist1"><code>PROJECT_NAME</code></dt>
+<dd>
+<p>The name of this project.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>PROJECT_BASEDIR</code></dt>
+<dd>
+<p>The path to the root directory of this project.</p>
+</dd>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>HOMEPAGE</code></dt>
+<dd>
+<p>The URL of the project&#8217;s homepage.</p>
+</dd>
+<dt class="hdlist1"><code>SRCDIR</code></dt>
+<dd>
+<p>The path to the source directory (i.e., <code>${PROJECT_BASEDIR}/src</code>)
+<code>OUTDIR</code>: The path to the working directory (i.e., <code>${PROJECT_BASEDIR}/out</code>)</p>
+</dd>
+<dt class="hdlist1"><code>EXEC_BASEDIR</code></dt>
+<dd>
+<p>The directory that holds executables of this product during the build-time. (i.e., <code>${PROJECT_BASEDIR}/out/main/scripts</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCDIR</code></dt>
+<dd>
+<p>The directory to store generated documentations. (i.e., <code>${PROJECT_BASEDIR}/out/doc</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCSRCDIR</code></dt>
+<dd>
+<p>The directory to store documentation source files during a build.  (i.e., <code>${PROJECT_BASEDIR}/out/doc</code>)</p>
+</dd>
+<dt class="hdlist1"><code>DOCKER_REPO_NAME</code></dt>
+<dd>
+<p>A name of docker repository name. (i.e., <code>{.docker.user}/{.project.name}</code>).</p>
+</dd>
+<dt class="hdlist1"><code>BUILD_HOSTFSROOT_MOUNTPOINT</code></dt>
+<dd>
+<p>A path under which the root directory of the host side file system "seems" mounted.
+By prefixing this path to a host side path, you can calculate the corresponding path of it inside the docker container.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_problems">Known Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>A build on macOS halts during <code>test</code>.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-14 06:31:33 UTC
+Last updated 2023-11-14 09:09:59 UTC
 </div>
 </div>
 </body>
