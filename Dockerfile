@@ -12,4 +12,4 @@ RUN export LC_ALL=C && \
     mkdir -p /var/lib/commandunit && \
     mkdir -p /app/lib/commandunit && \
     echo $VERSION > /app/lib/version_file
-ENTRYPOINT ["/app/bin/commandunit"]
+ENTRYPOINT ["/app/bin/commandunit-main"]
