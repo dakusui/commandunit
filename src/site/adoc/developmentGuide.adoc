@@ -9,6 +9,7 @@
 - bash
 - bashcov
 - docker + dockerd
+  - link:https://github.com/christian-korneck/docker-pushrm[docker-pushrm plugin]
 - Ubuntu 22.04
 
 == `build.sh`
