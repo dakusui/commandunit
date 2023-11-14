@@ -8,7 +8,7 @@ OUTDIR="${PROJECT_BASEDIR}/out"
 EXEC_BASEDIR="${OUTDIR}/main/scripts"
 DOCDIR="${PROJECT_BASEDIR}/out/doc"
 DOCSRCDIR="${PROJECT_BASEDIR}/out/site/adoc"
-LIBDIR="${OUTDIR}/lib"
+LIBDIR="${OUTDIR}/lib"   # This would not be used anymore.
 TESTDIR="${OUTDIR}/test/scripts/lv1"
 LATEST_RELEASED_VERSION="$(printf "v%s.%s" "$(jq -r -c '.version.latestReleased.major' "${_build_info_file}")" \
   "$(jq -r -c '.version.latestReleased.minor' "${_build_info_file}")")"
