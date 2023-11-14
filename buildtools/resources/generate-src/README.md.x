@@ -59,25 +59,12 @@ Run tests found under DIR in parallel mode.
 
 ## Installation
 
-Although it is possible to install `commandunit` scripts in your directory
-struture, it is highly adviced to use Docker to use `commandrunner` to avoid
-compatibility issues. Have the following bash function definition in
-your `~/.bashrc`.
+Place the following script in one of your directories on `PATH` environment variable entry with `755` permission.
 
 ```bash
 END
 
-bash -eu -E ""$(dirname "${0}")"/src/site/adoc/resources/examples/function_definition.rc.x"
-
-cat <<'END'
-```
-
-Or run the following one-liner.
-
-```bash
-END
-
-cat "$(dirname "$(dirname "$(dirname "$(dirname "${0}")")")")/src/site/adoc/resources/examples/oneline_installer.sh"
+bash -eu -E ""$(dirname "${0}")"/src/site/adoc/resources/examples/commandunit.x"
 
 cat <<'END'
 ```

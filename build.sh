@@ -26,7 +26,7 @@ function __execute_stage() {
     function stage_name() {
       echo "'${__execute_stage_stage_name}'"
     }
-    "execute_stage" "$@" && message "DONE:${_stage}"
+    ("execute_stage" "$@" && message "DONE:${_stage}") || abort "FAILED:${_stage}"
   } || {
     message "FAILED:${_stage}"
     return 1

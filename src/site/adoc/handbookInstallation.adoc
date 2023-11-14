@@ -1,57 +1,14 @@
 == `commandunit`: Installation Handbook
 
-The wrapper script.
-- Docker version
-- Native version
-
-For non-bash users.
-One-liner.
-(t.b.d.)
-
-=== Non-bash users
-
-If you are not using a modern enough `bash` or you like non-`bash` shell, you need to write a small script that executes the function defined by the `commandunit.rc`.
+Place the following script in one of directories on your `PATH` environment variable and give `755` permission (`chmod 755`).
 
 [source, bash]
-.`commandunit.sh` (An example to wrap `commandunit.rc`)
+.commandunit
 ----
-#!/usr/bin/env bash
-
-source "$(dirname ${0})/commandunit.rc"
-commandunit "${@}"
+include::resources/examples/commandunit[commandunit]
 ----
 
-
-=== Archived
-Although you can install `commandunit` scripts in your directory
-structure, it is highly advised to use Docker to use `commandrunner` to avoid
-compatibility issues.
-Have the following bash function definition in
-your `~/.bashrc`.
-
-[source, bash]
-[%collapsible]
-====
-[source, bash]
-----
-include::resources/examples/function_definition.rc[function_definition.rc]
-----
-====
-
-Or  just run the following one-liner to do it.
-
-[source, bash]
-----
-include::resources/examples/oneline_installer.sh[]
-----
-
-What the one-liner does is the following.
-
-1. grab the script from our github repo save it as `$HOME/.commandunitrc`.
-2. If a string that contains `#-COMMANDUNIT` in your `$HOME/.bashrc`, add a line
-`source "$HOME/.commandunitrc"`
-
-If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
+Or download it from link:resources/examples/commandunit[here].
 
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
