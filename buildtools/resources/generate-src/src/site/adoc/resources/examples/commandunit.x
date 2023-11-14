@@ -75,7 +75,7 @@ cat <<'END'
   function __commandunit_exec_commandunit_native() {
     local _version_name="${1}"
     shift
-    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit" "${@}"
+    "${COMMANDUNIT_SOURCE_DIR}/${_version_name}/src/main/scripts/bin/commandunit-main" "${@}"
   }
 
   local _project_basedir="${PROJECT_BASE_DIR}"
