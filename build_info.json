@@ -8,11 +8,11 @@
   "version": {
     "latestReleased": {
       "major": 1,
-      "minor": 26
+      "minor": 27
     },
     "target": {
       "major": 1,
-      "minor": 27
+      "minor": 28
     }
   },
   "repo": {

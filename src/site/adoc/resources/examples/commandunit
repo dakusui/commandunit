@@ -4,7 +4,7 @@ function __commandunit_exec_commandunit() {
   export PROJECT_BASE_DIR="${PWD}"
   export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
   export COMMANDUNIT_SOURCE_DIR="${PROJECT_BASE_DIR}/src/dependencies/commandunit"
-export COMMANDUNIT_DEFAULT_VERSION="v1.26"
+export COMMANDUNIT_DEFAULT_VERSION="v1.27"
   export BUD_DEBUG=enabled
   function __commandunit_user_option() {
     case "$(uname -sr)" in
