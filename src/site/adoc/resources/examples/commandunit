@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -eu -o pipefail -o errtrace
+shopt -s inherit_errexit nullglob compat"${BASH_COMPAT=42}"
+
 function __commandunit_exec_commandunit() {
   export PROJECT_BASE_DIR="${PWD}"
   export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
