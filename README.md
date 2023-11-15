@@ -67,7 +67,7 @@ function __commandunit_exec_commandunit() {
   export PROJECT_BASE_DIR="${PWD}"
   export COMMANDUNIT_PWD="${PROJECT_BASE_DIR}" # Referenced by commandunit itself.
   export COMMANDUNIT_SOURCE_DIR="${PROJECT_BASE_DIR}/src/dependencies/commandunit"
-export COMMANDUNIT_DEFAULT_VERSION="v1.28"
+  export COMMANDUNIT_DEFAULT_VERSION="${COMMANDUNIT_DEFAULT_VERSION:-v1.29}"
   export BUD_DEBUG=enabled
   function __commandunit_user_option() {
     case "$(uname -sr)" in
@@ -125,7 +125,6 @@ export COMMANDUNIT_DEFAULT_VERSION="v1.28"
   function __commandunit_clone_commandunit() {
     local _git_tag_option="${1}" _version_name="${2}"
     local _out
-    echo "version_name:${_source_dir}-/-${_version_name}" >&2
     # shellcheck disable=SC2086
     _out="$(git clone --depth 1 ${_git_tag_option} https://github.com/dakusui/commandunit.git "${COMMANDUNIT_SOURCE_DIR}/${_version_name}" 2>&1)" || {
       echo "Failed to clone<: ${_out}>" >&2
@@ -153,7 +152,7 @@ export COMMANDUNIT_DEFAULT_VERSION="v1.28"
         local _v="${_i#*=}"
         if [[ "${_v}" == "snapshot" ]]; then
           # _image_version="${COMMANDUNIT_VERSION%.*}.$((${COMMANDUNIT_VERSION##*.} + 1))"
-          local _default_version="${COMMANDUNIT_DEFAULT_VERSION}" # v1.24
+          local _default_version="${COMMANDUNIT_DEFAULT_VERSION}" # e.g. v1.24
           _image_version="${_default_version%.*}.$((${_default_version##*.} + 1))"
         else
           _branch_name="${_v}"
