@@ -215,6 +215,21 @@ Included Subcommands:: `clean`, `release-precheck`, `prepare`, `test:::true`, `b
 $ ./build.sh PUBLISH_DOC
 ----
 
+== Repository
+
+The source code repository of `commandunit` is found https://github.com/dakusui/commandunit[here].
+
+=== Tags
+
+Each released commit has a tag: `v{Major Version}.{Minor Version}`.
+For the commit whose "wrapper script" was verified most recently has a tag `wrapper-verified`.
+
+=== Branches
+
+The documentation is stored in `docs` branch and exposed to the public through https://dakusui.github.io/commandunit/[dakusui.github.io/commandunit].
+Check also <<PUBLISH_DOC>> subcommand of the build script.
+
+
 == Directory Structure
 
 ----

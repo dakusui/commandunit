@@ -19,6 +19,8 @@ COMMANDUNIT_SPECIFICATION="$(
     "  report:",
     "    Reads a file testreport.json under directory specified by --test-reportdir and renders a report file (testreport.adoc)",
     "    under the same directory.",
+    "  none:",
+    "    Does nothing",
     "",
     "Options: (* - for development use only)"
   ],
