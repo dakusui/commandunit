@@ -64,7 +64,7 @@ Place the following script in one of your directories on `PATH` environment vari
 ```bash
 END
 
-bash -eu -E ""$(dirname "${0}")"/src/site/adoc/resources/examples/commandunit.x"
+bash -eu -E ""$(dirname "${0}")"/src/site/adoc/resources/examples/00.commandunit.x"
 
 cat <<'END'
 ```

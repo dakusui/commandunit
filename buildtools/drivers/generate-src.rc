@@ -4,6 +4,7 @@ function execute_stage() {
   local _each
   while read _each; do
     local _dest="${_each%.x}"
+    _dest="$(echo ${_dest}|sed -E 's/(.*\/)[0-9]+\.([^/]+)$/\1\2/')"
     _dest="${_dest#${_basedir}/}"
     echo -n "Preprocessing: <${_each}>: <_dest: '${_dest}'>" >&2
     mkdir -p "$(dirname "${_each}")"
@@ -12,7 +13,7 @@ function execute_stage() {
       abort "FAILED TO PROCESS: '${_each}'"
     fi
     echo "...done" >&2
-  done < <(find "${_basedir}" -type f -name '*.x')
+  done < <(find "${_basedir}" -type f,l -name '*.x' -exec  sh -c 'echo "${0##*/}" "${0}"' {} \; | sort -k 1 | cut -f 2 -d ' ')
 
   message "Done.'${SRCDIR}'"
 }
