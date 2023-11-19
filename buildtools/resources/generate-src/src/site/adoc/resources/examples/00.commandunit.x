@@ -1,1 +1,1 @@
-/home/hiroshi/Documents/github/commandunit/buildtools/resources/generate-src/src/main/scripts/bin/commandunit.x
+/Users/hiroshi/Documents/github/commandunit/buildtools/resources/generate-src/src/main/scripts/bin/commandunit.x
