@@ -238,7 +238,9 @@ If no element matches the keyword(the first argument), non-0 value will be retur
 to_json_array:: Converts given arguments in to a JSON array.
 json_value_at:: Prints a JSON node found at the path specified by the second argument in the JSON node specified by the first argument.
 json_has_key:: Checks if a key (second argument) is found at the path (third argument. If omitted, `.` will be used) in a JSON object given by the first argument.
-If and only if the key is found, `0` will be returned.
+If and only if input is well-formed JSON and the key is found, `true` will be printed.
+If the input is well-formed JSON but the key doesn't exist, `false` will be printed.
+If the input is not well-formed, non-0 value will be returned.
 json_type_of:: Prints a type of JSON node specified by the first argument.
 The type will be one of: `object`, `array`, `string`, `number`, and `null`
 If non-welformed JSON node is given, the execution will be aborted.
