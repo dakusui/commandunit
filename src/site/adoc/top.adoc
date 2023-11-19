@@ -66,8 +66,8 @@ For the requirements of `commandunit` for your system (or software components an
 === Installation Manual
 
 You can install `commandunit` easily with its "wrapper" script.
-Just please check link:handbookInstallation.html[Installation and Quick Start Manual] for its installation.
-The documentation also discusses some tips (or ideas) to use it for non-bash users.
+Check link:https://github.com/dakusui/commandunit-installer[Installer] site.
+For more details of installation, please check link:handbookInstallation.html[Installation and Quick Start Manual].
 
 === Command-line Manual
 
@@ -83,10 +83,6 @@ Also, it assumes a directory structure, which is designed to be compatible with 
 
 You can start using `commandunit` by cloning, trying and modifying an example project.
 But for more details, such as syntax of the tool, you can check link:handbookProgramming.html[Programming Manual].
-
-== Walking Through Examples
-
-Check a link:walkingThroughExamples.html[Walking through Examples] for a use case scenario of `commandunit` to learn how you can use it.
 
 == FAQ
 
