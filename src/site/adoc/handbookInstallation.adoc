@@ -10,6 +10,8 @@ include::resources/examples/commandunit[commandunit]
 
 Or download it from link:resources/examples/commandunit[here].
 
+For more details, check https://github.com/dakusui/commandunit-installer[commandunit-installer]
+
 [.text-right]
 // suppress inspection "AsciiDocLinkResolve"
 link:index.html[top]
