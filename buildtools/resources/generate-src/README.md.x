@@ -59,17 +59,7 @@ Run tests found under DIR in parallel mode.
 
 ## Installation
 
-Place the following script in one of your directories on `PATH` environment variable entry with `755` permission.
-
-```bash
-END
-
-bash -eu -E ""$(dirname "${0}")"/src/site/adoc/resources/examples/00.commandunit.x"
-
-cat <<'END'
-```
-
-If you are on `macOS`, make sure `~/.bashrc` is read by `~/.bash_profile`.
+Check the <a href="https://github.com/dakusui/commandunit-installer">commandunit-installer</a>.
 
 ## Building commandunit
 
